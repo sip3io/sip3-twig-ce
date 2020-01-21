@@ -1,0 +1,39 @@
+#! Spring Jackson
+---
+spring:
+  jackson:
+    property-naming-strategy: SNAKE_CASE
+
+#! Spring Cache
+---
+spring:
+  cache:
+    cache-names: listAttributes, listCollectionNames
+    caffeine:
+      spec: expireAfterWrite=1m
+
+#! Spring MongoClient
+---
+spring:
+  data:
+    mongodb:
+      uri: ${mongo.uri}
+      database: ${mongo.db}
+
+#! Server
+server:
+  port: 8080
+  servlet:
+    context-path: /api
+
+#! Mongo
+mongo:
+  uri: mongodb://127.0.0.1:27017
+  db: sip3
+  max-execution-time: 10000
+  batch-size: 128
+
+#! Application
+time-suffix: yyyyMMdd
+search:
+  default-limit: 50
