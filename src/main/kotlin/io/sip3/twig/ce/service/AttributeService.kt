@@ -41,12 +41,12 @@ open class AttributeService(private val mongoClient: MongoClient) {
             }
 
             if (type == Attribute.TYPE_STRING) {
-                var options = attribute.options
-                if (options == null) {
-                    options = mutableSetOf()
-                    attribute.options = options
+                document.get("options")?.let { options ->
+                    if (attribute.options == null) {
+                        attribute.options = mutableSetOf()
+                    }
+                    attribute.options!!.addAll(options as List<String>)
                 }
-                document.getValue("options")?.let { options.addAll(it as List<String>) }
             }
         }
 
