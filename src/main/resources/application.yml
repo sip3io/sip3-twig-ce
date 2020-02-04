@@ -28,7 +28,7 @@ server:
 
 #! Mongo
 mongo:
-  uri: mongodb://127.0.0.1:27017
+  uri: mongodb://10.80.0.22:27017
   db: sip3
   max-execution-time: 10000
   batch-size: 128
