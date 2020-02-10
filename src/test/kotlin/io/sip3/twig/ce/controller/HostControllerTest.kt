@@ -56,7 +56,7 @@ class HostControllerTest {
 
     @Test
     fun `Get all hosts`() {
-        given(hostService.getAll()).willReturn(setOf(HOST_1, HOST_2))
+        given(hostService.list()).willReturn(setOf(HOST_1, HOST_2))
         mockMvc.perform(get("/hosts"))
                 .andDo(print())
                 .andExpect(status().isOk)
@@ -89,7 +89,7 @@ class HostControllerTest {
 
     @Test
     fun `Add valid host`() {
-        given(hostService.add(any())).willReturn(HOST_2)
+        given(hostService.create(any())).willReturn(HOST_2)
 
         mockMvc.perform(post("/hosts")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -107,7 +107,7 @@ class HostControllerTest {
 
     @Test
     fun `Add host already persisted`() {
-        given(hostService.add(any())).willThrow(DuplicateKeyException(""))
+        given(hostService.create(any())).willThrow(DuplicateKeyException(""))
 
         mockMvc.perform(post("/hosts")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -117,7 +117,7 @@ class HostControllerTest {
 
     @Test
     fun `Update valid host`() {
-        given(hostService.add(any())).willReturn(HOST_2)
+        given(hostService.create(any())).willReturn(HOST_2)
 
         mockMvc.perform(put("/hosts")
                 .contentType(MediaType.APPLICATION_JSON)

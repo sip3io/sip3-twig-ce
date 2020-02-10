@@ -51,7 +51,7 @@ class HostServiceTest {
     @Test
     fun `Get all hosts`() {
         given(hostRepository.findAll()).willReturn(setOf(HOST_1, HOST_2))
-        val hosts = hostService.getAll()
+        val hosts = hostService.list()
         assertEquals(2, hosts.size)
         assertEquals(HOST_1, hosts.first())
     }
@@ -72,7 +72,7 @@ class HostServiceTest {
     @Test
     fun `Add new host`() {
         given(hostRepository.save(any<Host>())).willReturn(HOST_1)
-        hostService.add(HOST_1)
+        hostService.create(HOST_1)
 
         verify(hostRepository, times(1)).save(any<Host>())
     }
@@ -81,7 +81,7 @@ class HostServiceTest {
     fun `Add existing host`() {
         given(hostRepository.findByNameIgnoreCase(any())).willReturn(HOST_1)
         given(hostRepository.save(any<Host>())).willReturn(HOST_1)
-        hostService.add(HOST_1)
+        hostService.create(HOST_1)
     }
 
     @Test

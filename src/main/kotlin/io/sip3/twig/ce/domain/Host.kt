@@ -39,7 +39,7 @@ data class Host(
                 position = 0,
                 dataType = "String",
                 required = true,
-                notes = "Unique host name",
+                notes = "Host name",
                 example = "sip.sbc.example.com"
         )
         @NotNull
@@ -49,7 +49,7 @@ data class Host(
                 position = 1,
                 dataType = "String",
                 required = false,
-                notes = "List of sip ip addresses",
+                notes = "SIP network IP addresses",
                 example = "[\"192.168.10.10\", \"192.168.10.11:5061\", \"192.168.10.0/24\"]"
         )
         @IpAddressList
@@ -59,7 +59,7 @@ data class Host(
                 position = 2,
                 dataType = "String",
                 required = false,
-                notes = "List of media ip addresses",
+                notes = "RTP network IP addresses",
                 example = "[\"192.168.10.10\", \"192.168.10.11:32766\", \"192.168.10.0/24\"]"
         )
         @IpAddressList

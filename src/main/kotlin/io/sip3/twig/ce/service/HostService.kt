@@ -24,7 +24,7 @@ import org.springframework.stereotype.Component
 @Component
 open class HostService(private val hostRepository: HostRepository) {
 
-    open fun getAll(): Set<Host> {
+    open fun list(): Set<Host> {
         return hostRepository.findAll().toSet()
     }
 
@@ -32,7 +32,7 @@ open class HostService(private val hostRepository: HostRepository) {
         return hostRepository.getByNameIgnoreCase(name)
     }
 
-    open fun add(host: Host): Host {
+    open fun create(host: Host): Host {
         hostRepository.findByNameIgnoreCase(host.name)?.let {
             throw DuplicateKeyException("Host with name \"${host.name}\" already exists")
         }
@@ -41,10 +41,10 @@ open class HostService(private val hostRepository: HostRepository) {
     }
 
     open fun update(host: Host): Host {
-        return hostRepository.getByNameIgnoreCase(host.name).let { existent ->
-            existent.sip = host.sip
-            existent.media = host.media
-            hostRepository.save(existent)
+        return hostRepository.getByNameIgnoreCase(host.name).let { existingHost ->
+            existingHost.sip = host.sip
+            existingHost.media = host.media
+            hostRepository.save(existingHost)
         }
     }
 
