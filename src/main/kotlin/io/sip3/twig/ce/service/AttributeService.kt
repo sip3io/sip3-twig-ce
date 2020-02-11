@@ -25,7 +25,7 @@ import org.springframework.stereotype.Component
 open class AttributeService(private val mongoClient: MongoClient) {
 
     @Cacheable(value = ["listAttributes"])
-    open fun listAttributes(): Collection<Attribute> {
+    open fun list(): Collection<Attribute> {
         val attributes = mutableMapOf<String, Attribute>()
 
         val collections = mongoClient.listCollectionNames("attributes")
