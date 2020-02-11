@@ -23,8 +23,7 @@ import org.junit.Assert.assertEquals
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.BDDMockito.given
-import org.mockito.Mockito.times
-import org.mockito.Mockito.verify
+import org.mockito.Mockito.*
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.mock.mockito.MockBean
@@ -101,18 +100,17 @@ class HostServiceTest {
 
     @Test
     fun `Delete host by name`() {
-        given(hostRepository.getByNameIgnoreCase(any())).willReturn(HOST_1)
+        given(hostRepository.findByNameIgnoreCase(any())).willReturn(HOST_1)
         hostService.deleteByName("host1")
 
         verify(hostRepository, times(1)).delete(any())
     }
 
-    @Test(expected = EmptyResultDataAccessException::class)
+    @Test
     fun `Delete not existing host by name`() {
-        given(hostRepository.getByNameIgnoreCase(any())).willThrow(EmptyResultDataAccessException(1))
         hostService.deleteByName("host1")
 
-        verify(hostRepository, times(1)).delete(any())
+        verify(hostRepository, never()).delete(any())
     }
 
     @Test

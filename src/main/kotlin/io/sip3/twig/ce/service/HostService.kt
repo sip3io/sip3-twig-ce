@@ -49,19 +49,19 @@ open class HostService(private val hostRepository: HostRepository) {
     }
 
     open fun deleteByName(name: String) {
-        hostRepository.getByNameIgnoreCase(name).let { hostRepository.delete(it) }
+        hostRepository.findByNameIgnoreCase(name)?.let { hostRepository.delete(it) }
     }
 
     open fun saveAll(hosts: Set<Host>) {
         hosts.forEach { host ->
-            val existent = hostRepository.findByNameIgnoreCase(host.name)
+            val existingHost = hostRepository.findByNameIgnoreCase(host.name)
 
-            if (existent == null) {
+            if (existingHost == null) {
                 hostRepository.save(host)
             } else {
-                existent.sip = host.sip
-                existent.media = host.media
-                hostRepository.save(existent)
+                existingHost.sip = host.sip
+                existingHost.media = host.media
+                hostRepository.save(existingHost)
             }
         }
     }

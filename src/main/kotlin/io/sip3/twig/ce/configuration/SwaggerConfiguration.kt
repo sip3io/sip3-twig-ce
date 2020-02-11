@@ -34,21 +34,22 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2
 open class SwaggerConfiguration {
 
     @Autowired
-    lateinit var buildProperties: BuildProperties
+    var buildProperties: BuildProperties? = null
 
     @Bean
     open fun docket(): Docket {
         return Docket(DocumentationType.SWAGGER_2)
                 .apiInfo(ApiInfoBuilder()
                         .title("Twig API")
-                        .version(buildProperties.version)
+                        .version(buildProperties?.version)
                         .build())
                 .select()
                 .apis(RequestHandlerSelectors.withClassAnnotation(RestController::class.java))
                 .paths(PathSelectors.any())
                 .build()
                 .tags(
-                        Tag("Hosts API", "Hosts management")
+                        Tag("Attributes API", ""),
+                        Tag("Hosts API", "")
                 )
                 .useDefaultResponseMessages(false)
     }

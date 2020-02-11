@@ -59,11 +59,11 @@ class AttributeServiceTest {
         given(mongoClient.find(collections))
                 .willReturn(listOf(attribute1, attribute2).listIterator())
 
-        var attributes = attributeService.listAttributes()
+        var attributes = attributeService.list()
         assertEquals(2, attributes.size)
 
         // Test `listAttributes` cache
-        attributes = attributeService.listAttributes()
+        attributes = attributeService.list()
         assertEquals(2, attributes.size)
         verify(mongoClient, times(1)).find(collections)
     }

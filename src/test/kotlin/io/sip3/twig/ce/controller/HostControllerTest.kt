@@ -189,7 +189,7 @@ class HostControllerTest {
             val fileMock = MockMultipartFile("file", "hosts.json", null, fileStream)
             mockMvc.perform(multipart("/hosts/import")
                     .file(fileMock))
-                    .andExpect(status().isConflict)
+                    .andExpect(status().isBadRequest)
         }
     }
 }

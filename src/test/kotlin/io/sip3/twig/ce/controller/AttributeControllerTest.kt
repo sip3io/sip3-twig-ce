@@ -53,7 +53,7 @@ class AttributeControllerTest {
             options = mutableSetOf("option1", "option2")
         }
 
-        given(attributeService.listAttributes())
+        given(attributeService.list())
                 .willReturn(listOf(attribute1, attribute2))
 
         mockMvc.perform(get("/attributes"))

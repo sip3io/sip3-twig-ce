@@ -14,19 +14,13 @@
  * limitations under the License.
  */
 
-package io.sip3.twig.ce.validators
+package io.sip3.twig.ce.util
 
 import java.net.InetAddress
-import javax.validation.ConstraintValidator
-import javax.validation.ConstraintValidatorContext
 
-class IpAddressListValidator : ConstraintValidator<IpAddressList, List<String>> {
+object IpAddressUtil {
 
-    override fun isValid(ips: List<String>?, context: ConstraintValidatorContext?): Boolean {
-        return ips?.all { validateIp(it) } ?: true
-    }
-
-    private fun validateIp(ip: String): Boolean {
+    fun isValid(ip: String): Boolean {
         return when {
             ip.contains("/") -> validateIpAndRange(ip, "/", 0..32)
             ip.contains(":") -> validateIpAndRange(ip, ":", 1..65535)

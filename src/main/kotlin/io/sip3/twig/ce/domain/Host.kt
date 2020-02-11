@@ -17,7 +17,6 @@
 package io.sip3.twig.ce.domain
 
 import com.fasterxml.jackson.annotation.JsonIgnore
-import io.sip3.twig.ce.validators.IpAddressList
 import io.swagger.annotations.ApiModel
 import io.swagger.annotations.ApiModelProperty
 import org.springframework.data.annotation.Id
@@ -52,7 +51,6 @@ data class Host(
                 notes = "SIP network IP addresses",
                 example = "[\"192.168.10.10\", \"192.168.10.11:5061\", \"192.168.10.0/24\"]"
         )
-        @IpAddressList
         var sip: List<String>?,
 
         @ApiModelProperty(
@@ -62,6 +60,5 @@ data class Host(
                 notes = "RTP network IP addresses",
                 example = "[\"192.168.10.10\", \"192.168.10.11:32766\", \"192.168.10.0/24\"]"
         )
-        @IpAddressList
         var media: List<String>?
 )
