@@ -16,43 +16,46 @@
 
 package io.sip3.twig.ce.domain
 
-import com.fasterxml.jackson.annotation.JsonIgnore
 import io.swagger.annotations.ApiModel
 import io.swagger.annotations.ApiModelProperty
-import org.springframework.data.annotation.Id
-import org.springframework.data.mongodb.core.mapping.Document
 import javax.validation.constraints.NotNull
 
-@ApiModel(value = "Host")
-@Document(collection = "hosts")
-data class Host(
-
-        @JsonIgnore
-        @Id
-        val id: String?,
+@ApiModel(value = "Search Request")
+data class SearchRequest(
 
         @ApiModelProperty(
                 position = 0,
                 required = true,
-                notes = "Host name",
-                example = "sip.sbc.example.com"
+                notes = "From time",
+                example = "1581494059704"
         )
         @NotNull
-        var name: String,
+        val createdAt: Long,
 
         @ApiModelProperty(
                 position = 1,
-                required = false,
-                notes = "SIP network IP addresses",
-                example = "[\"192.168.10.10\", \"192.168.10.11:5061\", \"192.168.10.0/24\"]"
+                required = true,
+                notes = "To time",
+                example = "1581494069704"
         )
-        var sip: List<String>?,
+        @NotNull
+        val terminatedAt: Long,
 
         @ApiModelProperty(
                 position = 2,
-                required = false,
-                notes = "RTP network IP addresses",
-                example = "[\"192.168.10.10\", \"192.168.10.11:32766\", \"192.168.10.0/24\"]"
+                required = true,
+                notes = "Search query string",
+                example = "sip.method=INVITE ip.dst_addr=23.08.20.15 sip.state=answered"
         )
-        var media: List<String>?
+        @NotNull
+        var query: String,
+
+        @ApiModelProperty(
+                position = 3,
+                required = false,
+                notes = "Limit of search results",
+                example = "50"
+        )
+        @NotNull
+        val limit: Int?
 )

@@ -17,7 +17,7 @@
 package io.sip3.twig.ce.controller
 
 import io.sip3.twig.ce.domain.Host
-import io.sip3.twig.ce.service.HostService
+import io.sip3.twig.ce.service.host.HostService
 import io.sip3.twig.ce.util.MockitoUtils.any
 import org.hamcrest.Matchers.`is`
 import org.hamcrest.collection.IsCollectionWithSize

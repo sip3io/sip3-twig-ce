@@ -35,5 +35,8 @@ mongo:
 
 #! Application
 time-suffix: yyyyMMdd
-search:
+session:
   default-limit: 50
+  call:
+    max-legs: 10
+    termination-timeout: 10000

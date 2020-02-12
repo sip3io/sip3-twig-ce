@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.sip3.twig.ce.service
+package io.sip3.twig.ce.service.host
 
 import io.sip3.twig.ce.domain.Host
 import io.sip3.twig.ce.repository.HostRepository
