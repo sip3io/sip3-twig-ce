@@ -39,4 +39,5 @@ session:
   default-limit: 50
   call:
     max-legs: 10
-    termination-timeout: 10000
+    aggregation-timeout: 60000
+    termination-timeout: 5000

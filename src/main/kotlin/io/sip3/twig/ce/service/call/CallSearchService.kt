@@ -19,19 +19,19 @@ package io.sip3.twig.ce.service.call
 import com.mongodb.client.model.Filters.*
 import io.sip3.twig.ce.domain.SearchRequest
 import io.sip3.twig.ce.domain.SearchResponse
-import io.sip3.twig.ce.mongo.MongoClient
 import io.sip3.twig.ce.service.SearchService
-import io.sip3.twig.ce.service.attribute.AttributeService
+import io.sip3.twig.ce.util.IteratorUtil
+import io.sip3.twig.ce.util.map
+import io.sip3.twig.ce.util.nextOrNull
 import mu.KotlinLogging
 import org.bson.Document
 import org.bson.conversions.Bson
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
 import java.util.*
 
 @Component("INVITE")
-class CallSearchService : SearchService {
+class CallSearchService : SearchService() {
 
     private val logger = KotlinLogging.logger {}
 
@@ -46,54 +46,96 @@ class CallSearchService : SearchService {
     @Value("\${session.call.max-legs}")
     private var maxLegs: Int = 10
 
+    @Value("\${session.call.aggregation-timeout}")
+    private var aggregationTimeout: Long = 60000
+
     @Value("\${session.call.termination-timeout}")
-    private var terminationTimeout: Long = 10000
-
-    @Autowired
-    private lateinit var attributeService: AttributeService
-
-    @Autowired
-    private lateinit var mongoClient: MongoClient
+    private var terminationTimeout: Long = 5000
 
     override fun search(request: SearchRequest): Iterator<SearchResponse> {
-        // TODO...
-        return Collections.emptyIterator<SearchResponse>()
+        var (createdAt, terminatedAt, query) = request
+
+        val documents = if (query.contains("rtp.")) {
+            // Filter documents in `rtpr_rtp` and `rtpr_rtcp` collections
+            findInRtprIndexBySearchRequest(createdAt, terminatedAt, query).map { document ->
+                // Map `rtpr_rtp` or `rtpr_rtcp` document to `sip_call` document
+                val startedAt = document.getLong("started_at")
+                document.getString("call_id")?.let { callId ->
+                    query = "sip.call_id=$callId"
+                    return@map findInSipIndexBySearchRequest(startedAt - aggregationTimeout, startedAt, query).nextOrNull()
+                }
+            }
+        } else {
+            // Filter documents in `sip_call` collections
+            findInSipIndexBySearchRequest(createdAt, terminatedAt, query)
+        }
+
+        // Search and aggregate calls using filtered documents
+        return SearchIterator(createdAt, documents)
     }
 
-    private fun findInRtprIndexBySearchRequest(request: SearchRequest): Iterator<Document> {
-        // TODO...
-        return Collections.emptyIterator<Document>()
+    private fun findInRtprIndexBySearchRequest(createdAt: Long, terminatedAt: Long, query: String): Iterator<Document> {
+        var filters = mutableListOf<Bson>().apply {
+            // Time filters
+            add(gte("started_at", createdAt))
+            add(lte("started_at", terminatedAt))
+
+            // Main filters
+            query.split(" ")
+                    .filterNot { it.isBlank() }
+                    .filterNot { it.startsWith("sip.") }
+                    .map { filter(it) }
+                    .forEach { add(it) }
+        }
+
+        return IteratorUtil.merge(
+                mongoClient.find("rtpr_rpt", Pair(createdAt, terminatedAt), and(filters)),
+                mongoClient.find("rtpr_rtcp", Pair(createdAt, terminatedAt), and(filters))
+        )
     }
 
-    private fun findInSipIndexBySearchRequest(request: SearchRequest): Iterator<Document> {
-        // TODO...
-        return Collections.emptyIterator<Document>()
+    private fun findInSipIndexBySearchRequest(createdAt: Long, terminatedAt: Long, query: String): Iterator<Document> {
+        val filters = mutableListOf<Bson>().apply {
+            // Time filters
+            add(gte("created_at", createdAt))
+            add(lte("created_at", terminatedAt))
+
+            // Main filters
+            query.split(" ")
+                    .filterNot { it.isBlank() }
+                    .filterNot { it.startsWith("rtp.") }
+                    .filterNot { it.startsWith("sip.method") }
+                    .map { filter(it) }
+                    .forEach { add(it) }
+        }
+
+        return mongoClient.find("sip_call_index", Pair(createdAt, terminatedAt), and(filters))
     }
 
-    inner class SearchIterator(private val request: SearchRequest, private val documents: Iterator<Document>) : Iterator<SearchResponse> {
+    inner class SearchIterator(private val createdAt: Long, private val documents: Iterator<Document?>) : Iterator<SearchResponse> {
 
-        private val processed = mutableSetOf<Document>()
         private var next: Set<Document>? = null
+        private val processed = mutableSetOf<String>()
 
         override fun hasNext(): Boolean {
-            if (next == null) {
-                while (documents.hasNext()) {
-                    val document = documents.next()
+            if (next != null) return true
 
-                    // Check if document is in `processed`
-                    if (!processed.contains(document)) {
-                        // Create and aggregate `call`
-                        val call = TreeSet(CREATED_AT)
-                        aggregateCall(document, call)
+            while (documents.hasNext()) {
+                var document: Document = documents.next() ?: continue
 
-                        // Add all documents to `processed`
-                        processed.addAll(call)
+                // Check if `call_id` is in `processed`
+                if (!processed.contains(document.getString("call_id"))) {
+                    // Create and aggregate `call`
+                    val call = TreeSet(CREATED_AT)
+                    aggregateCall(document, call)
 
-                        // Check `created_at` condition
-                        if (request.createdAt <= call.first().getLong("created_at")) {
-                            next = call
-                            break
-                        }
+                    // Add all the documents `call_id` to `processed`
+                    call.forEach { processed.add(it.getString("call_id")) }
+
+                    // Check `created_at` condition
+                    if (createdAt <= call.first().getLong("created_at")) {
+                        next = call
+                        break
                     }
                 }
             }
@@ -102,10 +144,7 @@ class CallSearchService : SearchService {
         }
 
         override fun next(): SearchResponse {
-            // `NoSuchElementException` must be thrown accordingly to the `Iterator` class contract
-            if (!hasNext()) {
-                throw NoSuchElementException()
-            }
+            if (!hasNext()) throw NoSuchElementException()
 
             val result = SearchResponse().apply {
                 // TODO...

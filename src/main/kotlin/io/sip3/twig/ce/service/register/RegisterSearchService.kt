@@ -23,7 +23,7 @@ import org.springframework.stereotype.Component
 import java.util.*
 
 @Component("REGISTER")
-class RegisterSearchService : SearchService {
+class RegisterSearchService : SearchService() {
 
     override fun search(request: SearchRequest): Iterator<SearchResponse> {
         return Collections.emptyIterator<SearchResponse>()

@@ -16,10 +16,73 @@
 
 package io.sip3.twig.ce.service
 
+import com.mongodb.client.model.Filters.*
+import io.sip3.commons.domain.Attribute
 import io.sip3.twig.ce.domain.SearchRequest
 import io.sip3.twig.ce.domain.SearchResponse
+import io.sip3.twig.ce.mongo.MongoClient
+import io.sip3.twig.ce.service.attribute.AttributeService
+import org.bson.conversions.Bson
+import org.springframework.beans.factory.annotation.Autowired
+import javax.validation.ValidationException
 
-interface SearchService {
+abstract class SearchService {
 
-    fun search(request: SearchRequest): Iterator<SearchResponse>
+    @Autowired
+    protected lateinit var attributeService: AttributeService
+
+    @Autowired
+    protected lateinit var mongoClient: MongoClient
+
+    abstract fun search(request: SearchRequest): Iterator<SearchResponse>
+
+    fun filter(expression: String): Bson {
+        return when {
+            expression.contains("!=") -> {
+                val (field, value) = readAttribute(expression, "!=")
+                ne(field, value)
+            }
+            expression.contains(">") -> {
+                val (field, value) = readAttribute(expression, ">")
+                gt(field, value)
+            }
+            expression.contains("<") -> {
+                val (field, value) = readAttribute(expression, "<")
+                lt(field, value)
+            }
+            expression.contains("=") -> {
+                val (field, value) = readAttribute(expression, "=")
+                if ((value is String) && value.contains(".")) {
+                    regex(field, value)
+                } else {
+                    eq(field, value)
+                }
+            }
+            else -> {
+                throw ValidationException("Couldn't parse the expression: $expression")
+            }
+        }
+    }
+
+    private fun readAttribute(expression: String, delimiter: String): Pair<String, Any> {
+        val attribute = expression.substringBefore(delimiter)
+
+        val type = attributeService.list()
+                .firstOrNull { it.name == attribute }
+                ?.type
+
+        val name = attribute.substringAfter("sip.")
+                .substringAfter("ip.")
+                .substringAfter("rtp.")
+        val value = expression.substringAfter(delimiter)
+
+        return when (type) {
+            Attribute.TYPE_STRING -> Pair(name, value)
+            Attribute.TYPE_NUMBER -> Pair(name, value.toDouble())
+            Attribute.TYPE_BOOLEAN -> Pair(name, value.toBoolean())
+            else -> {
+                throw ValidationException("Unknown attribute: $expression")
+            }
+        }
+    }
 }

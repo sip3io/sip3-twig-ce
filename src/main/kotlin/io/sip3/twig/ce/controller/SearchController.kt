@@ -19,11 +19,12 @@ package io.sip3.twig.ce.controller
 import io.sip3.twig.ce.domain.SearchRequest
 import io.sip3.twig.ce.domain.SearchResponse
 import io.sip3.twig.ce.service.SearchService
-import io.sip3.twig.ce.util.merge
+import io.sip3.twig.ce.util.IteratorUtil
 import io.swagger.annotations.Api
 import io.swagger.annotations.ApiOperation
 import io.swagger.annotations.ApiResponse
 import io.swagger.annotations.ApiResponses
+import org.apache.logging.log4j.util.Strings
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.web.bind.annotation.PostMapping
@@ -31,7 +32,6 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import springfox.documentation.swagger2.annotations.EnableSwagger2
-import java.util.*
 import javax.validation.Valid
 
 @EnableSwagger2
@@ -44,7 +44,8 @@ class SearchController {
 
     companion object {
 
-        val METHOD_REGEX = Regex("sip.method=(\\w*)")
+        const val SIP_METHOD_INVITE = "sip.method=INVITE"
+        val SIP_METHOD_REGEX = Regex("sip.method=(\\w*)")
     }
 
     @Value("\${session.default-limit}")
@@ -66,16 +67,22 @@ class SearchController {
     ])
     @PostMapping
     fun search(@Valid @RequestBody request: SearchRequest): List<SearchResponse> {
-        val searches = METHOD_REGEX.findAll(request.query)
+        val query = request.query
+                .replace(SIP_METHOD_INVITE, Strings.EMPTY)
+
+        if (query.contains("sip.") && query.contains("rtp.")) {
+            throw UnsupportedOperationException("Complex search by `sip.` and `rtp.` filters is not supported.")
+        }
+
+        val searches = SIP_METHOD_REGEX.findAll(request.query)
                 .map { match -> match.groupValues[1] }
                 .mapNotNull { method -> services[method] }
                 .map { service -> service.search(request) }
                 .toList()
+                .toTypedArray()
 
-        var result = Collections.emptyIterator<SearchResponse>()
-        searches.forEach { result = result.merge(it) }
-
-        return result.asSequence()
+        return IteratorUtil.merge(*searches)
+                .asSequence()
                 .take(request.limit ?: defaultLimit)
                 .toList()
     }
