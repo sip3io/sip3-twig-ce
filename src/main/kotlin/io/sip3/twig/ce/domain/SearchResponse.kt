@@ -73,15 +73,15 @@ class SearchResponse {
     @ApiModelProperty(
             position = 6,
             required = true,
-            notes = "Call Identifier",
-            example = "73d68dd8548211eab1d1047d7bbbc100"
+            notes = "Call IDs",
+            example = "[73d68dd8548211eab1d1047d7bbbc100]"
     )
-    lateinit var callId: String
+    lateinit var callId: Collection<String>
 
     @ApiModelProperty(
             position = 7,
             required = false,
-            notes = "Call duration in ms",
+            notes = "Call duration",
             example = "60000"
     )
     var duration: Int? = null

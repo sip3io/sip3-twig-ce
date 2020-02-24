@@ -56,7 +56,7 @@ class SearchController {
 
     @ApiOperation(
             position = 0,
-            value = "Search",
+            value = "Search sessions",
             produces = "application/json"
     )
     @ApiResponses(value = [

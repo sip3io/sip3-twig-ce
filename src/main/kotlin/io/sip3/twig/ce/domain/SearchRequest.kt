@@ -44,7 +44,7 @@ data class SearchRequest(
         @ApiModelProperty(
                 position = 2,
                 required = true,
-                notes = "Search query string",
+                notes = "Search query",
                 example = "sip.method=INVITE ip.dst_addr=23.08.20.15 sip.state=answered"
         )
         @NotNull
@@ -53,7 +53,7 @@ data class SearchRequest(
         @ApiModelProperty(
                 position = 3,
                 required = false,
-                notes = "Limit of search results",
+                notes = "Search limit",
                 example = "50"
         )
         @NotNull
