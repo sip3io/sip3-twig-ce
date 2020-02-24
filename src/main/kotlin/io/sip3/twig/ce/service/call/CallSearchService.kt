@@ -43,6 +43,9 @@ class CallSearchService : SearchService() {
         )
     }
 
+    @Value("\${session.use-x-correlation-header}")
+    private var useXCorrelationHeader: Boolean = true
+
     @Value("\${session.call.max-legs}")
     private var maxLegs: Int = 10
 
@@ -55,10 +58,10 @@ class CallSearchService : SearchService() {
     override fun search(request: SearchRequest): Iterator<SearchResponse> {
         var (createdAt, terminatedAt, query) = request
 
-        val documents = if (query.contains("rtp.")) {
-            // Filter documents in `rtpr_rtp` and `rtpr_rtcp` collections
+        val matchedDocuments = if (query.contains("rtp.")) {
+            // Filter documents in `rtpr_rtp_index` and `rtpr_rtcp_index` collections
             findInRtprIndexBySearchRequest(createdAt, terminatedAt, query).map { document ->
-                // Map `rtpr_rtp` or `rtpr_rtcp` document to `sip_call` document
+                // Map `rtpr_rtp` or `rtpr_rtcp` document to `sip_call_index` document
                 val startedAt = document.getLong("started_at")
                 document.getString("call_id")?.let { callId ->
                     query = "sip.call_id=$callId"
@@ -66,16 +69,32 @@ class CallSearchService : SearchService() {
                 }
             }
         } else {
-            // Filter documents in `sip_call` collections
+            // Filter documents in `sip_call_index` collections
             findInSipIndexBySearchRequest(createdAt, terminatedAt, query)
         }
 
-        // Search and aggregate calls using filtered documents
-        return SearchIterator(createdAt, documents)
+        // Search and correlate calls using filtered documents
+        return SearchIterator(createdAt, matchedDocuments).map { correlatedCall ->
+            return@map SearchResponse().apply {
+                val firstLeg = correlatedCall.legs.first()
+
+                this.createdAt = firstLeg.getLong("created_at")
+                firstLeg.getLong("terminated_at")?.let { this.terminatedAt = it }
+
+                method = "INVITE"
+                state = firstLeg.getString("state")
+                caller = correlatedCall.legs.joinToString(" - ") { leg -> leg.getString("caller") }
+                callee = correlatedCall.legs.joinToString(" - ") { leg -> leg.getString("callee") }
+                callId = correlatedCall.legs.map { leg -> leg.getString("call_id") }.toSet()
+
+                firstLeg.getInteger("duration")?.let { duration = it }
+                firstLeg.getString("error_code")?.let { errorCode = it }
+            }
+        }
     }
 
     private fun findInRtprIndexBySearchRequest(createdAt: Long, terminatedAt: Long, query: String): Iterator<Document> {
-        var filters = mutableListOf<Bson>().apply {
+        val filters = mutableListOf<Bson>().apply {
             // Time filters
             add(gte("started_at", createdAt))
             add(lte("started_at", terminatedAt))
@@ -89,8 +108,8 @@ class CallSearchService : SearchService() {
         }
 
         return IteratorUtil.merge(
-                mongoClient.find("rtpr_rpt", Pair(createdAt, terminatedAt), and(filters)),
-                mongoClient.find("rtpr_rtcp", Pair(createdAt, terminatedAt), and(filters))
+                mongoClient.find("rtpr_rpt_index", Pair(createdAt, terminatedAt), and(filters)),
+                mongoClient.find("rtpr_rtcp_index", Pair(createdAt, terminatedAt), and(filters))
         )
     }
 
@@ -112,29 +131,31 @@ class CallSearchService : SearchService() {
         return mongoClient.find("sip_call_index", Pair(createdAt, terminatedAt), and(filters))
     }
 
-    inner class SearchIterator(private val createdAt: Long, private val documents: Iterator<Document?>) : Iterator<SearchResponse> {
+    inner class SearchIterator(private val createdAt: Long, private val matchedDocuments: Iterator<Document?>) : Iterator<CorrelatedCall> {
 
-        private var next: Set<Document>? = null
+        private var next: CorrelatedCall? = null
         private val processed = mutableSetOf<String>()
 
         override fun hasNext(): Boolean {
             if (next != null) return true
 
-            while (documents.hasNext()) {
-                var document: Document = documents.next() ?: continue
+            while (matchedDocuments.hasNext()) {
+                val matchedDocument: Document = matchedDocuments.next() ?: continue
 
                 // Check if `call_id` is in `processed`
-                if (!processed.contains(document.getString("call_id"))) {
-                    // Create and aggregate `call`
-                    val call = TreeSet(CREATED_AT)
-                    aggregateCall(document, call)
+                if (!processed.contains(matchedDocument.getString("call_id"))) {
+                    // Create and correlate call
+                    val correlatedCall = CorrelatedCall().apply {
+                        correlate(matchedDocument)
+                    }
 
-                    // Add all the documents `call_id` to `processed`
-                    call.forEach { processed.add(it.getString("call_id")) }
+                    // Update `processed` with new `call_id`
+                    correlatedCall.legs.forEach { leg -> processed.add(leg.getString("call_id")) }
 
-                    // Check `created_at` condition
-                    if (createdAt <= call.first().getLong("created_at")) {
-                        next = call
+                    // Check `created_at` condition and break the loop
+                    val firstLeg = correlatedCall.legs.first()
+                    if (createdAt <= firstLeg.getLong("created_at")) {
+                        next = correlatedCall
                         break
                     }
                 }
@@ -143,73 +164,111 @@ class CallSearchService : SearchService() {
             return next != null
         }
 
-        override fun next(): SearchResponse {
+        override fun next(): CorrelatedCall {
             if (!hasNext()) throw NoSuchElementException()
 
-            val result = SearchResponse().apply {
-                // TODO...
-            }
-
+            val correlatedCall = next!!
             next = null
-            return result
+            return correlatedCall
         }
+    }
 
-        private fun aggregateCall(document: Document, call: TreeSet<Document>) {
-            if (call.add(document) && call.size < maxLegs) {
-                findInSipIndexByDocument(document).forEach { d -> aggregateCall(d, call) }
+    inner class CorrelatedCall {
+
+        val legs = TreeSet<Document>(CREATED_AT)
+
+        private val callers = mutableSetOf<Pair<String, String>>()
+
+        fun correlate(leg: Document) {
+            val caller = leg.getString("caller")
+            val callee = leg.getString("callee")
+
+            if (callers.add(Pair(caller, callee))) {
+                val matchedLegs = findInSipIndexByCallerAndCallee(leg)
+                correlate(leg, matchedLegs)
+
+                if (useXCorrelationHeader) {
+                    findInSipIndexByCallIdsAndXCallIds().forEach { correlate(it) }
+                }
             }
         }
 
-        private fun findInSipIndexByDocument(document: Document): Iterator<Document> {
-            val createdAt = document.getLong("created_at")
-            val terminatedAt = document.getLong("terminated_at")
+        private fun findInSipIndexByCallerAndCallee(leg: Document): List<Document> {
+            val createdAt = leg.getLong("created_at")
+
+            val caller = leg.getString("caller")
+            val callee = leg.getString("callee")
 
             val filters = mutableListOf<Bson>().apply {
                 // Time filters
-                if (terminatedAt == null) {
-                    // Session is still in progress
-                    add(or(
-                            gt("created_at", createdAt - terminationTimeout),
-                            lt("created_at", createdAt + terminationTimeout)
+                add(gte("created_at", createdAt - aggregationTimeout))
+                add(lte("created_at", createdAt + aggregationTimeout))
+
+                // Main filters
+                add(eq("caller", caller))
+                add(eq("callee", callee))
+            }
+
+            return mongoClient.find("sip_call_index", Pair(createdAt - aggregationTimeout, createdAt + aggregationTimeout), and(filters)).asSequence().toList()
+        }
+
+        private fun findInSipIndexByCallIdsAndXCallIds(): List<Document> {
+            val createdAt = legs.first().getLong("created_at")
+            val terminatedAt = legs.first().getLong("terminated_at")
+
+            val callIds = legs.map { it.getString("call_id") }
+            val xCallIds = legs.mapNotNull { it.getString("x_call_id") }
+
+            val filters = mutableListOf<Bson>().apply {
+                // Time filters
+                add(gte("created_at", createdAt - aggregationTimeout))
+                add(lte("created_at", (terminatedAt ?: createdAt) + aggregationTimeout))
+
+                // Main filters
+                if (xCallIds.isNotEmpty()) {
+                    add(or (
+                            `in`("x_call_id", callIds),
+                            `in`("call_id", xCallIds),
+                            `in`("x_call_id", xCallIds)
                     ))
                 } else {
-                    // Session is terminated
-                    add(lt("created_at", terminatedAt))
-                    add(gt("terminated_at", createdAt))
+                    add(`in`("x_call_id", callIds))
+                }
+            }
+
+            return mongoClient.find("sip_call_index", Pair(createdAt - aggregationTimeout, (terminatedAt ?: createdAt) + aggregationTimeout), and(filters)).asSequence().toList()
+        }
+
+
+        private fun correlate(leg: Document, matchedLegs: List<Document>) {
+            if (legs.size >= maxLegs || !legs.add(leg)) return
+
+            matchedLegs.filter { matchedLeg ->
+                val createdAt = leg.getLong("created_at")
+                val terminatedAt = leg.getLong("terminated_at")
+
+                // Time filters
+                val filterByTime = if (terminatedAt == null) {
+                    // Call is still `in progress`
+                    createdAt - terminationTimeout >= matchedLeg.getLong("created_at")
+                            && createdAt + terminationTimeout <= matchedLeg.getLong("created_at")
+                } else {
+                    terminatedAt >= matchedLeg.getLong("created_at")
+                            && createdAt <= matchedLeg.getLong("terminated_at")
                 }
 
                 // Host filters
-                add(or(
-                        document.getString("dst_host")?.let { eq("src_host", it) } ?: eq("dst_addr", document.getString("src_addr")),
-                        document.getString("src_host")?.let { eq("dst_host", it) } ?: eq("src_addr", document.getString("dst_addr"))
-                ))
+                val filterBySrcHost = leg.getString("src_host")?.let { it == matchedLeg.getString("dst_host") }
+                        ?: leg.getString("src_addr") == matchedLeg.getString("dst_addr")
 
-                // Main filters
-                val xCallId = document.getString("x_call_id")
-                add(or(
-                        and(
-                                eq("caller", document.getString("caller")),
-                                eq("callee", document.getString("callee"))
-                        ),
-                        if (xCallId == null) {
-                            eq("x_call_id", document.getString("call_id"))
-                        } else {
-                            or(
-                                    eq("call_id", document.getString("x_call_id")),
-                                    eq("x_call_id", document.getString("call_id")),
-                                    eq("x_call_id", document.getString("x_call_id"))
-                            )
-                        }
-                ))
+                val filterByDstHost = leg.getString("dst_host")?.let { it == matchedLeg.getString("src_host") }
+                        ?: leg.getString("dst_addr") == matchedLeg.getString("src_addr")
+
+                // Combine and apply all the filters
+                return@filter filterByTime && (filterBySrcHost || filterByDstHost)
+            }.forEach { matchedLeg ->
+                correlate(matchedLeg, matchedLegs)
             }
-
-            val timeRange = if (terminatedAt == null) {
-                Pair(createdAt - terminationTimeout, createdAt + terminationTimeout)
-            } else {
-                Pair(createdAt, terminatedAt)
-            }
-
-            return mongoClient.find("sip_call_index", timeRange, and(filters))
         }
     }
 }

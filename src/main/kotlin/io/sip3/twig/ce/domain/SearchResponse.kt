@@ -74,9 +74,9 @@ class SearchResponse {
             position = 6,
             required = true,
             notes = "Call IDs",
-            example = "[73d68dd8548211eab1d1047d7bbbc100]"
+            example = "[73d68dd8548211eab1d1047d7bbbc100, 73d68dd854821147d7bbbc100eab1d10]"
     )
-    lateinit var callId: Collection<String>
+    lateinit var callId: Set<String>
 
     @ApiModelProperty(
             position = 7,
