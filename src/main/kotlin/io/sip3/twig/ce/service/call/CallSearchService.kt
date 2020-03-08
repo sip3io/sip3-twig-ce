@@ -259,10 +259,10 @@ class CallSearchService : SearchService() {
 
                 // Host filters
                 val filterBySrcHost = leg.getString("src_host")?.let { it == matchedLeg.getString("dst_host") }
-                        ?: leg.getString("src_addr") == matchedLeg.getString("dst_addr")
+                        ?: (leg.getString("src_addr") == matchedLeg.getString("dst_addr"))
 
                 val filterByDstHost = leg.getString("dst_host")?.let { it == matchedLeg.getString("src_host") }
-                        ?: leg.getString("dst_addr") == matchedLeg.getString("src_addr")
+                        ?: (leg.getString("dst_addr") == matchedLeg.getString("src_addr"))
 
                 // Combine and apply all the filters
                 return@filter filterByTime && (filterBySrcHost || filterByDstHost)
