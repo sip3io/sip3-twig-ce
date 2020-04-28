@@ -98,6 +98,7 @@
     </dependencies>
 
     <build>
+        <finalName>sip3-twig-ce</finalName>
         <plugins>
             <plugin>
                 <groupId>org.jetbrains.kotlin</groupId>
@@ -150,6 +151,7 @@
                             <execution>
                                 <goals>
                                     <goal>build-info</goal>
+                                    <goal>repackage</goal>
                                 </goals>
                             </execution>
                         </executions>
