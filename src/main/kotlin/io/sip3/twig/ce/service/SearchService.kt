@@ -74,6 +74,9 @@ abstract class SearchService {
         val name = attribute.substringAfter("sip.")
                 .substringAfter("ip.")
                 .substringAfter("rtp.")
+                // Accordingly to SIP3 conventions attributes have names like r-factor, setup-time, e.t.c
+                // However, in MongoDB all fields have underscore instead - `r_factor`, `setup_time`, e.t.c
+                .replace("-", "_")
         val value = expression.substringAfter(delimiter)
 
         return when (type) {
