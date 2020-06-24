@@ -19,12 +19,13 @@ package io.sip3.twig.ce.controller
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import io.sip3.twig.ce.domain.Host
-import io.sip3.twig.ce.service.HostService
+import io.sip3.twig.ce.service.host.HostService
 import io.sip3.twig.ce.util.IpAddressUtil.isValid
 import io.swagger.annotations.Api
 import io.swagger.annotations.ApiOperation
 import io.swagger.annotations.ApiResponse
 import io.swagger.annotations.ApiResponses
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.multipart.MultipartFile
 import springfox.documentation.swagger2.annotations.EnableSwagger2
@@ -37,7 +38,13 @@ import javax.validation.constraints.NotNull
 )
 @RestController
 @RequestMapping("/hosts")
-class HostController(private val hostService: HostService, private val mapper: ObjectMapper) {
+class HostController {
+
+    @Autowired
+    private lateinit var hostService: HostService
+
+    @Autowired
+    private lateinit var mapper: ObjectMapper
 
     @ApiOperation(
             position = 1,
@@ -47,8 +54,8 @@ class HostController(private val hostService: HostService, private val mapper: O
     @ApiResponses(value = [
         ApiResponse(code = 200, message = "Returns hosts"),
         ApiResponse(code = 500, message = "InternalServerError"),
-        ApiResponse(code = 504, message = "ConnectionTimeoutError")]
-    )
+        ApiResponse(code = 504, message = "ConnectionTimeoutError")
+    ])
     @GetMapping
     fun list(): Set<Host> {
         return hostService.list()
@@ -63,8 +70,8 @@ class HostController(private val hostService: HostService, private val mapper: O
         ApiResponse(code = 200, message = "Returns host"),
         ApiResponse(code = 404, message = "Host not found"),
         ApiResponse(code = 500, message = "InternalServerError"),
-        ApiResponse(code = 504, message = "ConnectionTimeoutError")]
-    )
+        ApiResponse(code = 504, message = "ConnectionTimeoutError")
+    ])
     @GetMapping("/{name}")
     fun getByName(@Valid @NotNull @PathVariable("name") name: String): Host {
         return hostService.getByName(name.toLowerCase())
@@ -80,8 +87,8 @@ class HostController(private val hostService: HostService, private val mapper: O
         ApiResponse(code = 400, message = "Bad request"),
         ApiResponse(code = 409, message = "Duplicate host"),
         ApiResponse(code = 500, message = "InternalServerError"),
-        ApiResponse(code = 504, message = "ConnectionTimeoutError")]
-    )
+        ApiResponse(code = 504, message = "ConnectionTimeoutError")
+    ])
     @PostMapping
     fun create(@Valid @RequestBody host: Host): Host {
         validate(host)
@@ -98,8 +105,8 @@ class HostController(private val hostService: HostService, private val mapper: O
         ApiResponse(code = 400, message = "Bad request"),
         ApiResponse(code = 404, message = "Host not found"),
         ApiResponse(code = 500, message = "InternalServerError"),
-        ApiResponse(code = 504, message = "ConnectionTimeoutError")]
-    )
+        ApiResponse(code = 504, message = "ConnectionTimeoutError")
+    ])
     @PutMapping
     fun update(@Valid @RequestBody host: Host): Host {
         validate(host)
@@ -114,8 +121,8 @@ class HostController(private val hostService: HostService, private val mapper: O
         ApiResponse(code = 204, message = "Host deleted successfully"),
         ApiResponse(code = 400, message = "Bad request"),
         ApiResponse(code = 500, message = "InternalServerError"),
-        ApiResponse(code = 504, message = "ConnectionTimeoutError")]
-    )
+        ApiResponse(code = 504, message = "ConnectionTimeoutError")
+    ])
     @DeleteMapping("/{name}")
     fun deleteByName(@Valid @PathVariable("name") @NotNull name: String) {
         hostService.deleteByName(name)
@@ -129,8 +136,8 @@ class HostController(private val hostService: HostService, private val mapper: O
         ApiResponse(code = 204, message = "Hosts added and updated successfully"),
         ApiResponse(code = 400, message = "Bad request"),
         ApiResponse(code = 500, message = "InternalServerError"),
-        ApiResponse(code = 504, message = "ConnectionTimeoutError")]
-    )
+        ApiResponse(code = 504, message = "ConnectionTimeoutError")
+    ])
     @PostMapping("/import")
     fun import(@RequestParam("file") @Valid @NotNull file: MultipartFile) {
         val hosts: Set<Host> = mapper.readValue(file.inputStream)

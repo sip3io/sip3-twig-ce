@@ -54,8 +54,11 @@ class ExceptionController {
             is DuplicateKeyException -> ResponseEntity.status(HttpStatus.CONFLICT)
                     .body("DuplicateKeyException: `${e.message}`.")
 
+            is UnsupportedOperationException -> ResponseEntity.badRequest()
+                    .body("UnsupportedOperationException: `${e.message}`.")
+
             is ValidationException -> ResponseEntity.badRequest()
-                    .body("Validation failed: `${e.message}`.")
+                    .body("ValidationException: `${e.message}`.")
 
             is MethodArgumentNotValidException -> ResponseEntity.badRequest()
                     .body("MethodArgumentNotValidException: Invalid input data")

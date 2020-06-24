@@ -29,27 +29,38 @@ class IteratorUtilTest {
     }
 
     @Test
-    fun `Merge 2 empty iterators`() {
+    fun `Merge 2 empty Iterators`() {
         assertTrue(EMPTY_ITERATOR.equalsContent(EMPTY_ITERATOR.merge(EMPTY_ITERATOR)))
+        assertTrue(EMPTY_ITERATOR.equalsContent(IteratorUtil.merge(EMPTY_ITERATOR, EMPTY_ITERATOR)))
         assertTrue(EMPTY_ITERATOR.equalsContent(EMPTY_ITERATOR.merge(EMPTY_ITERATOR, COMPARATOR)))
     }
 
     @Test
-    fun `Merge 1 empty and 1 non-empty iterators`() {
+    fun `Merge 1 empty and 1 non-empty Iterators`() {
         val list = listOf(1, 3, 5)
 
         assertTrue(list.iterator().equalsContent(list.iterator().merge(EMPTY_ITERATOR)))
+        assertTrue(list.iterator().equalsContent(IteratorUtil.merge(list.iterator(), EMPTY_ITERATOR)))
         assertTrue(list.iterator().equalsContent(list.iterator().merge(EMPTY_ITERATOR, COMPARATOR)))
     }
 
     @Test
-    fun `Merge 2 non-empty iterators`() {
+    fun `Merge 2 non-empty Iterators`() {
         val i1 = listOf(1, 3, 5)
         val i2 = listOf(2, 4)
 
         var expected = listOf(1, 3, 5, 2, 4)
         assertTrue(expected.iterator().equalsContent(i1.iterator().merge(i2.iterator())))
+        assertTrue(expected.iterator().equalsContent(IteratorUtil.merge(i1.iterator(), i2.iterator())))
         expected = listOf(1, 2, 3, 4, 5)
         assertTrue(expected.iterator().equalsContent(i1.iterator().merge(i2.iterator(), COMPARATOR)))
+    }
+
+    @Test
+    fun `Map Iterator(Int) to Iterator(String)`() {
+        val i1 = listOf(1, 2, 3)
+
+        val expected = listOf("1", "2", "3")
+        assertTrue(expected.iterator().equalsContent(i1.iterator().map(Any::toString)))
     }
 }

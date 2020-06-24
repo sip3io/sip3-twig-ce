@@ -29,8 +29,8 @@ object IpAddressUtil {
     }
 
     private fun validateIpAndRange(ip: String, delimiter: String, intRange: IntRange): Boolean {
-        val splited = ip.split(delimiter)
-        return validateIpString(splited[0]) && splited[1].toIntOrNull() in intRange
+        val splitted = ip.split(delimiter)
+        return validateIpString(splitted[0]) && splitted[1].toIntOrNull() in intRange
     }
 
     private fun validateIpString(ip: String): Boolean {

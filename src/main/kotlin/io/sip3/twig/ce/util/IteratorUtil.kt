@@ -16,6 +16,18 @@
 
 package io.sip3.twig.ce.util
 
+import java.util.*
+import kotlin.NoSuchElementException
+
+object IteratorUtil {
+
+    fun <T> merge(vararg iterators: Iterator<T>): Iterator<T> {
+        var i = Collections.emptyIterator<T>()
+        iterators.forEach { i = i.merge(it) }
+        return i
+    }
+}
+
 fun <T> Iterator<T>.merge(o: Iterator<T>, comparator: Comparator<T>? = null): Iterator<T> {
     val i = this
     return object : Iterator<T> {
@@ -38,6 +50,21 @@ fun <T> Iterator<T>.merge(o: Iterator<T>, comparator: Comparator<T>? = null): It
                 vo = o.nextOrNull()
             }
             return v!!
+        }
+    }
+}
+
+fun <T, R> Iterator<T>.map(transform: (T) -> R): Iterator<R> {
+    val i = this
+    return object : Iterator<R> {
+
+        override fun hasNext(): Boolean {
+            return i.hasNext()
+        }
+
+        override fun next(): R {
+            if (!hasNext()) throw NoSuchElementException()
+            return transform.invoke(i.next())
         }
     }
 }

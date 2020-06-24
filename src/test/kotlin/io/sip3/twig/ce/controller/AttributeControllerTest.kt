@@ -17,7 +17,7 @@
 package io.sip3.twig.ce.controller
 
 import io.sip3.commons.domain.Attribute
-import io.sip3.twig.ce.service.AttributeService
+import io.sip3.twig.ce.service.attribute.AttributeService
 import org.hamcrest.collection.IsCollectionWithSize
 import org.junit.Test
 import org.junit.runner.RunWith

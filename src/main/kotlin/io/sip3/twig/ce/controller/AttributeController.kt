@@ -17,11 +17,12 @@
 package io.sip3.twig.ce.controller
 
 import io.sip3.commons.domain.Attribute
-import io.sip3.twig.ce.service.AttributeService
+import io.sip3.twig.ce.service.attribute.AttributeService
 import io.swagger.annotations.Api
 import io.swagger.annotations.ApiOperation
 import io.swagger.annotations.ApiResponse
 import io.swagger.annotations.ApiResponses
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
@@ -33,7 +34,10 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2
 )
 @RestController
 @RequestMapping("/attributes")
-class AttributeController(private val attributeService: AttributeService) {
+class AttributeController {
+
+    @Autowired
+    private lateinit var attributeService: AttributeService
 
     @ApiOperation(
             position = 1,
@@ -43,8 +47,8 @@ class AttributeController(private val attributeService: AttributeService) {
     @ApiResponses(value = [
         ApiResponse(code = 200, message = "Returns attributes"),
         ApiResponse(code = 500, message = "InternalServerError"),
-        ApiResponse(code = 504, message = "ConnectionTimeoutError")]
-    )
+        ApiResponse(code = 504, message = "ConnectionTimeoutError")
+    ])
     @GetMapping
     fun list(): Collection<Attribute> {
         return attributeService.list()
