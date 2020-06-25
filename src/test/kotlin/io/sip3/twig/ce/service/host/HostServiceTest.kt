@@ -14,11 +14,10 @@
  * limitations under the License.
  */
 
-package io.sip3.twig.ce.service
+package io.sip3.twig.ce.service.host
 
 import io.sip3.twig.ce.domain.Host
 import io.sip3.twig.ce.repository.HostRepository
-import io.sip3.twig.ce.service.host.HostService
 import io.sip3.twig.ce.util.MockitoUtils.any
 import org.junit.Assert.assertEquals
 import org.junit.Test

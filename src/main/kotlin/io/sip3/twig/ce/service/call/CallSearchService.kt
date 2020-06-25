@@ -121,6 +121,7 @@ class CallSearchService : SearchService() {
 
             // Main filters
             query.split(" ")
+                    .asSequence()
                     .filterNot { it.isBlank() }
                     .filterNot { it.startsWith("rtp.") }
                     .filterNot { it.startsWith("sip.method") }

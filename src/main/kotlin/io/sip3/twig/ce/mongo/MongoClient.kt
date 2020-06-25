@@ -16,8 +16,8 @@
 
 package io.sip3.twig.ce.mongo
 
-import com.mongodb.MongoClient
-import com.mongodb.MongoClientURI
+import com.mongodb.client.MongoClient
+import com.mongodb.client.MongoClients
 import com.mongodb.client.MongoCursor
 import io.sip3.commons.util.format
 import mu.KotlinLogging
@@ -40,14 +40,14 @@ open class MongoClient(@Value("\${time-suffix}") suffix: String,
     private val logger = KotlinLogging.logger {}
 
     private val suffix: DateTimeFormatter = DateTimeFormatter.ofPattern(suffix)
-    private val client: MongoClient = MongoClient(MongoClientURI(uri))
+    private val client: MongoClient = MongoClients.create(uri)
 
-    open fun find(prefix: String, timeRange: Pair<Long, Long>, filter: Bson, sort: Bson? = null): Iterator<Document> {
+    open fun find(prefix: String, timeRange: Pair<Long, Long>, filter: Bson, sort: Bson? = null, limit: Int? = null): Iterator<Document> {
         val collections = listCollectionNames(prefix, timeRange)
-        return find(collections, filter, sort)
+        return find(collections, filter, sort, limit)
     }
 
-    open fun find(collections: List<String>, filter: Bson? = null, sort: Bson? = null): Iterator<Document> {
+    open fun find(collections: List<String>, filter: Bson? = null, sort: Bson? = null, limit: Int? = null): Iterator<Document> {
         val collectionNames = collections.iterator()
         return object : Iterator<Document> {
 
@@ -66,7 +66,7 @@ open class MongoClient(@Value("\${time-suffix}") suffix: String,
                             }
                             .apply {
                                 maxTime(maxExecutionTime, TimeUnit.MILLISECONDS)
-                                batchSize(batchSize)
+                                batchSize(limit ?: batchSize)
                                 sort?.let { sort(it) }
                             }
                             .iterator()
