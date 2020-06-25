@@ -14,11 +14,10 @@
  * limitations under the License.
  */
 
-package io.sip3.twig.ce.service
+package io.sip3.twig.ce.service.attribute
 
 import io.sip3.commons.domain.Attribute
 import io.sip3.twig.ce.mongo.MongoClient
-import io.sip3.twig.ce.service.attribute.AttributeService
 import org.bson.Document
 import org.junit.Assert.assertEquals
 import org.junit.Test
