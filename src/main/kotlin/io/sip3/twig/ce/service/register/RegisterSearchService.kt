@@ -50,6 +50,7 @@ class RegisterSearchService : SearchService() {
         val processed = mutableSetOf<Document>()
 
         return findInSipIndexBySearchRequest(request).asSequence()
+                .filterNot { processed.contains(it) }
                 .map { leg ->
                     return@map CorrelatedRegistration().apply {
                         correlate(leg)
@@ -113,11 +114,13 @@ class RegisterSearchService : SearchService() {
 
             val filters = mutableListOf<Bson>().apply {
                 // Time filters
-                add(gte("created_at", leg.getLong("terminated_at")))
-                add(lte("terminated_at", leg.getLong("created_at")))
+                add(lte("created_at", leg.getLong("terminated_at")))
+                add(gte("terminated_at", leg.getLong("created_at")))
 
                 // Main filters
                 add(eq("state", leg.getString("state")))
+                add(eq("caller", leg.getString("caller")))
+                add(eq("callee", leg.getString("callee")))
                 add(or(
                         leg.getString("src_host")?.let { eq("dst_host", it) } ?: eq("dst_addr", leg.getString("src_addr")),
                         leg.getString("dst_host")?.let { eq("src_host", it) } ?: eq("src_addr", leg.getString("dst_addr"))
