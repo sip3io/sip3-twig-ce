@@ -77,6 +77,7 @@ class SearchController {
         val searches = SIP_METHOD_REGEX.findAll(request.query)
                 .map { match -> match.groupValues[1] }
                 .mapNotNull { method -> services[method] }
+                .ifEmpty { services.values.asSequence() }
                 .map { service -> service.search(request) }
                 .toList()
                 .toTypedArray()
