@@ -16,7 +16,12 @@
 
 package io.sip3.twig.ce.service.call
 
-import com.mongodb.client.model.Filters.*
+import com.mongodb.client.model.Filters.`in`
+import com.mongodb.client.model.Filters.and
+import com.mongodb.client.model.Filters.eq
+import com.mongodb.client.model.Filters.gte
+import com.mongodb.client.model.Filters.lte
+import com.mongodb.client.model.Filters.or
 import io.sip3.twig.ce.domain.SearchRequest
 import io.sip3.twig.ce.domain.SearchResponse
 import io.sip3.twig.ce.service.SearchService
@@ -31,7 +36,7 @@ import org.springframework.stereotype.Component
 import java.util.*
 
 @Component("INVITE")
-class CallSearchService : SearchService() {
+open class CallSearchService : SearchService() {
 
     private val logger = KotlinLogging.logger {}
 
