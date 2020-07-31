@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package io.sip3.twig.ce.util
+package io.sip3.twig.ce
 
 import org.mockito.Mockito
 
-object MockitoUtils {
+object MockitoExtension {
 
     @Suppress("UNCHECKED_CAST")
     fun <T> any(): T {

@@ -17,11 +17,11 @@
 package io.sip3.twig.ce.controller
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import io.sip3.twig.ce.MockitoExtension.any
 import io.sip3.twig.ce.domain.SearchRequest
 import io.sip3.twig.ce.domain.SearchResponse
 import io.sip3.twig.ce.service.call.CallSearchService
 import io.sip3.twig.ce.service.register.RegisterSearchService
-import io.sip3.twig.ce.util.MockitoUtils.any
 import org.hamcrest.Matchers.`is`
 import org.hamcrest.Matchers.startsWith
 import org.junit.Test
@@ -147,9 +147,6 @@ class SearchControllerTest {
 
     @Test
     fun `Handle bad request`() {
-        val query = "sip.method=INVITE"
-        val request = SearchRequest(CREATED_AT, TERMINATED_AT, query, 50)
-
         given(callSearchService.search(any())).willReturn(RESPONSE_1.iterator())
 
         mockMvc.perform(post("/search")

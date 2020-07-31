@@ -16,14 +16,16 @@
 
 package io.sip3.twig.ce.service.host
 
+import io.sip3.twig.ce.MockitoExtension.any
 import io.sip3.twig.ce.domain.Host
 import io.sip3.twig.ce.repository.HostRepository
-import io.sip3.twig.ce.util.MockitoUtils.any
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.BDDMockito.given
-import org.mockito.Mockito.*
+import org.mockito.Mockito.never
+import org.mockito.Mockito.times
+import org.mockito.Mockito.verify
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.mock.mockito.MockBean
