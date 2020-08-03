@@ -17,6 +17,7 @@
 package io.sip3.twig.ce.controller
 
 import io.sip3.twig.ce.MockitoExtension.any
+import io.sip3.twig.ce.configuration.SecurityConfigurationProperties
 import io.sip3.twig.ce.domain.Host
 import io.sip3.twig.ce.service.host.HostService
 import org.hamcrest.Matchers.`is`
@@ -45,7 +46,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPat
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 @RunWith(SpringRunner::class)
-@WebMvcTest(HostController::class)
+@WebMvcTest(HostController::class, SecurityConfigurationProperties::class)
 class HostControllerTest {
 
     companion object {
