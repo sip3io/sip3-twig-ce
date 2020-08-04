@@ -30,9 +30,9 @@ import org.junit.jupiter.api.extension.ExtendWith
 @ExtendWith(MongoExtension::class)
 class MongoClientTest {
 
-    private val client: MongoClient = MongoClient("yyyyMMdd", "mongodb://${MongoExtension.HOST}:${MongoExtension.PORT}", "sip3-test", 1000L, 128)
-
     companion object {
+
+        val MONGO_URI = "mongodb://${MongoExtension.HOST}:${MongoExtension.PORT}"
 
         const val CREATED_AT = 1596326400000    // 2020-08-02 00:00:00 UTC
         const val TERMINATED_AT = 1596499199000 // 2020-08-03 23:59:59 UTC
@@ -61,16 +61,18 @@ class MongoClientTest {
         @BeforeAll
         @JvmStatic
         fun beforeAll() {
-            val mongoClient = MongoClients.create("mongodb://${MongoExtension.HOST}:${MongoExtension.PORT}")
-            mongoClient.getDatabase("sip3-test").apply {
-                createCollection("test_20200802")
-                getCollection("test_20200802").insertMany(mutableListOf(DOCUMENT_1, DOCUMENT_2))
-
-                createCollection("test_20200803")
-                getCollection("test_20200803").insertMany(mutableListOf(DOCUMENT_3, DOCUMENT_4, DOCUMENT_5))
+            MongoClients.create(MONGO_URI).getDatabase("sip3-test").apply {
+                getCollection("test_20200802").insertMany(mutableListOf(
+                        DOCUMENT_1, DOCUMENT_2
+                ))
+                getCollection("test_20200803").insertMany(mutableListOf(
+                        DOCUMENT_3, DOCUMENT_4, DOCUMENT_5
+                ))
             }
         }
     }
+
+    private val client: MongoClient = MongoClient("yyyyMMdd", MONGO_URI, "sip3-test", 1000L, 128)
 
     @Test
     fun `Validate listCollectionNames() by prefix`() {
