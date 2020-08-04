@@ -16,7 +16,11 @@
 
 package io.sip3.twig.ce.service
 
-import com.mongodb.client.model.Filters.*
+import com.mongodb.client.model.Filters.eq
+import com.mongodb.client.model.Filters.gt
+import com.mongodb.client.model.Filters.lt
+import com.mongodb.client.model.Filters.ne
+import com.mongodb.client.model.Filters.regex
 import io.sip3.commons.domain.Attribute
 import io.sip3.twig.ce.domain.SearchRequest
 import io.sip3.twig.ce.domain.SearchResponse
@@ -50,13 +54,17 @@ abstract class SearchService {
                 val (field, value) = readAttribute(expression, "<")
                 lt(field, value)
             }
-            expression.contains("=") -> {
-                val (field, value) = readAttribute(expression, "=")
-                if ((value is String) && value.contains(".")) {
+            expression.contains("=~") -> {
+                val (field, value) = readAttribute(expression, "=~")
+                if (value is String) {
                     regex(field, value)
                 } else {
-                    eq(field, value)
+                    throw ValidationException("Regex for attribute is not supported: $expression")
                 }
+            }
+            expression.contains("=") -> {
+                val (field, value) = readAttribute(expression, "=")
+                eq(field, value)
             }
             else -> {
                 throw ValidationException("Couldn't parse the expression: $expression")
@@ -74,6 +82,7 @@ abstract class SearchService {
         val name = attribute.substringAfter("sip.")
                 .substringAfter("ip.")
                 .substringAfter("rtp.")
+                .substringAfter("rtcp.")
                 // Accordingly to SIP3 conventions attributes have names like r-factor, setup-time, e.t.c
                 // However, in MongoDB all fields have underscore instead - `r_factor`, `setup_time`, e.t.c
                 .replace("-", "_")

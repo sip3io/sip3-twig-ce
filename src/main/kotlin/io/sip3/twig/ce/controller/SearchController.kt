@@ -70,8 +70,8 @@ class SearchController {
         val query = request.query
                 .replace(SIP_METHOD_INVITE, Strings.EMPTY)
 
-        if (query.contains("sip.") && query.contains("rtp.")) {
-            throw UnsupportedOperationException("Complex search by `sip.` and `rtp.` filters is not supported.")
+        if (query.contains("sip.") && (query.contains("rtp.") || query.contains("rtcp."))) {
+            throw UnsupportedOperationException("Complex search by `sip.` and (`rtp.` or `rtcp.`) filters is not supported.")
         }
 
         val searches = SIP_METHOD_REGEX.findAll(request.query)

@@ -58,19 +58,19 @@ open class CallSearchService : SearchService() {
     private var aggregationTimeout: Long = 60000
 
     @Value("\${session.call.termination-timeout}")
-    private var terminationTimeout: Long = 5000
+    private var terminationTimeout: Long = 10000
 
     override fun search(request: SearchRequest): Iterator<SearchResponse> {
-        var (createdAt, terminatedAt, query) = request
+        val (createdAt, terminatedAt, query) = request
 
-        val matchedDocuments = if (query.contains("rtp.")) {
+        val matchedDocuments = if (query.contains("rtp.") || query.contains("rtcp.")) {
             // Filter documents in `rtpr_rtp_index` and `rtpr_rtcp_index` collections
             findInRtprIndexBySearchRequest(createdAt, terminatedAt, query).map { document ->
                 // Map `rtpr_rtp` or `rtpr_rtcp` document to `sip_call_index` document
-                val startedAt = document.getLong("started_at")
                 document.getString("call_id")?.let { callId ->
-                    query = "sip.call_id=$callId"
-                    return@map findInSipIndexBySearchRequest(startedAt - aggregationTimeout, startedAt, query).nextOrNull()
+                    val startedAt = document.getLong("started_at")
+                    val byCallId = "sip.call_id=$callId"
+                    return@map findInSipIndexBySearchRequest(startedAt - aggregationTimeout, startedAt, byCallId).nextOrNull()
                 }
             }
         } else {
@@ -88,9 +88,9 @@ open class CallSearchService : SearchService() {
 
                 method = "INVITE"
                 state = firstLeg.getString("state")
-                caller = correlatedCall.legs.joinToString(" - ") { leg -> leg.getString("caller") }
-                callee = correlatedCall.legs.joinToString(" - ") { leg -> leg.getString("callee") }
-                callId = correlatedCall.legs.map { leg -> leg.getString("call_id") }.toSet()
+                caller = correlatedCall.legs.map { it.getString("caller") }.toSet().joinToString(" - ")
+                callee = correlatedCall.legs.map { it.getString("callee") }.toSet().joinToString(" - ")
+                callId = correlatedCall.legs.map { it.getString("call_id") }.toSet()
 
                 firstLeg.getInteger("duration")?.let { duration = it }
                 firstLeg.getString("error_code")?.let { errorCode = it }
@@ -112,10 +112,14 @@ open class CallSearchService : SearchService() {
                     .forEach { add(it) }
         }
 
-        return IteratorUtil.merge(
-                mongoClient.find("rtpr_rpt_index", Pair(createdAt, terminatedAt), and(filters)),
-                mongoClient.find("rtpr_rtcp_index", Pair(createdAt, terminatedAt), and(filters))
-        )
+        val prefixes = mutableListOf<String>().apply {
+            if (query.contains("rtp.")) { add("rtpr_rtp_index") }
+            if (query.contains("rtcp.")) { add("rtpr_rtcp_index") }
+        }
+
+        return prefixes.map { mongoClient.find(it, Pair(createdAt, terminatedAt), and(filters)) }
+                .toTypedArray()
+                .let { IteratorUtil.merge(*it) }
     }
 
     private fun findInSipIndexBySearchRequest(createdAt: Long, terminatedAt: Long, query: String): Iterator<Document> {
@@ -129,6 +133,7 @@ open class CallSearchService : SearchService() {
                     .asSequence()
                     .filterNot { it.isBlank() }
                     .filterNot { it.startsWith("rtp.") }
+                    .filterNot { it.startsWith("rtcp.") }
                     .filterNot { it.startsWith("sip.method") }
                     .map { filter(it) }
                     .forEach { add(it) }
@@ -232,7 +237,7 @@ open class CallSearchService : SearchService() {
 
                 // Main filters
                 if (xCallIds.isNotEmpty()) {
-                    add(or (
+                    add(or(
                             `in`("x_call_id", callIds),
                             `in`("call_id", xCallIds),
                             `in`("x_call_id", xCallIds)
@@ -242,7 +247,8 @@ open class CallSearchService : SearchService() {
                 }
             }
 
-            return mongoClient.find("sip_call_index", Pair(createdAt - aggregationTimeout, (terminatedAt ?: createdAt) + aggregationTimeout), and(filters)).asSequence().toList()
+            val timeRange = Pair(createdAt - aggregationTimeout, (terminatedAt ?: createdAt) + aggregationTimeout)
+            return mongoClient.find("sip_call_index", timeRange, and(filters)).asSequence().toList()
         }
 
 
@@ -254,10 +260,10 @@ open class CallSearchService : SearchService() {
                 val terminatedAt = leg.getLong("terminated_at")
 
                 // Time filters
-                val filterByTime = if (terminatedAt == null) {
+                val filterByTime = if (terminatedAt == null || matchedLeg.getLong("terminated_at") == null) {
                     // Call is still `in progress`
-                    createdAt - terminationTimeout >= matchedLeg.getLong("created_at")
-                            && createdAt + terminationTimeout <= matchedLeg.getLong("created_at")
+                    createdAt - terminationTimeout <= matchedLeg.getLong("created_at")
+                            && createdAt + terminationTimeout >= matchedLeg.getLong("created_at")
                 } else {
                     terminatedAt >= matchedLeg.getLong("created_at")
                             && createdAt <= matchedLeg.getLong("terminated_at")
