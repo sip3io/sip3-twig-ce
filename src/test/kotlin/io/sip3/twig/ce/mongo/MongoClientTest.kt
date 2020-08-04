@@ -16,19 +16,21 @@
 
 package io.sip3.twig.ce.mongo
 
+import com.mongodb.client.MongoClients
 import com.mongodb.client.model.Sorts
 import io.sip3.twig.ce.MongoExtension
 import org.bson.Document
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.extension.ExtendWith
 
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @ExtendWith(MongoExtension::class)
 class MongoClientTest {
 
-    val client by lazy {
-        MongoClient("yyyyMMdd", "mongodb://${MongoExtension.HOST}:${MongoExtension.PORT}", "sip3-test", 1000L, 128)
-    }
+    private val client: MongoClient = MongoClient("yyyyMMdd", "mongodb://${MongoExtension.HOST}:${MongoExtension.PORT}", "sip3-test", 1000L, 128)
 
     companion object {
 
@@ -56,14 +58,22 @@ class MongoClientTest {
             put("key", "key1")
         }
 
+        @BeforeAll
+        @JvmStatic
+        fun beforeAll() {
+            val mongoClient = MongoClients.create("mongodb://${MongoExtension.HOST}:${MongoExtension.PORT}")
+            mongoClient.getDatabase("sip3-test").apply {
+                createCollection("test_20200802")
+                getCollection("test_20200802").insertMany(mutableListOf(DOCUMENT_1, DOCUMENT_2))
 
+                createCollection("test_20200803")
+                getCollection("test_20200803").insertMany(mutableListOf(DOCUMENT_3, DOCUMENT_4, DOCUMENT_5))
+            }
+        }
     }
 
     @Test
     fun `Validate listCollectionNames() by prefix`() {
-        // Init
-        initMongo()
-
         // Execute
         val names = client.listCollectionNames("test", Pair(CREATED_AT, TERMINATED_AT))
 
@@ -76,7 +86,6 @@ class MongoClientTest {
     @Test
     fun `Find Documents by filter with descending sort`() {
         // Init
-        initMongo()
         val filter = Document().apply {
             put("key", "key1")
         }
@@ -92,23 +101,5 @@ class MongoClientTest {
         assertEquals(DOCUMENT_1, documents[0])
         assertEquals(DOCUMENT_5, documents[1])
         assertEquals(DOCUMENT_3, documents[2])
-    }
-
-    private fun initMongo() {
-        val mongoClient = com.mongodb.client.MongoClients.create("mongodb://${MongoExtension.HOST}:${MongoExtension.PORT}")
-        mongoClient.getDatabase("sip3-test").apply {
-            createCollection("test_20200802")
-            getCollection("test_20200802").insertMany(mutableListOf(
-                    DOCUMENT_1,
-                    DOCUMENT_2
-            ))
-
-            createCollection("test_20200803")
-            getCollection("test_20200803").insertMany(mutableListOf(
-                    DOCUMENT_3,
-                    DOCUMENT_4,
-                    DOCUMENT_5
-            ))
-        }
     }
 }
