@@ -18,7 +18,7 @@ package io.sip3.twig.ce.configuration
 
 import mu.KotlinLogging
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.context.properties.ConfigurationProperties
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.HttpStatus
 import org.springframework.security.authentication.AuthenticationProvider
@@ -26,29 +26,30 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter
 import org.springframework.security.web.authentication.Http403ForbiddenEntryPoint
-import org.springframework.stereotype.Component
 import org.springframework.web.context.WebApplicationContext
-import java.util.*
 
 @Configuration
-open class SecurityConfiguration(private val security: SecurityConfigurationProperties) : WebSecurityConfigurerAdapter() {
+open class SecurityConfiguration : WebSecurityConfigurerAdapter() {
 
     private val logger = KotlinLogging.logger {}
 
     @Autowired
     lateinit var context: WebApplicationContext
 
+    @Value("\${security.enabled}")
+    private var enabled = false
+
     override fun configure(http: HttpSecurity?) {
         http!!.csrf().disable()
                 .authorizeRequests().anyRequest().apply {
-                    if (security.enabled) {
+                    if (enabled) {
                         authenticated().and()
                                 .formLogin()
                                 .successHandler { _, _, authentication ->
-                                    logger.info("Login attempt. User: ${authentication.principal}, State: SUCCESSFUL")
+                                    logger.info { "Login attempt. User: ${authentication.principal}, State: SUCCESSFUL" }
                                 }
                                 .failureHandler { _, response, exception ->
-                                    logger.info("Login attempt. User: ${exception.message}, State: FAILED")
+                                    logger.info { "Login attempt. User: ${exception.message}, State: FAILED" }
                                     response.sendError(HttpStatus.FORBIDDEN.value())
                                 }
                                 .and()
@@ -61,37 +62,11 @@ open class SecurityConfiguration(private val security: SecurityConfigurationProp
     }
 
     override fun configure(auth: AuthenticationManagerBuilder?) {
-        if (security.enabled) {
-            val providers = context.getBeanNamesForType(AuthenticationProvider::class.java)
-
-            val enabledProviders = mutableListOf<String>().apply {
-                security.grafana?.let { add("grafana")}
-                security.mailChimp?.let { add("mailchimp")}
-                security.ldap?.let { add("ldap")}
-                security.file?.let { add("file")}
-
-                intersect(providers.asIterable())
-            }
-
-            enabledProviders.forEach { name ->
-                if (providers.contains(name)) {
-                    val provider = context.getBean(name, AuthenticationProvider::class.java)
-                    auth!!.authenticationProvider(provider)
-                    logger.info { "Authentication provider '$name' added." }
-                }
+        if (enabled) {
+            context.getBeansOfType(AuthenticationProvider::class.java).forEach { (name, provider) ->
+                auth!!.authenticationProvider(provider)
+                logger.info { "Authentication provider '$name' added." }
             }
         }
     }
-}
-
-@Component
-@ConfigurationProperties(prefix = "security")
-open class SecurityConfigurationProperties {
-
-    var enabled: Boolean = false
-
-    var mailChimp: Properties? = null
-    var ldap: Properties? = null
-    var grafana: Properties? = null
-    var file: Properties? = null
 }

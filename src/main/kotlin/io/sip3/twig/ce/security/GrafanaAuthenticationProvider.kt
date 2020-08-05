@@ -17,6 +17,7 @@
 package io.sip3.twig.ce.security
 
 import mu.KotlinLogging
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpHeaders
@@ -29,6 +30,7 @@ import org.springframework.stereotype.Component
 import org.springframework.web.client.RestTemplate
 
 @Component("grafana")
+@ConditionalOnProperty(prefix = "security.grafana", name = ["url"])
 class GrafanaAuthenticationProvider(private val config: GrafanaSecurityConfiguration) : AuthenticationProvider {
 
     private val logger = KotlinLogging.logger {}

@@ -18,7 +18,6 @@ package io.sip3.twig.ce.controller
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.sip3.twig.ce.MockitoExtension.any
-import io.sip3.twig.ce.configuration.SecurityConfigurationProperties
 import io.sip3.twig.ce.domain.SearchRequest
 import io.sip3.twig.ce.domain.SearchResponse
 import io.sip3.twig.ce.service.call.CallSearchService
@@ -43,7 +42,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPat
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 @RunWith(SpringRunner::class)
-@WebMvcTest(SearchController::class, SecurityConfigurationProperties::class)
+@WebMvcTest(SearchController::class)
 class SearchControllerTest {
 
     companion object {

@@ -17,7 +17,6 @@
 package io.sip3.twig.ce.controller
 
 import io.sip3.commons.domain.Attribute
-import io.sip3.twig.ce.configuration.SecurityConfigurationProperties
 import io.sip3.twig.ce.service.attribute.AttributeService
 import org.hamcrest.collection.IsCollectionWithSize
 import org.junit.Test
@@ -33,7 +32,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPat
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 @RunWith(SpringRunner::class)
-@WebMvcTest(AttributeController::class, SecurityConfigurationProperties::class)
+@WebMvcTest(AttributeController::class)
 class AttributeControllerTest {
 
     @Autowired
