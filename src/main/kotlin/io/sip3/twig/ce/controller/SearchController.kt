@@ -46,6 +46,7 @@ class SearchController {
 
         const val SIP_METHOD_INVITE = "sip.method=INVITE"
         val SIP_METHOD_REGEX = Regex("sip.method=(\\w*)")
+        val EXCLUSIVE_ATTRIBUTES = listOf("sip.", "rtp.", "rtcp.")
     }
 
     @Value("\${session.default-limit}")
@@ -70,8 +71,8 @@ class SearchController {
         val query = request.query
                 .replace(SIP_METHOD_INVITE, Strings.EMPTY)
 
-        if (query.contains("sip.") && query.contains("rtp.")) {
-            throw UnsupportedOperationException("Complex search by `sip.` and `rtp.` filters is not supported.")
+        if (EXCLUSIVE_ATTRIBUTES.count { query.contains(it) } > 1) {
+            throw UnsupportedOperationException("Complex search by `sip.`, `rtp.`, `rtcp.` filters is not supported.")
         }
 
         val searches = SIP_METHOD_REGEX.findAll(request.query)
