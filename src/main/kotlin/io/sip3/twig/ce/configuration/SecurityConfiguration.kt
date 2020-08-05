@@ -19,6 +19,7 @@ package io.sip3.twig.ce.configuration
 import mu.KotlinLogging
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.context.annotation.ComponentScan
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.HttpStatus
 import org.springframework.security.authentication.AuthenticationProvider
@@ -29,6 +30,7 @@ import org.springframework.security.web.authentication.Http403ForbiddenEntryPoin
 import org.springframework.web.context.WebApplicationContext
 
 @Configuration
+@ComponentScan("io.sip3.twig.ee")
 open class SecurityConfiguration : WebSecurityConfigurerAdapter() {
 
     private val logger = KotlinLogging.logger {}
