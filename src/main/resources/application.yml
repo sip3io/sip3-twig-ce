@@ -41,7 +41,7 @@ session:
   call:
     max-legs: 10
     aggregation-timeout: 60000
-    termination-timeout: 5000
+    termination-timeout: 10000
   register:
     max-legs: 10
     aggregation-timeout: 60000
