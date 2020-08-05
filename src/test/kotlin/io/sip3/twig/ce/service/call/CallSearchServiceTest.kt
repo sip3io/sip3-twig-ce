@@ -51,6 +51,7 @@ class CallSearchServiceTest {
 
         val NOW = System.currentTimeMillis()
 
+        // Call 1 (1/3)
         val LEG_1 = Document().apply {
             put("src_addr", "192.168.8.1")
 
@@ -68,6 +69,7 @@ class CallSearchServiceTest {
             put("call_id", "some-call-id-1")
         }
 
+        // Call 1 (2/3)
         val LEG_2 = Document().apply {
             put("src_addr", "10.10.0.1")
             put("src_host", "pbx")
@@ -87,6 +89,7 @@ class CallSearchServiceTest {
             put("x_call_id", "some-call-id-1")
         }
 
+        // Call 1 (3/3)
         val LEG_3 = Document().apply {
             put("src_addr", "5.5.5.5")
 
@@ -105,6 +108,7 @@ class CallSearchServiceTest {
             put("x_call_id", "some-call-id-1")
         }
 
+        // Call 2 (1/1)
         val LEG_4 = Document().apply {
             put("src_addr", "5.5.6.6")
             put("src_host", "sip3-telecom")
@@ -122,6 +126,7 @@ class CallSearchServiceTest {
             put("call_id", "some-call-id-4")
         }
 
+        // Call 3 (1/2) in progress
         val LEG_5 = Document().apply {
             put("src_addr", "192.168.8.2")
 
@@ -129,9 +134,7 @@ class CallSearchServiceTest {
             put("dst_host", "pbx")
 
             put("created_at", NOW)
-            put("terminated_at", NOW + 60000)
             put("answered_at", NOW + 10000)
-            put("duration", 60000)
             put("state", "answered")
 
             put("caller", "222")
@@ -139,6 +142,7 @@ class CallSearchServiceTest {
             put("call_id", "some-call-id-5")
         }
 
+        // Call 3 (2/2) in progress
         val LEG_6 = Document().apply {
             put("src_addr", "10.10.0.1")
             put("src_host", "pbx")
@@ -147,10 +151,8 @@ class CallSearchServiceTest {
             put("dst_host", "sbc")
 
             put("created_at", NOW + 20)
-            put("terminated_at", NOW + 60000 - 600)
             put("answered_at", NOW + 10000 + 10)
             put("state", "answered")
-            put("duration", 59380)
 
             put("caller", "2111111")
             put("callee", "2999999")
@@ -355,6 +357,7 @@ class CallSearchServiceTest {
             `when`(client.find(any(), any(), any(), any(), any()))
                     // Search by callee and caller return empty iterator
                     .thenReturn(Collections.emptyIterator())
+                    // Search by x-call-id for `LEG_1`
                     .thenReturn(sequenceOf(LEG_1, LEG_3).iterator())
 
             // Execute
@@ -397,5 +400,4 @@ class CallSearchServiceTest {
     fun resetMocks() {
         reset(client)
     }
-
 }
