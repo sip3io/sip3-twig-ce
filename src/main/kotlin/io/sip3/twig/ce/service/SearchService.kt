@@ -59,7 +59,7 @@ abstract class SearchService {
                 if (value is String) {
                     regex(field, value)
                 } else {
-                    throw ValidationException("Regex for attribute is not supported: $expression")
+                    throw ValidationException("Attribute doesn't support regex query: $expression")
                 }
             }
             expression.contains("=") -> {
@@ -83,9 +83,7 @@ abstract class SearchService {
                 .substringAfter("ip.")
                 .substringAfter("rtp.")
                 .substringAfter("rtcp.")
-                // Accordingly to SIP3 conventions attributes have names like r-factor, setup-time, e.t.c
-                // However, in MongoDB all fields have underscore instead - `r_factor`, `setup_time`, e.t.c
-                .replace("-", "_")
+
         val value = expression.substringAfter(delimiter)
 
         return when (type) {

@@ -255,10 +255,10 @@ open class CallSearchService : SearchService() {
         private fun correlate(leg: Document, matchedLegs: List<Document>) {
             if (legs.size >= maxLegs || !legs.add(leg)) return
 
-            matchedLegs.filter { matchedLeg ->
-                val createdAt = leg.getLong("created_at")
-                val terminatedAt = leg.getLong("terminated_at")
+            val createdAt = leg.getLong("created_at")
+            val terminatedAt = leg.getLong("terminated_at")
 
+            matchedLegs.filter { matchedLeg ->
                 // Time filters
                 val filterByTime = if (terminatedAt == null || matchedLeg.getLong("terminated_at") == null) {
                     // Call is still `in progress`
