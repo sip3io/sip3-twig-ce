@@ -50,6 +50,9 @@ open class RegisterSearchService : SearchService() {
     @Value("\${session.register.aggregation-timeout}")
     private var aggregationTimeout: Long = 10000
 
+    @Value("\${session.register.duration-timeout}")
+    private var durationTimeout: Long = 900000
+
     override fun search(request: SearchRequest): Iterator<SearchResponse> {
         val processed = mutableSetOf<Document>()
 
@@ -57,13 +60,15 @@ open class RegisterSearchService : SearchService() {
                 .filterNot { processed.contains(it) }
                 .map { leg ->
                     return@map CorrelatedRegistration().apply {
-                        correlate(leg)
+                        correlate(leg, processed)
                         processed.addAll(legs)
                     }
                 }
                 .map { correlatedRegistration ->
                     return@map SearchResponse().apply {
-                        val firstLeg = correlatedRegistration.legs.first()
+                        val firstLeg = correlatedRegistration.legs.firstOrNull {
+                            it.getString("src_host") == null
+                        } ?: correlatedRegistration.legs.first()
 
                         this.createdAt = firstLeg.getLong("created_at")
                         this.terminatedAt = firstLeg.getLong("terminated_at")
@@ -84,8 +89,8 @@ open class RegisterSearchService : SearchService() {
         request.apply {
             val filters = mutableListOf<Bson>().apply {
                 // Time filters
-                add(gte("created_at", createdAt))
                 add(lte("created_at", terminatedAt))
+                add(gte("terminated_at", createdAt))
 
                 // Main filters
                 query.split(" ")
@@ -98,7 +103,7 @@ open class RegisterSearchService : SearchService() {
                         .forEach { add(it) }
             }
 
-            return mongoClient.find("sip_register_index", Pair(createdAt, terminatedAt), and(filters), limit = limit)
+            return mongoClient.find("sip_register_index", Pair(createdAt - durationTimeout, terminatedAt), and(filters), limit = limit)
         }
     }
 
@@ -106,10 +111,12 @@ open class RegisterSearchService : SearchService() {
 
         val legs = TreeSet(CREATED_AT)
 
-        fun correlate(leg: Document) {
-            if (legs.add(leg) && legs.size < maxLegs) {
-                findInSipIndexByDocument(leg).forEach { correlate(it) }
-            }
+        fun correlate(leg: Document, processed: MutableSet<Document>) {
+            val matchedLegs = findInSipIndexByDocument(leg).asSequence()
+                    .filterNot { processed.contains(it) }
+                    .toList()
+
+            correlate(leg, matchedLegs)
         }
 
         private fun findInSipIndexByDocument(leg: Document): Iterator<Document> {
@@ -118,8 +125,13 @@ open class RegisterSearchService : SearchService() {
 
             val filters = mutableListOf<Bson>().apply {
                 // Time filters
-                add(lte("created_at", leg.getLong("terminated_at")))
-                add(gte("terminated_at", leg.getLong("created_at")))
+                if (leg.getString("state") == "registered") {
+                    add(lte("created_at", terminatedAt))
+                    add(gte("terminated_at", createdAt))
+                } else {
+                    add(gte("created_at", createdAt - aggregationTimeout))
+                    add(lte("created_at", createdAt + aggregationTimeout))
+                }
 
                 // Main filters
                 add(eq("state", leg.getString("state")))
@@ -131,7 +143,50 @@ open class RegisterSearchService : SearchService() {
                 ))
             }
 
-            return mongoClient.find("sip_register_index", Pair(createdAt - aggregationTimeout, terminatedAt + aggregationTimeout), and(filters))
+            return mongoClient.find("sip_register_index", Pair(createdAt - durationTimeout, terminatedAt + aggregationTimeout), and(filters))
+        }
+
+        private fun correlate(leg: Document, matchedLegs: List<Document>) {
+            // Exclude leg correlation for `registered` state with time intersection
+            if (leg.getString("state") == "registered") {
+                if (legs.any { correlatedLeg ->
+                            correlatedLeg.getString("state") == "registered"
+                                    && correlatedLeg.getString("src_addr") == leg.getString("src_addr")
+                                    && correlatedLeg.getString("dst_addr") == leg.getString("dst_addr")
+                                    && correlatedLeg.getLong("terminated_at") >= leg.getLong("created_at")
+                                    && correlatedLeg.getLong("created_at") <= leg.getLong("terminated_at")
+                        }) {
+                    return
+                }
+            }
+
+            if (legs.size >= maxLegs || !legs.add(leg)) return
+
+            val createdAt = leg.getLong("created_at")
+            val terminatedAt = leg.getLong("terminated_at")
+
+            matchedLegs.filter { matchedLeg ->
+                // Time filters
+                val filterByTime = if (terminatedAt == null) {
+                    createdAt - aggregationTimeout >= matchedLeg.getLong("created_at")
+                            && createdAt + aggregationTimeout <= matchedLeg.getLong("created_at")
+                } else {
+                    terminatedAt >= matchedLeg.getLong("created_at")
+                            && createdAt <= matchedLeg.getLong("terminated_at")
+                }
+
+                // Host filters
+                val filterBySrcHost = leg.getString("src_host")?.let { it == matchedLeg.getString("dst_host") }
+                        ?: (leg.getString("src_addr") == matchedLeg.getString("dst_addr"))
+
+                val filterByDstHost = leg.getString("dst_host")?.let { it == matchedLeg.getString("src_host") }
+                        ?: (leg.getString("dst_addr") == matchedLeg.getString("src_addr"))
+
+                // Combine and apply all filters
+                return@filter filterByTime && (filterBySrcHost || filterByDstHost)
+            }.forEach { matchedLeg ->
+                correlate(matchedLeg, matchedLegs)
+            }
         }
     }
 }

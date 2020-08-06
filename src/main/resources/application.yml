@@ -44,4 +44,5 @@ session:
     termination-timeout: 10000
   register:
     max-legs: 10
-    aggregation-timeout: 60000
+    aggregation-timeout: 10000
+    duration-timeout: 900000
