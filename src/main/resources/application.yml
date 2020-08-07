@@ -44,6 +44,7 @@ time-suffix: yyyyMMdd
 session:
   default-limit: 50
   use-x-correlation-header: true
+  show-retransmits: true
   call:
     max-legs: 10
     aggregation-timeout: 60000
