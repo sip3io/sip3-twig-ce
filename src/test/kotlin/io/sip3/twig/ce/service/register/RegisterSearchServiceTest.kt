@@ -35,6 +35,7 @@ import org.mockito.BDDMockito.reset
 import org.mockito.BDDMockito.times
 import org.mockito.BDDMockito.verify
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.mock.mockito.MockBean
 
@@ -182,6 +183,7 @@ class RegisterSearchServiceTest {
     lateinit var attributeService: AttributeService
 
     @Autowired
+    @Qualifier("REGISTER")
     lateinit var service: RegisterSearchService
 
     @Test
