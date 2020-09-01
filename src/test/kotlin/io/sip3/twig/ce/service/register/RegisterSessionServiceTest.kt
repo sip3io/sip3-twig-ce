@@ -22,10 +22,10 @@ import io.pkts.packet.sip.impl.PreConditions.assertNotNull
 import io.sip3.twig.ce.MockitoExtension.any
 import io.sip3.twig.ce.domain.SessionRequest
 import io.sip3.twig.ce.mongo.MongoClient
-import junit.framework.Assert.assertEquals
-import junit.framework.Assert.assertTrue
 import org.bson.Document
 import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.mockito.BDDMockito.given
 import org.mockito.BDDMockito.reset
