@@ -54,7 +54,7 @@ abstract class SessionService {
 
     abstract fun findInRawBySessionRequest(req: SessionRequest): Iterator<Document>
 
-    open fun details(req: SessionRequest): Any? {
+    open fun details(req: SessionRequest): List<Document> {
         val legs = mutableListOf<Document>()
 
         findInRawBySessionRequest(req).asSequence()
@@ -96,7 +96,7 @@ abstract class SessionService {
         return legs
     }
 
-    open fun content(req: SessionRequest): Any? {
+    open fun content(req: SessionRequest): List<Document> {
         val messages = findInRawBySessionRequest(req).asSequence()
                 .sortedWith(CREATED_AT)
                 .groupBy { document -> "${document.getString("src_addr")}:${document.getString("dst_addr")}:${document.getString("raw_data")}" }
@@ -119,17 +119,7 @@ abstract class SessionService {
                 }
                 .toList()
 
-        val hosts = mutableSetOf<String>().apply {
-            messages.forEach { message ->
-                add(message.getString("src_host") ?: message.getString("src_addr"))
-                add(message.getString("dst_host") ?: message.getString("dst_addr"))
-            }
-        }
-
-        return mutableMapOf<String, Any>().apply {
-            put("hosts", hosts)
-            put("messages", messages)
-        }
+        return messages
     }
 
     open fun pcap(req: SessionRequest): ByteArrayOutputStream {

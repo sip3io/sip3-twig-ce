@@ -208,15 +208,9 @@ class RegisterSessionServiceTest {
         )
 
         // Execute
-        val result = service.content(request) as? Map<String, Any>
+        val messages = service.content(request) as? List<Document>
 
         // Assert
-        assertNotNull(result)
-        val hosts = result!!["hosts"] as? Set<String>
-        assertNotNull(hosts)
-        assertEquals(3, hosts!!.size)
-        assertTrue(hosts.containsAll(listOf("192.168.10.123", "192.168.10.234", "pbx")))
-        val messages = result["messages"] as? List<Document>
         assertNotNull(messages)
         assertEquals(documents.size, messages!!.size)
 

@@ -20,10 +20,12 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import io.sip3.twig.ce.MockitoExtension.any
 import io.sip3.twig.ce.domain.SearchRequest
 import io.sip3.twig.ce.domain.SearchResponse
+import io.sip3.twig.ce.service.ServiceLocator
 import io.sip3.twig.ce.service.call.CallSearchService
 import io.sip3.twig.ce.service.register.RegisterSearchService
 import org.hamcrest.Matchers.`is`
 import org.hamcrest.Matchers.startsWith
+import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.BDDMockito.given
@@ -82,11 +84,20 @@ class SearchControllerTest {
     @Autowired
     private lateinit var mockMvc: MockMvc
 
-    @MockBean(name = "INVITE")
+    @MockBean
     private lateinit var callSearchService: CallSearchService
 
-    @MockBean(name = "REGISTER")
+    @MockBean
     private lateinit var registerSearchService: RegisterSearchService
+
+    @MockBean
+    private lateinit var serviceLocator: ServiceLocator
+
+    @Before
+    fun init() {
+        given(serviceLocator.searchServices()).willReturn(listOf(callSearchService, registerSearchService))
+        given(serviceLocator.searchService("INVITE")).willReturn(callSearchService)
+        given(serviceLocator.searchService("REGISTER")).willReturn(registerSearchService)    }
 
     @Test
     fun `Search by query with INVITE method`() {

@@ -18,11 +18,15 @@ package io.sip3.twig.ce.service.host
 
 import io.sip3.twig.ce.domain.Host
 import io.sip3.twig.ce.repository.HostRepository
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.dao.DuplicateKeyException
 import org.springframework.stereotype.Component
 
 @Component
-open class HostService(private val hostRepository: HostRepository) {
+open class HostService {
+
+    @Autowired
+    private lateinit var hostRepository: HostRepository
 
     open fun list(): Set<Host> {
         return hostRepository.findAll().toSet()
@@ -30,6 +34,10 @@ open class HostService(private val hostRepository: HostRepository) {
 
     open fun getByName(name: String): Host {
         return hostRepository.getByNameIgnoreCase(name)
+    }
+
+    open fun findByNameIgnoreCase(name: String): Host? {
+        return hostRepository.findByNameIgnoreCase(name)
     }
 
     open fun create(host: Host): Host {
