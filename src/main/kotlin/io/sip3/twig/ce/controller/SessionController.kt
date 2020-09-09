@@ -76,8 +76,8 @@ class SessionController {
         )
     }
 
-    @PostMapping("/callflow")
-    fun callflow(@RequestBody req: SessionRequest): Map<String, Any> {
+    @PostMapping("/flow")
+    fun flow(@RequestBody req: SessionRequest): Map<String, Any> {
         val events = sortedSetOf<Event>(compareBy { it.timestamp })
 
         // Add SIP events
@@ -91,7 +91,7 @@ class SessionController {
             ))
         }
 
-        // Add RTPR events for calls
+        // Add RTPR events only for calls
         if (req.method?.firstOrNull() == "INVITE") {
             // Add RTPR events
             (mediaSessionService.details(req) as List<*>).forEach { rtpr ->

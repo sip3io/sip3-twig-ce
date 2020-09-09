@@ -25,9 +25,9 @@ import io.sip3.twig.ce.service.call.CallSearchService
 import io.sip3.twig.ce.service.register.RegisterSearchService
 import org.hamcrest.Matchers.`is`
 import org.hamcrest.Matchers.startsWith
-import org.junit.Before
-import org.junit.Test
-import org.junit.runner.RunWith
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.BDDMockito.given
 import org.mockito.BDDMockito.never
 import org.mockito.BDDMockito.only
@@ -36,14 +36,14 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.http.MediaType
-import org.springframework.test.context.junit4.SpringRunner
+import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
-@RunWith(SpringRunner::class)
+@ExtendWith(SpringExtension::class)
 @WebMvcTest(SearchController::class)
 class SearchControllerTest {
 
@@ -93,11 +93,12 @@ class SearchControllerTest {
     @MockBean
     private lateinit var serviceLocator: ServiceLocator
 
-    @Before
+    @BeforeEach
     fun init() {
         given(serviceLocator.searchServices()).willReturn(listOf(callSearchService, registerSearchService))
         given(serviceLocator.searchService("INVITE")).willReturn(callSearchService)
-        given(serviceLocator.searchService("REGISTER")).willReturn(registerSearchService)    }
+        given(serviceLocator.searchService("REGISTER")).willReturn(registerSearchService)
+    }
 
     @Test
     fun `Search by query with INVITE method`() {

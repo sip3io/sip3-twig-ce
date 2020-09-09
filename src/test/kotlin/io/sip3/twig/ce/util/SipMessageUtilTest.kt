@@ -17,9 +17,9 @@
 package io.sip3.twig.ce.util
 
 import gov.nist.javax.sip.parser.StringMsgParser
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertNull
-import org.junit.Test
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNull
+import org.junit.jupiter.api.Test
 
 class SipMessageUtilTest {
 
