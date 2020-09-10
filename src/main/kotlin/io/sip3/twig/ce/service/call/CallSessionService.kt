@@ -28,7 +28,7 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
 
 @Component
-class CallSessionService : SessionService() {
+open class CallSessionService : SessionService() {
 
     @Value("\${session.call.termination-timeout}")
     private val terminationTimeout: Long = 10000

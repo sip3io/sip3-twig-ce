@@ -24,7 +24,7 @@ import org.bson.conversions.Bson
 import org.springframework.stereotype.Component
 
 @Component
-class RegisterSessionService : SessionService() {
+open class RegisterSessionService : SessionService() {
 
     override fun findInRawBySessionRequest(req: SessionRequest): Iterator<Document> {
         requireNotNull(req.createdAt) { "created_at" }

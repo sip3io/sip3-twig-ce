@@ -42,12 +42,10 @@ class IpAddressUtilTest {
         assertFalse(isValid("10.10.10.10:0"))
         assertFalse(isValid("10.10.10.10:65536"))
         assertFalse(isValid("10.10.10.10/33"))
-        // TODO: Fix that. No exception, result is 10.10.10.256/127.0.0.1
-//        assertFalse(isValid("10.10.10.256"))
+        assertFalse(isValid("10.10.10.256"))
         assertFalse(isValid("10.10.10.10/"))
         assertFalse(isValid("10.10.10."))
         assertFalse(isValid("10.10..10"))
-        // TODO: Fix that. No exception, result is is.not.ip.address/127.0.0.1
-//        assertFalse(isValid("is.not.ip.address"))
+        assertFalse(isValid("is.not.ip.address"))
     }
 }
