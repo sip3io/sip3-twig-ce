@@ -23,7 +23,6 @@ import io.sip3.twig.ce.service.ServiceLocator
 import io.sip3.twig.ce.service.SessionService
 import io.sip3.twig.ce.service.host.HostService
 import io.sip3.twig.ce.service.media.MediaSessionService
-import io.sip3.twig.ce.service.media.domain.LegSession
 import io.swagger.annotations.Api
 import mu.KotlinLogging
 import org.bson.Document
@@ -94,8 +93,7 @@ class SessionController {
         // Add RTPR events only for calls
         if (req.method?.firstOrNull() == "INVITE") {
             // Add RTPR events
-            (mediaSessionService.details(req) as List<*>).forEach { rtpr ->
-                rtpr as Map<String, LegSession?>
+            mediaSessionService.details(req).forEach { rtpr ->
                 rtpr.values.filterNotNull().minBy { it.createdAt }?.let { legSession ->
                     events.add(Event(
                             legSession.createdAt,
