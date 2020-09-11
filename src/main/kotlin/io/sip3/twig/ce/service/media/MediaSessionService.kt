@@ -35,7 +35,7 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
 
 @Component
-class MediaSessionService {
+open class MediaSessionService {
 
     @Value("\${session.media.block-count}")
     private var blockCount: Int = 28
@@ -46,7 +46,7 @@ class MediaSessionService {
     @Autowired
     private lateinit var mongoClient: MongoClient
 
-    fun details(req: SessionRequest): List<Map<String, LegSession?>> {
+    open fun details(req: SessionRequest): List<Map<String, LegSession?>> {
         requireNotNull(req.createdAt, { "created_at" })
         requireNotNull(req.terminatedAt, { "terminated_at" })
         requireNotNull(req.callId, { "call_id" })

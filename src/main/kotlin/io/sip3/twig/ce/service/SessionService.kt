@@ -59,7 +59,7 @@ abstract class SessionService {
 
         findInRawBySessionRequest(req).asSequence()
                 .filter { document ->
-                    document.getString("raw_data").startsWith("REGISTER")
+                    document.getString("raw_data").startsWith(req.method?.first()!!)
                 }
                 .sortedWith(CREATED_AT)
                 .groupBy { document -> "${document.getString("src_addr")}:${document.getString("dst_addr")}" }

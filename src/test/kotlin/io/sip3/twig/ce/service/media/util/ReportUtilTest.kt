@@ -18,8 +18,8 @@ package io.sip3.twig.ce.service.media.util
 
 import io.sip3.twig.ce.service.media.util.ReportUtil.splitReport
 import org.bson.Document
-import org.junit.Assert.assertEquals
-import org.junit.Test
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Test
 
 class ReportUtilTest {
 

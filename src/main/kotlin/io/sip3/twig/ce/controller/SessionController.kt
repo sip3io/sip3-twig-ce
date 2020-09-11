@@ -77,7 +77,7 @@ class SessionController {
 
     @PostMapping("/flow")
     fun flow(@RequestBody req: SessionRequest): Map<String, Any> {
-        val events = sortedSetOf<Event>(compareBy { it.timestamp })
+        val events = mutableListOf<Event>()
 
         // Add SIP events
         getSessionService(req).content(req).map { message ->
@@ -117,6 +117,7 @@ class SessionController {
             Participant(name, "host", host)
         }
 
+        events.sortBy { it.timestamp }
         return mapOf(
                 "participants" to participants,
                 "events" to events

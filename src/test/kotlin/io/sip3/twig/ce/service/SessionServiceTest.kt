@@ -20,6 +20,7 @@ import io.pkts.Pcap
 import io.pkts.packet.Packet
 import io.pkts.packet.sip.impl.PreConditions.assertNotNull
 import io.sip3.twig.ce.domain.SessionRequest
+import io.sip3.twig.ce.mongo.MongoClient
 import org.bson.Document
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -29,7 +30,7 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.stereotype.Component
 import java.io.ByteArrayInputStream
 
-@SpringBootTest(classes = [TestSessionService::class])
+@SpringBootTest(classes = [TestSessionService::class, MongoClient::class])
 class SessionServiceTest {
 
     companion object {

@@ -20,9 +20,9 @@ import io.sip3.twig.ce.service.media.util.LegSessionUtil.createLegSession
 import io.sip3.twig.ce.service.media.util.LegSessionUtil.generateLegId
 import io.sip3.twig.ce.service.media.util.LegSessionUtil.generatePartyId
 import org.bson.Document
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertNotEquals
-import org.junit.Test
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNotEquals
+import org.junit.jupiter.api.Test
 
 class LegSessionUtilTest {
 
