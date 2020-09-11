@@ -24,6 +24,9 @@ import io.sip3.twig.ce.service.SessionService
 import io.sip3.twig.ce.service.host.HostService
 import io.sip3.twig.ce.service.media.MediaSessionService
 import io.swagger.annotations.Api
+import io.swagger.annotations.ApiOperation
+import io.swagger.annotations.ApiResponse
+import io.swagger.annotations.ApiResponses
 import mu.KotlinLogging
 import org.bson.Document
 import org.springframework.beans.factory.annotation.Autowired
@@ -54,11 +57,33 @@ class SessionController {
     @Autowired
     private lateinit var hostService: HostService
 
+    @ApiOperation(
+            position = 0,
+            value = "List session details",
+            produces = "application/json"
+    )
+    @ApiResponses(value = [
+        ApiResponse(code = 200, message = "Returns session details"),
+        ApiResponse(code = 400, message = "Bad request"),
+        ApiResponse(code = 500, message = "InternalServerError"),
+        ApiResponse(code = 504, message = "ConnectionTimeoutError")
+    ])
     @PostMapping("/details")
     fun details(@RequestBody req: SessionRequest): Any? {
         return getSessionService(req).details(req)
     }
 
+    @ApiOperation(
+            position = 1,
+            value = "List session content",
+            produces = "application/json"
+    )
+    @ApiResponses(value = [
+        ApiResponse(code = 200, message = "Returns session messages and host list"),
+        ApiResponse(code = 400, message = "Bad request"),
+        ApiResponse(code = 500, message = "InternalServerError"),
+        ApiResponse(code = 504, message = "ConnectionTimeoutError")
+    ])
     @PostMapping("/content")
     fun content(@RequestBody req: SessionRequest): Map<String, Any> {
         val messages = getSessionService(req).content(req)
@@ -75,6 +100,17 @@ class SessionController {
         )
     }
 
+    @ApiOperation(
+            position = 2,
+            value = "Build session flow",
+            produces = "application/json"
+    )
+    @ApiResponses(value = [
+        ApiResponse(code = 200, message = "Returns session events and participants info"),
+        ApiResponse(code = 400, message = "Bad request"),
+        ApiResponse(code = 500, message = "InternalServerError"),
+        ApiResponse(code = 504, message = "ConnectionTimeoutError")
+    ])
     @PostMapping("/flow")
     fun flow(@RequestBody req: SessionRequest): Map<String, Any> {
         val events = mutableListOf<Event>()
@@ -124,11 +160,33 @@ class SessionController {
         )
     }
 
+    @ApiOperation(
+            position = 3,
+            value = "Get media session statistics",
+            produces = "application/json"
+    )
+    @ApiResponses(value = [
+        ApiResponse(code = 200, message = "Returns media session statistics"),
+        ApiResponse(code = 400, message = "Bad request"),
+        ApiResponse(code = 500, message = "InternalServerError"),
+        ApiResponse(code = 504, message = "ConnectionTimeoutError")
+    ])
     @PostMapping("/media")
     fun media(@RequestBody req: SessionRequest): Any? {
         return mediaSessionService.details(req)
     }
 
+    @ApiOperation(
+            position = 4,
+            value = "Get PCAP for session",
+            produces = "application/vnd.tcpdump.pcapOutputStream"
+    )
+    @ApiResponses(value = [
+        ApiResponse(code = 200, message = "Returns session PCAP file"),
+        ApiResponse(code = 400, message = "Bad request"),
+        ApiResponse(code = 500, message = "InternalServerError"),
+        ApiResponse(code = 504, message = "ConnectionTimeoutError")
+    ])
     @PostMapping("/pcap")
     fun pcap(@RequestBody req: SessionRequest, response: HttpServletResponse) {
         response.contentType = "application/vnd.tcpdump.pcapOutputStream"
