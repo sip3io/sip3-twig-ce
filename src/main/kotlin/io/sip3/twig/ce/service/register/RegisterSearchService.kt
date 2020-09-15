@@ -31,7 +31,7 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
 import java.util.*
 
-@Component("REGISTER")
+@Component
 open class RegisterSearchService : SearchService() {
 
     private val logger = KotlinLogging.logger {}

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.sip3.twig.ce.service.register
+package io.sip3.twig.ce.service.call
 
 import io.pkts.packet.sip.impl.PreConditions.assertNotNull
 import io.sip3.twig.ce.MockitoExtension.any
@@ -34,13 +34,13 @@ import org.springframework.boot.test.mock.mockito.MockBean
 import java.util.*
 
 @SpringBootTest
-class RegisterSessionServiceTest {
+class CallSessionServiceTest {
 
     @MockBean
     private lateinit var client: MongoClient
 
     @Autowired
-    private lateinit var service: RegisterSessionService
+    private lateinit var service: CallSessionService
 
     @Test
     fun `Validate 'findInRawBySessionRequest()' method`() {

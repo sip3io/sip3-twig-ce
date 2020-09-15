@@ -14,17 +14,24 @@
  * limitations under the License.
  */
 
-package io.sip3.twig.ce.service.register
+package io.sip3.twig.ce.service.call
 
-import com.mongodb.client.model.Filters
+import com.mongodb.client.model.Filters.`in`
+import com.mongodb.client.model.Filters.and
+import com.mongodb.client.model.Filters.gte
+import com.mongodb.client.model.Filters.lte
 import io.sip3.twig.ce.domain.SessionRequest
 import io.sip3.twig.ce.service.SessionService
 import org.bson.Document
 import org.bson.conversions.Bson
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
 
 @Component
-open class RegisterSessionService : SessionService() {
+open class CallSessionService : SessionService() {
+
+    @Value("\${session.call.termination-timeout}")
+    private val terminationTimeout: Long = 10000
 
     override fun findInRawBySessionRequest(req: SessionRequest): Iterator<Document> {
         requireNotNull(req.createdAt) { "created_at" }
@@ -32,11 +39,11 @@ open class RegisterSessionService : SessionService() {
         requireNotNull(req.callId) { "call_id" }
 
         val filters = mutableListOf<Bson>().apply {
-            add(Filters.gte("created_at", req.createdAt!!))
-            add(Filters.lte("created_at", req.terminatedAt!!))
-            add(Filters.`in`("call_id", req.callId!!))
+            add(gte("created_at", req.createdAt!! - terminationTimeout))
+            add(lte("created_at", req.terminatedAt!! + terminationTimeout))
+            add(`in`("call_id", req.callId!!))
         }
 
-        return mongoClient.find("sip_register_raw", Pair(req.createdAt!!, req.terminatedAt!!), Filters.and(filters))
+        return mongoClient.find("sip_call_raw", Pair(req.createdAt!!, req.terminatedAt!!), and(filters))
     }
 }

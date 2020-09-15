@@ -19,9 +19,10 @@ package io.sip3.twig.ce.service.host
 import io.sip3.twig.ce.MockitoExtension.any
 import io.sip3.twig.ce.domain.Host
 import io.sip3.twig.ce.repository.HostRepository
-import org.junit.Assert.assertEquals
-import org.junit.Test
-import org.junit.runner.RunWith
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
+import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.BDDMockito.given
 import org.mockito.Mockito.never
 import org.mockito.Mockito.times
@@ -31,9 +32,9 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.dao.DuplicateKeyException
 import org.springframework.dao.EmptyResultDataAccessException
-import org.springframework.test.context.junit4.SpringRunner
+import org.springframework.test.context.junit.jupiter.SpringExtension
 
-@RunWith(SpringRunner::class)
+@ExtendWith(SpringExtension::class)
 @SpringBootTest
 class HostServiceTest {
 
@@ -64,10 +65,13 @@ class HostServiceTest {
         assertEquals(HOST_1, host)
     }
 
-    @Test(expected = EmptyResultDataAccessException::class)
+    @Test
     fun `Get by name if host not exists`() {
         given(hostRepository.getByNameIgnoreCase(any())).willThrow(EmptyResultDataAccessException(1))
-        hostService.getByName("host1")
+
+        assertThrows<EmptyResultDataAccessException> {
+            hostService.getByName("host1")
+        }
     }
 
     @Test
@@ -78,11 +82,14 @@ class HostServiceTest {
         verify(hostRepository, times(1)).save(any<Host>())
     }
 
-    @Test(expected = DuplicateKeyException::class)
+    @Test
     fun `Add existing host`() {
         given(hostRepository.findByNameIgnoreCase(any())).willReturn(HOST_1)
         given(hostRepository.save(any<Host>())).willReturn(HOST_1)
-        hostService.create(HOST_1)
+
+        assertThrows<DuplicateKeyException> {
+            hostService.create(HOST_1)
+        }
     }
 
     @Test
@@ -94,10 +101,13 @@ class HostServiceTest {
         verify(hostRepository, times(1)).save(HOST_1)
     }
 
-    @Test(expected = EmptyResultDataAccessException::class)
+    @Test
     fun `Update not existing host`() {
         given(hostRepository.getByNameIgnoreCase(any())).willThrow(EmptyResultDataAccessException(1))
-        hostService.update(HOST_1)
+
+        assertThrows<EmptyResultDataAccessException> {
+            hostService.update(HOST_1)
+        }
     }
 
     @Test

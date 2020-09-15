@@ -35,7 +35,7 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
 import java.util.*
 
-@Component("INVITE")
+@Component
 open class CallSearchService : SearchService() {
 
     private val logger = KotlinLogging.logger {}

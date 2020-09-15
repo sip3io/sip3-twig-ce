@@ -18,7 +18,7 @@ package io.sip3.twig.ce.controller
 
 import io.sip3.twig.ce.domain.SearchRequest
 import io.sip3.twig.ce.domain.SearchResponse
-import io.sip3.twig.ce.service.SearchService
+import io.sip3.twig.ce.service.ServiceLocator
 import io.sip3.twig.ce.util.IteratorUtil
 import io.swagger.annotations.Api
 import io.swagger.annotations.ApiOperation
@@ -53,7 +53,7 @@ class SearchController {
     private var defaultLimit: Int = 50
 
     @Autowired
-    private lateinit var services: Map<String, SearchService>
+    private lateinit var serviceLocator: ServiceLocator
 
     @ApiOperation(
             position = 0,
@@ -77,8 +77,8 @@ class SearchController {
 
         val searches = SIP_METHOD_REGEX.findAll(request.query)
                 .map { match -> match.groupValues[1] }
-                .mapNotNull { method -> services[method] }
-                .ifEmpty { services.values.asSequence() }
+                .mapNotNull { method -> serviceLocator.searchService(method) }
+                .ifEmpty { serviceLocator.searchServices().asSequence() }
                 .map { service -> service.search(request) }
                 .toList()
                 .toTypedArray()
