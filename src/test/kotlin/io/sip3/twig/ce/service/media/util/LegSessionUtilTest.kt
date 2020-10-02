@@ -107,7 +107,7 @@ class LegSessionUtilTest {
 
     @Test
     fun `Create Leg Session`() {
-        val legSession = createLegSession(listOf(RTPR_INDEX_A, RTPR_INDEX_B), 24)
+        val legSession = createLegSession(listOf(RTPR_INDEX_A, RTPR_INDEX_B), 24, "rtp")
 
         assertEquals(RTPR_INDEX_A.getLong("started_at" ),legSession.createdAt)
         assertEquals(RTPR_INDEX_A.getLong("started_at" ) + RTPR_INDEX_A.getInteger("duration" ),legSession.terminatedAt)

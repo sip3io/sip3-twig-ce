@@ -67,7 +67,7 @@ open class MediaSessionService {
                 .asSequence()
                 .groupBy { generateLegId(it) }
                 .forEach { (legId, documents) ->
-                    sessions[legId] = createLegSession(documents, blockCount)
+                    sessions[legId] = createLegSession(documents, blockCount, source)
                 }
 
         // Add blocks to media sessions

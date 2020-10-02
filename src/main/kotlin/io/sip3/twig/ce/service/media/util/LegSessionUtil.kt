@@ -48,18 +48,18 @@ object LegSessionUtil {
         return "${report.getInteger("src_port")}:${report.getInteger("dst_port")}"
     }
 
-    fun createLegSession(documents: List<Document>, blockCount: Int): LegSession {
-        // Split to `out` and `in` reports
+    fun createLegSession(documents: List<Document>, blockCount: Int, source: String): LegSession {
+        // Split to `first` and `second` reports
         val firstReport = documents.first()
-        val outPartyId = generatePartyId(firstReport)
-        val (out, `in`) = documents.partition { generatePartyId(it) == outPartyId }
+        val firstPartyId = generatePartyId(firstReport)
+        val (first, second) = documents.partition { generatePartyId(it) == firstPartyId }
 
         // Define timestamps
-        val legCreatedAt =  min(out.first().getLong("started_at"),
-                `in`.firstOrNull()?.getLong("started_at") ?: Long.MAX_VALUE)
+        val legCreatedAt =  min(first.first().getLong("started_at"),
+                second.firstOrNull()?.getLong("started_at") ?: Long.MAX_VALUE)
 
-        val legTerminatedAt = max(out.last().getLong("started_at") + out.last().getInteger("duration"),
-                `in`.lastOrNull()?.let { it.getLong("started_at") + it.getInteger("duration") } ?: 0)
+        val legTerminatedAt = max(first.last().getLong("started_at") + first.last().getInteger("duration"),
+                second.lastOrNull()?.let { it.getLong("started_at") + it.getInteger("duration") } ?: 0)
 
 
         return LegSession().apply {
@@ -68,20 +68,38 @@ object LegSessionUtil {
 
             duration = (legTerminatedAt - legCreatedAt).toInt()
             callId = firstReport.getString("call_id")
-
-            srcAddr = firstReport.getString("src_addr")
-            srcPort = firstReport.getInteger("src_port")
-            firstReport.getString("src_host")?.let { srcHost = it }
-            dstAddr = firstReport.getString("dst_addr")
-            dstPort = firstReport.getInteger("dst_port")
-            firstReport.getString("dst_host")?.let { dstHost = it }
-
             codecs.add(LegSession.Codec(firstReport.getString("codec_name"), firstReport.getInteger("payload_type")))
 
-            this.out.add(createMediaSession(out, blockCount))
+            when (source) {
+                "rtp" -> {
+                    srcAddr = firstReport.getString("src_addr")
+                    srcPort = firstReport.getInteger("src_port")
+                    firstReport.getString("src_host")?.let { srcHost = it }
+                    dstAddr = firstReport.getString("dst_addr")
+                    dstPort = firstReport.getInteger("dst_port")
+                    firstReport.getString("dst_host")?.let { dstHost = it }
 
-            if (`in`.isNotEmpty()) {
-                this.`in`.add(createMediaSession(`in`, blockCount))
+                    this.out.add(createMediaSession(first, blockCount))
+
+                    if (second.isNotEmpty()) {
+                        this.`in`.add(createMediaSession(second, blockCount))
+                    }
+                }
+
+                "rtcp" -> {
+                    srcAddr = firstReport.getString("dst_addr")
+                    srcPort = firstReport.getInteger("dst_port")
+                    firstReport.getString("src_host")?.let { dstHost = it }
+                    dstAddr = firstReport.getString("src_addr")
+                    dstPort = firstReport.getInteger("src_port")
+                    firstReport.getString("dst_host")?.let { srcHost = it }
+
+                    this.`in`.add(createMediaSession(first, blockCount))
+
+                    if (second.isNotEmpty()) {
+                        this.out.add(createMediaSession(second, blockCount))
+                    }
+                }
             }
         }
     }
