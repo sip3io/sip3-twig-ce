@@ -53,3 +53,6 @@ session:
     max-legs: 10
     aggregation-timeout: 10000
     duration-timeout: 900000
+  media:
+    block-count: 28
+    termination-timeout: 60000

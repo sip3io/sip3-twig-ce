@@ -201,6 +201,8 @@ open class CallSearchService : SearchService() {
                 if (useXCorrelationHeader) {
                     findInSipIndexByCallIdsAndXCallIds().forEach { correlate(it) }
                 }
+            } else if (legs.size < maxLegs && legs.add(leg)){
+                findInSipIndexByCallIdsAndXCallIds().forEach { correlate(it) }
             }
         }
 
