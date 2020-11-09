@@ -58,7 +58,7 @@ open class MediaSessionService {
                 .map { mapOf("rtp" to rtp[it], "rtcp" to rtcp[it]) }
     }
 
-    private fun findLegSessions(source: String, createdAt: Long, terminatedAt: Long, callId: List<String>, withBlocks: Boolean = true): Map<String, LegSession> {
+    open fun findLegSessions(source: String, createdAt: Long, terminatedAt: Long, callId: List<String>, withBlocks: Boolean = true): Map<String, LegSession> {
         val sessions = mutableMapOf<String, LegSession>()
         val reports = mutableListOf<Document>()
 
@@ -96,7 +96,7 @@ open class MediaSessionService {
     }
 
     // TODO: Hardcoded mediaSession selection.
-    private fun updateMediaSession(legSession: LegSession, reports: List<Document>) {
+    open fun updateMediaSession(legSession: LegSession, reports: List<Document>) {
         val firstReport = reports.first()
         val mediaSession = if (((firstReport.getInteger("src_port") - legSession.srcPort) in 0..1)
                 && ((firstReport.getInteger("dst_port") - legSession.dstPort) in 0..1)) {
@@ -166,7 +166,7 @@ open class MediaSessionService {
         mediaSession.blocks.addAll(blocks)
     }
 
-    private fun find(prefix: String, createdAt: Long, terminatedAt: Long, callId: List<String>): Iterator<Document> {
+    open fun find(prefix: String, createdAt: Long, terminatedAt: Long, callId: List<String>): Iterator<Document> {
         val filters = mutableListOf<Bson>().apply {
             add(Filters.gte("started_at", createdAt))
             add(Filters.lte("started_at", terminatedAt + terminationTimeout))

@@ -24,7 +24,6 @@ import org.springframework.web.bind.annotation.RestController
 import springfox.documentation.builders.ApiInfoBuilder
 import springfox.documentation.builders.PathSelectors
 import springfox.documentation.builders.RequestHandlerSelectors
-import springfox.documentation.service.Tag
 import springfox.documentation.spi.DocumentationType
 import springfox.documentation.spring.web.plugins.Docket
 
@@ -45,10 +44,6 @@ open class SwaggerConfiguration {
                 .apis(RequestHandlerSelectors.withClassAnnotation(RestController::class.java))
                 .paths(PathSelectors.any())
                 .build()
-                .tags(
-                        Tag("Attributes API", ""),
-                        Tag("Hosts API", "")
-                )
                 .useDefaultResponseMessages(false)
     }
 }
