@@ -49,20 +49,19 @@ open class MongoClient(@Value("\${time-suffix}") suffix: String,
 
     open fun find(collections: List<String>, filter: Bson? = null, sort: Bson? = null, limit: Int? = null): Iterator<Document> {
         val collectionNames = collections.iterator()
+
         return object : Iterator<Document> {
 
             var cursor: MongoCursor<Document>? = null
 
             override fun hasNext(): Boolean {
-                if (cursor != null && cursor!!.hasNext()) return true
-
-                if (!collectionNames.hasNext()) return false
+                if (cursor?.hasNext() == true) return true
 
                 if (collectionNames.hasNext()) {
                     cursor = client.getDatabase(db)
                             .getCollection(collectionNames.next())
                             .run {
-                                if (filter != null) find(filter) else find()
+                                filter?.let { find(filter) } ?: find()
                             }
                             .apply {
                                 maxTime(maxExecutionTime, TimeUnit.MILLISECONDS)
@@ -70,9 +69,11 @@ open class MongoClient(@Value("\${time-suffix}") suffix: String,
                                 sort?.let { sort(it) }
                             }
                             .iterator()
+
+                    return hasNext()
                 }
 
-                return hasNext()
+                return false
             }
 
             override fun next(): Document {
