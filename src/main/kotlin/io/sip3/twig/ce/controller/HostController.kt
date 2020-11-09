@@ -28,11 +28,9 @@ import io.swagger.annotations.ApiResponses
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.multipart.MultipartFile
-import springfox.documentation.swagger2.annotations.EnableSwagger2
 import javax.validation.Valid
 import javax.validation.constraints.NotNull
 
-@EnableSwagger2
 @Api(
         tags = ["Hosts API"]
 )

@@ -168,7 +168,7 @@ class HostControllerTest {
 
     @Test
     fun `Upload JSON file`() {
-        HostControllerTest::class.java.getResourceAsStream("/correctHostList.json").use { fileStream ->
+        HostControllerTest::class.java.getResourceAsStream("/json/correctHostList.json").use { fileStream ->
             val fileMock = MockMultipartFile("file", "hosts.json", null, fileStream)
             mockMvc.perform(multipart("/hosts/import")
                     .file(fileMock)).andExpect(status().isOk)
@@ -179,7 +179,7 @@ class HostControllerTest {
 
     @Test
     fun `Upload JSON file with invalid host`() {
-        HostControllerTest::class.java.getResourceAsStream("/incorrectAddressHostList.json").use { fileStream ->
+        HostControllerTest::class.java.getResourceAsStream("/json/incorrectAddressHostList.json").use { fileStream ->
             val fileMock = MockMultipartFile("file", "hosts.json", null, fileStream)
 
             mockMvc.perform(multipart("/hosts/import")
@@ -191,7 +191,7 @@ class HostControllerTest {
 
     @Test
     fun `Upload JSON file with duplicate host`() {
-        HostControllerTest::class.java.getResourceAsStream("/duplicatedHostList.json").use { fileStream ->
+        HostControllerTest::class.java.getResourceAsStream("/json/duplicatedHostList.json").use { fileStream ->
             val fileMock = MockMultipartFile("file", "hosts.json", null, fileStream)
             mockMvc.perform(multipart("/hosts/import")
                     .file(fileMock))
