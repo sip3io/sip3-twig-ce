@@ -26,7 +26,9 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter
 import org.springframework.security.web.authentication.Http403ForbiddenEntryPoint
+import org.springframework.security.web.authentication.www.BasicAuthenticationFilter
 import org.springframework.web.context.WebApplicationContext
+import javax.servlet.http.HttpServletRequestWrapper
 
 @Configuration
 open class SecurityConfiguration : WebSecurityConfigurerAdapter() {
@@ -37,13 +39,21 @@ open class SecurityConfiguration : WebSecurityConfigurerAdapter() {
     lateinit var context: WebApplicationContext
 
     @Value("\${security.enabled}")
-    private var enabled = false
+    private var securityEnabled = false
 
-    override fun configure(http: HttpSecurity?) {
-        http!!.csrf().disable()
-                .authorizeRequests().anyRequest().apply {
-                    if (enabled) {
-                        authenticated().and()
+    override fun configure(http: HttpSecurity) {
+        http.csrf().disable()
+                .authorizeRequests()
+                // Permit all Swagger endpoints
+                .antMatchers("/swagger-resources/**").permitAll()
+                .antMatchers("/swagger-ui/**").permitAll()
+                .antMatchers("/v2/api-docs").permitAll()
+                // Secure the rest of the endpoints accordingly to the settings
+                .anyRequest().apply {
+                    if (securityEnabled) {
+                        authenticated()
+                                // Login form handling
+                                .and()
                                 .formLogin()
                                 .successHandler { _, _, authentication ->
                                     logger.info { "Login attempt. User: ${authentication.principal}, State: SUCCESSFUL" }
@@ -52,7 +62,18 @@ open class SecurityConfiguration : WebSecurityConfigurerAdapter() {
                                     logger.info { "Login attempt. User: ${exception.message}, State: FAILED" }
                                     response.sendError(HttpStatus.FORBIDDEN.value())
                                 }
+                                // Basic authorization handling
                                 .and()
+                                .httpBasic()
+                                // Springfox sends `Authorization` header in lowercase
+                                // So, we have to hack a `HttpServletRequest` object :(
+                                .and()
+                                .addFilterBefore({ req, res, chain ->
+                                    val r = (req as? javax.servlet.http.HttpServletRequest)
+                                            ?.let { HttpServletRequest(req) } ?: req
+                                    chain.doFilter(r, res)
+                                }, BasicAuthenticationFilter::class.java)
+                                // Exception handling
                                 .exceptionHandling()
                                 .authenticationEntryPoint(Http403ForbiddenEntryPoint())
                     } else {
@@ -62,11 +83,18 @@ open class SecurityConfiguration : WebSecurityConfigurerAdapter() {
     }
 
     override fun configure(auth: AuthenticationManagerBuilder?) {
-        if (enabled) {
+        if (securityEnabled) {
             context.getBeansOfType(AuthenticationProvider::class.java).forEach { (name, provider) ->
                 auth!!.authenticationProvider(provider)
                 logger.info { "Authentication provider '$name' added." }
             }
+        }
+    }
+
+    class HttpServletRequest(request: javax.servlet.http.HttpServletRequest) : HttpServletRequestWrapper(request) {
+
+        override fun getHeader(name: String): String? {
+            return super.getHeader(name) ?: super.getHeader(name.toLowerCase())
         }
     }
 }
