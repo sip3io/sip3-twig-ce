@@ -44,7 +44,8 @@ open class CallSearchService : SearchService() {
 
         val CREATED_AT = compareBy<Document>(
                 { d -> d.getLong("created_at") },
-                { d -> d.getString("dst_addr") }
+                { d -> d.getString("dst_addr") },
+                { d -> d.getString("call_id") }
         )
     }
 

@@ -395,7 +395,7 @@ class CallSearchServiceTest {
                     // Search by x-call-id for `LEG_1`
                     .thenReturn(sequenceOf(LEG_3).iterator())
                     // Search by callee and caller for `LEG_3`
-                    .thenReturn(sequenceOf(LEG_4).iterator())
+                    .thenReturn(sequenceOf(LEG_3).iterator())
                     // Search by x-call-id for `LEG_3`
                     .thenReturn(Collections.emptyIterator())
 
