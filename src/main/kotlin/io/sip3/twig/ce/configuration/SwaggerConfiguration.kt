@@ -57,9 +57,7 @@ open class SwaggerConfiguration {
                                         val reference = SecurityReference("Authorization", arrayOfNulls<AuthorizationScope>(0))
                                         add(reference)
                                     })
-                                    // However, this method is deprecated, I couldn't find a clean example of how to use a recommended one
-                                    // Let's use it till they will update official documentation
-                                    .forPaths(PathSelectors.any())
+                                    .operationSelector { true }
                                     .build()
                             add(context)
                         })
