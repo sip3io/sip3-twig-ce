@@ -98,8 +98,8 @@ open class MediaSessionService {
     // TODO: Hardcoded mediaSession selection.
     open fun updateMediaSession(legSession: LegSession, reports: List<Document>) {
         val firstReport = reports.first()
-        val mediaSession = if (((firstReport.getInteger("src_port") - legSession.srcPort) in 0..1)
-                && ((firstReport.getInteger("dst_port") - legSession.dstPort) in 0..1)) {
+        val mediaSession = if (firstReport.getString("src_addr") == legSession.srcAddr
+                && firstReport.getString("dst_addr") == legSession.dstAddr) {
             legSession.out.first()
         } else {
             legSession.`in`.first()

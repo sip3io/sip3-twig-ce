@@ -26,26 +26,18 @@ object LegSessionUtil {
 
     fun generateLegId(report: Document): String {
         val callId = report.getString("call_id")
-
         val srcAddr = report.getString("src_addr")
-        val srcPort = report.getInteger("src_port").let { port ->
-            if (port % 2 == 0) { port } else { port - 1 }
-        }
-
         val dstAddr = report.getString("dst_addr")
-        val dstPort = report.getInteger("dst_port").let { port ->
-            if (port % 2 == 0) { port } else { port - 1 }
-        }
 
-        return if (srcPort > dstPort) {
-            "$callId:$srcAddr:$srcPort:$dstAddr:$dstPort"
+        return if (srcAddr > dstAddr) {
+            "$callId:$srcAddr:$dstAddr"
         } else {
-            "$callId:$dstAddr:$dstPort:$srcAddr:$srcPort"
+            "$callId:$dstAddr:$srcAddr"
         }
     }
 
     fun generatePartyId(report: Document): String {
-        return "${report.getInteger("src_port")}:${report.getInteger("dst_port")}"
+        return "${report.getString("src_addr")}:${report.getString("dst_addr")}"
     }
 
     fun createLegSession(documents: List<Document>, blockCount: Int): LegSession {
