@@ -100,12 +100,12 @@ open class MediaSessionService {
         val firstReport = reports.first()
         val mediaSession = if (firstReport.getString("src_addr") == legSession.srcAddr
                 && firstReport.getString("dst_addr") == legSession.dstAddr) {
-            legSession.out.first()
+            legSession.out.firstOrNull()
         } else {
-            legSession.`in`.first()
+            legSession.`in`.firstOrNull()
         }
 
-        if (mediaSession.duration == 0) {
+        if (mediaSession == null || mediaSession.duration == 0) {
             return
         }
 
