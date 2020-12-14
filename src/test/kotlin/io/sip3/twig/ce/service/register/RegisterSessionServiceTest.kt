@@ -24,9 +24,7 @@ import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
-import org.mockito.BDDMockito.given
-import org.mockito.BDDMockito.only
-import org.mockito.BDDMockito.reset
+import org.mockito.BDDMockito.*
 import org.mockito.Mockito.verify
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -47,9 +45,9 @@ class RegisterSessionServiceTest {
         // Init
         given(client.find(any(), any(), any(), any(), any())).willReturn(Collections.emptyIterator())
         val request = SessionRequest(
-                createdAt = 1599729288822,
-                terminatedAt = 1599730288822,
-                callId = listOf("call-id-1", "call-id-2")
+            createdAt = 1599729288822,
+            terminatedAt = 1599730288822,
+            callId = listOf("call-id-1", "call-id-2")
         )
 
         // Execute

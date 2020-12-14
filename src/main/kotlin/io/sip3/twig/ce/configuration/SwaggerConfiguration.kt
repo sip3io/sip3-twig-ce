@@ -45,32 +45,34 @@ open class SwaggerConfiguration {
     @Bean
     open fun docket(): Docket {
         return Docket(DocumentationType.SWAGGER_2)
-                .apiInfo(ApiInfoBuilder()
-                        .title("Twig API")
-                        .version(buildProperties?.version)
-                        .build())
-                .apply {
-                    if (securityEnabled) {
-                        securityContexts(mutableListOf<SecurityContext>().apply {
-                            val context = SecurityContext.builder()
-                                    .securityReferences(mutableListOf<SecurityReference>().apply {
-                                        val reference = SecurityReference("Authorization", arrayOfNulls<AuthorizationScope>(0))
-                                        add(reference)
-                                    })
-                                    .operationSelector { true }
-                                    .build()
-                            add(context)
-                        })
-                        securitySchemes(mutableListOf<SecurityScheme>().apply {
-                            val scheme = BasicAuth("Authorization")
-                            add(scheme)
-                        })
-                    }
+            .apiInfo(
+                ApiInfoBuilder()
+                    .title("Twig API")
+                    .version(buildProperties?.version)
+                    .build()
+            )
+            .apply {
+                if (securityEnabled) {
+                    securityContexts(mutableListOf<SecurityContext>().apply {
+                        val context = SecurityContext.builder()
+                            .securityReferences(mutableListOf<SecurityReference>().apply {
+                                val reference = SecurityReference("Authorization", arrayOfNulls<AuthorizationScope>(0))
+                                add(reference)
+                            })
+                            .operationSelector { true }
+                            .build()
+                        add(context)
+                    })
+                    securitySchemes(mutableListOf<SecurityScheme>().apply {
+                        val scheme = BasicAuth("Authorization")
+                        add(scheme)
+                    })
                 }
-                .select()
-                .apis(RequestHandlerSelectors.withClassAnnotation(RestController::class.java))
-                .paths(PathSelectors.any())
-                .build()
-                .useDefaultResponseMessages(false)
+            }
+            .select()
+            .apis(RequestHandlerSelectors.withClassAnnotation(RestController::class.java))
+            .paths(PathSelectors.any())
+            .build()
+            .useDefaultResponseMessages(false)
     }
 }

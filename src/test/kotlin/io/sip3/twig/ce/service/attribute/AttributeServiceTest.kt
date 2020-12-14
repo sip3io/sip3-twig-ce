@@ -55,9 +55,9 @@ class AttributeServiceTest {
         }
 
         given(mongoClient.listCollectionNames("attributes"))
-                .willReturn(collections)
+            .willReturn(collections)
         given(mongoClient.find(collections))
-                .willReturn(listOf(attribute1, attribute2).listIterator())
+            .willReturn(listOf(attribute1, attribute2).listIterator())
 
         var attributes = attributeService.list()
         assertEquals(2, attributes.size)

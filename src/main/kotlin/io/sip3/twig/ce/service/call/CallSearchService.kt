@@ -16,12 +16,7 @@
 
 package io.sip3.twig.ce.service.call
 
-import com.mongodb.client.model.Filters.`in`
-import com.mongodb.client.model.Filters.and
-import com.mongodb.client.model.Filters.eq
-import com.mongodb.client.model.Filters.gte
-import com.mongodb.client.model.Filters.lte
-import com.mongodb.client.model.Filters.or
+import com.mongodb.client.model.Filters.*
 import io.sip3.twig.ce.domain.SearchRequest
 import io.sip3.twig.ce.domain.SearchResponse
 import io.sip3.twig.ce.service.SearchService
@@ -43,9 +38,9 @@ open class CallSearchService : SearchService() {
     companion object {
 
         val CREATED_AT = compareBy<Document>(
-                { d -> d.getLong("created_at") },
-                { d -> d.getString("dst_addr") },
-                { d -> d.getString("call_id") }
+            { d -> d.getLong("created_at") },
+            { d -> d.getString("dst_addr") },
+            { d -> d.getString("call_id") }
         )
     }
 
@@ -107,20 +102,24 @@ open class CallSearchService : SearchService() {
 
             // Main filters
             query.split(" ")
-                    .filterNot { it.isBlank() }
-                    .filterNot { it.startsWith("sip.") }
-                    .map { filter(it) }
-                    .forEach { add(it) }
+                .filterNot { it.isBlank() }
+                .filterNot { it.startsWith("sip.") }
+                .map { filter(it) }
+                .forEach { add(it) }
         }
 
         val prefixes = mutableListOf<String>().apply {
-            if (query.contains("rtp.")) { add("rtpr_rtp_index") }
-            if (query.contains("rtcp.")) { add("rtpr_rtcp_index") }
+            if (query.contains("rtp.")) {
+                add("rtpr_rtp_index")
+            }
+            if (query.contains("rtcp.")) {
+                add("rtpr_rtcp_index")
+            }
         }
 
         return prefixes.map { mongoClient.find(it, Pair(createdAt, terminatedAt), and(filters)) }
-                .toTypedArray()
-                .let { IteratorUtil.merge(*it) }
+            .toTypedArray()
+            .let { IteratorUtil.merge(*it) }
     }
 
     private fun findInSipIndexBySearchRequest(createdAt: Long, terminatedAt: Long, query: String): Iterator<Document> {
@@ -131,13 +130,13 @@ open class CallSearchService : SearchService() {
 
             // Main filters
             query.split(" ")
-                    .asSequence()
-                    .filterNot { it.isBlank() }
-                    .filterNot { it.startsWith("rtp.") }
-                    .filterNot { it.startsWith("rtcp.") }
-                    .filterNot { it.startsWith("sip.method") }
-                    .map { filter(it) }
-                    .forEach { add(it) }
+                .asSequence()
+                .filterNot { it.isBlank() }
+                .filterNot { it.startsWith("rtp.") }
+                .filterNot { it.startsWith("rtcp.") }
+                .filterNot { it.startsWith("sip.method") }
+                .map { filter(it) }
+                .forEach { add(it) }
         }
 
         return mongoClient.find("sip_call_index", Pair(createdAt, terminatedAt), and(filters))
@@ -202,7 +201,7 @@ open class CallSearchService : SearchService() {
                 if (useXCorrelationHeader) {
                     findInSipIndexByCallIdsAndXCallIds().forEach { correlate(it) }
                 }
-            } else if (legs.size < maxLegs && legs.add(leg)){
+            } else if (legs.size < maxLegs && legs.add(leg)) {
                 findInSipIndexByCallIdsAndXCallIds().forEach { correlate(it) }
             }
         }
@@ -223,7 +222,8 @@ open class CallSearchService : SearchService() {
                 add(eq("callee", callee))
             }
 
-            return mongoClient.find("sip_call_index", Pair(createdAt - aggregationTimeout, createdAt + aggregationTimeout), and(filters)).asSequence().toList()
+            return mongoClient.find("sip_call_index", Pair(createdAt - aggregationTimeout, createdAt + aggregationTimeout), and(filters)).asSequence()
+                .toList()
         }
 
         private fun findInSipIndexByCallIdsAndXCallIds(): List<Document> {
@@ -240,11 +240,13 @@ open class CallSearchService : SearchService() {
 
                 // Main filters
                 if (xCallIds.isNotEmpty()) {
-                    add(or(
+                    add(
+                        or(
                             `in`("x_call_id", callIds),
                             `in`("call_id", xCallIds),
                             `in`("x_call_id", xCallIds)
-                    ))
+                        )
+                    )
                 } else {
                     add(`in`("x_call_id", callIds))
                 }
@@ -274,10 +276,10 @@ open class CallSearchService : SearchService() {
 
                 // Host filters
                 val filterBySrcHost = leg.getString("src_host")?.let { it == matchedLeg.getString("dst_host") }
-                        ?: (leg.getString("src_addr") == matchedLeg.getString("dst_addr"))
+                    ?: (leg.getString("src_addr") == matchedLeg.getString("dst_addr"))
 
                 val filterByDstHost = leg.getString("dst_host")?.let { it == matchedLeg.getString("src_host") }
-                        ?: (leg.getString("dst_addr") == matchedLeg.getString("src_addr"))
+                    ?: (leg.getString("dst_addr") == matchedLeg.getString("src_addr"))
 
                 // Combine and apply all the filters
                 return@filter filterByTime && (filterBySrcHost || filterByDstHost)

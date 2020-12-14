@@ -54,10 +54,10 @@ class AttributeControllerTest {
         }
 
         given(attributeService.list())
-                .willReturn(listOf(attribute1, attribute2))
+            .willReturn(listOf(attribute1, attribute2))
 
         mockMvc.perform(get("/attributes"))
-                .andExpect(status().isOk)
-                .andExpect(jsonPath("$", IsCollectionWithSize.hasSize<Any>(2)))
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$", IsCollectionWithSize.hasSize<Any>(2)))
     }
 }

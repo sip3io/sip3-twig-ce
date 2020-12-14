@@ -16,11 +16,7 @@
 
 package io.sip3.twig.ce.service
 
-import com.mongodb.client.model.Filters.eq
-import com.mongodb.client.model.Filters.gt
-import com.mongodb.client.model.Filters.lt
-import com.mongodb.client.model.Filters.ne
-import com.mongodb.client.model.Filters.regex
+import com.mongodb.client.model.Filters.*
 import io.sip3.commons.domain.Attribute
 import io.sip3.twig.ce.domain.SearchRequest
 import io.sip3.twig.ce.domain.SearchResponse
@@ -76,13 +72,13 @@ abstract class SearchService {
         val attribute = expression.substringBefore(delimiter)
 
         val type = attributeService.list()
-                .firstOrNull { it.name == attribute }
-                ?.type
+            .firstOrNull { it.name == attribute }
+            ?.type
 
         val name = attribute.substringAfter("sip.")
-                .substringAfter("ip.")
-                .substringAfter("rtp.")
-                .substringAfter("rtcp.")
+            .substringAfter("ip.")
+            .substringAfter("rtp.")
+            .substringAfter("rtcp.")
 
         val value = expression.substringAfter(delimiter)
 

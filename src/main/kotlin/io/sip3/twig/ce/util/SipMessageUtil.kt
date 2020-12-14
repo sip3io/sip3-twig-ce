@@ -21,20 +21,20 @@ import gov.nist.javax.sip.message.SIPRequest
 
 fun SIPMessage.requestUri(): String? {
     return (this as? SIPRequest)?.requestLine
-            ?.uri
-            ?.toString()
+        ?.uri
+        ?.toString()
 }
 
 fun SIPMessage.fromUri(): String? {
     return from?.address
-            ?.uri
-            ?.toString()
+        ?.uri
+        ?.toString()
 }
 
 fun SIPMessage.toUri(): String? {
     return to?.address
-            ?.uri
-            ?.toString()
+        ?.uri
+        ?.toString()
 }
 
 fun SIPMessage.method(): String? {

@@ -25,7 +25,8 @@ class ReportUtilTest {
 
     companion object {
 
-        val RTPR_RAW = Document.parse("""
+        val RTPR_RAW = Document.parse(
+            """
             {
                 "duration" : 5120,
                 "packets" : {
@@ -43,7 +44,8 @@ class ReportUtilTest {
                 "mos" : 3.94396066665649,
                 "fraction_lost" : 0.0078125
             }
-        """.trimIndent())
+        """.trimIndent()
+        )
     }
 
     @Test

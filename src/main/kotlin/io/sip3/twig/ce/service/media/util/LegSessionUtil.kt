@@ -47,11 +47,13 @@ object LegSessionUtil {
         val (out, `in`) = documents.partition { generatePartyId(it) == outPartyId }
 
         // Define timestamps
-        val legCreatedAt =  min(out.first().getLong("started_at"),
-                `in`.firstOrNull()?.getLong("started_at") ?: Long.MAX_VALUE)
+        val legCreatedAt = min(
+            out.first().getLong("started_at"),
+            `in`.firstOrNull()?.getLong("started_at") ?: Long.MAX_VALUE
+        )
 
         val legTerminatedAt = max(out.last().getLong("started_at") + out.last().getInteger("duration"),
-                `in`.lastOrNull()?.let { it.getLong("started_at") + it.getInteger("duration") } ?: 0)
+            `in`.lastOrNull()?.let { it.getLong("started_at") + it.getInteger("duration") } ?: 0)
 
 
         return LegSession().apply {

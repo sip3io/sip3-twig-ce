@@ -23,17 +23,10 @@ import io.sip3.twig.ce.mongo.MongoClient
 import io.sip3.twig.ce.service.attribute.AttributeService
 import org.bson.Document
 import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertFalse
-import org.junit.jupiter.api.Assertions.assertNull
-import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
-import org.mockito.BDDMockito.`when`
-import org.mockito.BDDMockito.given
-import org.mockito.BDDMockito.reset
-import org.mockito.BDDMockito.times
-import org.mockito.BDDMockito.verify
+import org.mockito.BDDMockito.*
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.mock.mockito.MockBean
@@ -45,24 +38,24 @@ class CallSearchServiceTest {
     companion object {
 
         val ATTRIBUTES = listOf(
-                Attribute().apply {
-                    name = "sip.callee"
-                    type = Attribute.TYPE_STRING
-                    options = mutableSetOf()
-                },
-                Attribute().apply {
-                    name = "sip.call_id"
-                    type = Attribute.TYPE_STRING
-                    options = mutableSetOf()
-                },
-                Attribute().apply {
-                    name = "rtp.mos"
-                    type = Attribute.TYPE_NUMBER
-                },
-                Attribute().apply {
-                    name = "rtcp.mos"
-                    type = Attribute.TYPE_NUMBER
-                }
+            Attribute().apply {
+                name = "sip.callee"
+                type = Attribute.TYPE_STRING
+                options = mutableSetOf()
+            },
+            Attribute().apply {
+                name = "sip.call_id"
+                type = Attribute.TYPE_STRING
+                options = mutableSetOf()
+            },
+            Attribute().apply {
+                name = "rtp.mos"
+                type = Attribute.TYPE_NUMBER
+            },
+            Attribute().apply {
+                name = "rtcp.mos"
+                type = Attribute.TYPE_NUMBER
+            }
         )
 
         val NOW = System.currentTimeMillis()
@@ -196,16 +189,16 @@ class CallSearchServiceTest {
         // Init
         given(attributeService.list()).willReturn(ATTRIBUTES)
         `when`(client.find(any(), any(), any(), any(), any()))
-                // Search by SearchRequest
-                .thenReturn(sequenceOf(LEG_1).iterator())
-                // Search by callee and caller for `LEG_2`
-                .thenReturn(sequenceOf(LEG_2).iterator())
-                // Search by x-call-id for `LEG_1`
-                .thenReturn(sequenceOf(LEG_3).iterator())
-                // Search by callee and caller for `LEG_3`
-                .thenReturn(sequenceOf(LEG_1).iterator())
-                // Search by x-call-id for `LEG_3`
-                .thenReturn(Collections.emptyIterator())
+            // Search by SearchRequest
+            .thenReturn(sequenceOf(LEG_1).iterator())
+            // Search by callee and caller for `LEG_2`
+            .thenReturn(sequenceOf(LEG_2).iterator())
+            // Search by x-call-id for `LEG_1`
+            .thenReturn(sequenceOf(LEG_3).iterator())
+            // Search by callee and caller for `LEG_3`
+            .thenReturn(sequenceOf(LEG_1).iterator())
+            // Search by x-call-id for `LEG_3`
+            .thenReturn(Collections.emptyIterator())
 
         val request = SearchRequest(NOW, NOW + 80000, "sip.callee=222", 50)
 
@@ -235,14 +228,14 @@ class CallSearchServiceTest {
         // Init
         given(attributeService.list()).willReturn(ATTRIBUTES)
         `when`(client.find(any(), any(), any(), any(), any()))
-                // Search by SearchRequest
-                .thenReturn(sequenceOf(RTPR_1).iterator())
-                // Search by callId SearchRequest
-                .thenReturn(sequenceOf(LEG_1).iterator())
-                // Search by callee and caller for `LEG_1`
-                .thenReturn(Collections.emptyIterator())
-                // Search by x-call-id for `LEG_1`
-                .thenReturn(Collections.emptyIterator())
+            // Search by SearchRequest
+            .thenReturn(sequenceOf(RTPR_1).iterator())
+            // Search by callId SearchRequest
+            .thenReturn(sequenceOf(LEG_1).iterator())
+            // Search by callee and caller for `LEG_1`
+            .thenReturn(Collections.emptyIterator())
+            // Search by x-call-id for `LEG_1`
+            .thenReturn(Collections.emptyIterator())
 
         val request = SearchRequest(NOW, NOW + 80000, "rtp.mos>3", 50)
 
@@ -271,14 +264,14 @@ class CallSearchServiceTest {
         // Init
         given(attributeService.list()).willReturn(ATTRIBUTES)
         `when`(client.find(any(), any(), any(), any(), any()))
-                // Search by SearchRequest
-                .thenReturn(sequenceOf(RTPR_1).iterator())
-                // Search by callId SearchRequest
-                .thenReturn(sequenceOf(LEG_1).iterator())
-                // Search by callee and caller for `LEG_1`
-                .thenReturn(Collections.emptyIterator())
-                // Search by x-call-id for `LEG_1`
-                .thenReturn(Collections.emptyIterator())
+            // Search by SearchRequest
+            .thenReturn(sequenceOf(RTPR_1).iterator())
+            // Search by callId SearchRequest
+            .thenReturn(sequenceOf(LEG_1).iterator())
+            // Search by callee and caller for `LEG_1`
+            .thenReturn(Collections.emptyIterator())
+            // Search by x-call-id for `LEG_1`
+            .thenReturn(Collections.emptyIterator())
 
         val request = SearchRequest(NOW, NOW + 80000, "rtcp.mos>3", 50)
 
@@ -309,22 +302,22 @@ class CallSearchServiceTest {
         fun `Correlate 2 calls`() {
             // Init
             `when`(client.find(any(), any(), any(), any(), any()))
-                    // Search by callee and caller for `LEG_1`
-                    .thenReturn(sequenceOf(LEG_1, LEG_2).iterator())
-                    // Search by x-call-id for `LEG_1`
-                    .thenReturn(sequenceOf(LEG_3).iterator())
-                    // Search by callee and caller for `LEG_3`
-                    .thenReturn(sequenceOf(LEG_1).iterator())
-                    // Search by x-call-id for `LEG_3`
-                    .thenReturn(Collections.emptyIterator())
-                    // Search by callee and caller for `LEG_5`
-                    .thenReturn(Collections.emptyIterator())
-                    // Search by x-call-id for `LEG_5`
-                    .thenReturn(sequenceOf(LEG_6).iterator())
-                    // Search by callee and caller for `LEG_6`
-                    .thenReturn(Collections.emptyIterator())
-                    // Search by x-call-id for `LEG_6`
-                    .thenReturn(Collections.emptyIterator())
+                // Search by callee and caller for `LEG_1`
+                .thenReturn(sequenceOf(LEG_1, LEG_2).iterator())
+                // Search by x-call-id for `LEG_1`
+                .thenReturn(sequenceOf(LEG_3).iterator())
+                // Search by callee and caller for `LEG_3`
+                .thenReturn(sequenceOf(LEG_1).iterator())
+                // Search by x-call-id for `LEG_3`
+                .thenReturn(Collections.emptyIterator())
+                // Search by callee and caller for `LEG_5`
+                .thenReturn(Collections.emptyIterator())
+                // Search by x-call-id for `LEG_5`
+                .thenReturn(sequenceOf(LEG_6).iterator())
+                // Search by callee and caller for `LEG_6`
+                .thenReturn(Collections.emptyIterator())
+                // Search by x-call-id for `LEG_6`
+                .thenReturn(Collections.emptyIterator())
 
             // Execute
             val searchIterator = service.SearchIterator(NOW, sequenceOf(LEG_1, LEG_5).iterator())
@@ -371,10 +364,10 @@ class CallSearchServiceTest {
         fun `Correlate 2 legs by x-call-id`() {
             // Init
             `when`(client.find(any(), any(), any(), any(), any()))
-                    // Search by callee and caller return empty iterator
-                    .thenReturn(Collections.emptyIterator())
-                    // Search by x-call-id for `LEG_1`
-                    .thenReturn(sequenceOf(LEG_1, LEG_3).iterator())
+                // Search by callee and caller return empty iterator
+                .thenReturn(Collections.emptyIterator())
+                // Search by x-call-id for `LEG_1`
+                .thenReturn(sequenceOf(LEG_1, LEG_3).iterator())
 
             // Execute
             val correlatedCall = service.CorrelatedCall()
@@ -390,14 +383,14 @@ class CallSearchServiceTest {
         fun `Correlate 3 legs`() {
             // Init
             `when`(client.find(any(), any(), any(), any(), any()))
-                    // Search by callee and caller for `LEG_1`
-                    .thenReturn(sequenceOf(LEG_1, LEG_2).iterator())
-                    // Search by x-call-id for `LEG_1`
-                    .thenReturn(sequenceOf(LEG_3).iterator())
-                    // Search by callee and caller for `LEG_3`
-                    .thenReturn(sequenceOf(LEG_3).iterator())
-                    // Search by x-call-id for `LEG_3`
-                    .thenReturn(Collections.emptyIterator())
+                // Search by callee and caller for `LEG_1`
+                .thenReturn(sequenceOf(LEG_1, LEG_2).iterator())
+                // Search by x-call-id for `LEG_1`
+                .thenReturn(sequenceOf(LEG_3).iterator())
+                // Search by callee and caller for `LEG_3`
+                .thenReturn(sequenceOf(LEG_3).iterator())
+                // Search by x-call-id for `LEG_3`
+                .thenReturn(Collections.emptyIterator())
 
             // Execute
             val correlatedCall = service.CorrelatedCall()

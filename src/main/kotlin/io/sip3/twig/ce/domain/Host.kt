@@ -27,32 +27,32 @@ import javax.validation.constraints.NotNull
 @Document(collection = "hosts")
 data class Host(
 
-        @JsonIgnore
-        @Id
-        val id: String?,
+    @JsonIgnore
+    @Id
+    val id: String?,
 
-        @ApiModelProperty(
-                position = 0,
-                required = true,
-                notes = "Host name",
-                example = "sip.sbc.example.com"
-        )
-        @NotNull
-        var name: String,
+    @ApiModelProperty(
+        position = 0,
+        required = true,
+        notes = "Host name",
+        example = "sip.sbc.example.com"
+    )
+    @NotNull
+    var name: String,
 
-        @ApiModelProperty(
-                position = 1,
-                required = false,
-                notes = "SIP network IP addresses",
-                example = "[\"192.168.10.10\", \"192.168.10.11:5061\", \"192.168.10.0/24\"]"
-        )
-        var sip: List<String>?,
+    @ApiModelProperty(
+        position = 1,
+        required = false,
+        notes = "SIP network IP addresses",
+        example = "[\"192.168.10.10\", \"192.168.10.11:5061\", \"192.168.10.0/24\"]"
+    )
+    var sip: List<String>?,
 
-        @ApiModelProperty(
-                position = 2,
-                required = false,
-                notes = "RTP network IP addresses",
-                example = "[\"192.168.10.10\", \"192.168.10.11:32766\", \"192.168.10.0/24\"]"
-        )
-        var media: List<String>?
+    @ApiModelProperty(
+        position = 2,
+        required = false,
+        notes = "RTP network IP addresses",
+        example = "[\"192.168.10.10\", \"192.168.10.11:32766\", \"192.168.10.0/24\"]"
+    )
+    var media: List<String>?
 )

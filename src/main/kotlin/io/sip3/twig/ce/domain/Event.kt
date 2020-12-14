@@ -22,43 +22,43 @@ import io.swagger.annotations.ApiModelProperty
 @ApiModel(value = "Event")
 data class Event(
 
-        @ApiModelProperty(
-                position = 0,
-                required = true,
-                notes = "Event timestamp",
-                example = "1581383715357"
-        )
-        val timestamp: Long,
+    @ApiModelProperty(
+        position = 0,
+        required = true,
+        notes = "Event timestamp",
+        example = "1581383715357"
+    )
+    val timestamp: Long,
 
-        @ApiModelProperty(
-                position = 1,
-                required = true,
-                notes = "Source of event",
-                example = "192.168.10.5"
-        )
-        val src: String,
+    @ApiModelProperty(
+        position = 1,
+        required = true,
+        notes = "Source of event",
+        example = "192.168.10.5"
+    )
+    val src: String,
 
-        @ApiModelProperty(
-                position = 2,
-                required = true,
-                notes = "Destination for event",
-                example = "PBX"
-        )
-        val dst: String,
+    @ApiModelProperty(
+        position = 2,
+        required = true,
+        notes = "Destination for event",
+        example = "PBX"
+    )
+    val dst: String,
 
-        @ApiModelProperty(
-                position = 3,
-                required = true,
-                notes = "Type of Event",
-                example = "SIP",
-                allowableValues = "SIP, RTPR"
-        )
-        val type: String,
+    @ApiModelProperty(
+        position = 3,
+        required = true,
+        notes = "Type of Event",
+        example = "SIP",
+        allowableValues = "SIP, RTPR"
+    )
+    val type: String,
 
-        @ApiModelProperty(
-                position = 4,
-                required = true,
-                notes = "Event details"
-        )
-        val details: Any
+    @ApiModelProperty(
+        position = 4,
+        required = true,
+        notes = "Event details"
+    )
+    val details: Any
 )

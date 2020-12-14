@@ -8,7 +8,7 @@ spring:
 
   autoconfigure:
     exclude:
-     - org.springframework.boot.autoconfigure.mongo.embedded.EmbeddedMongoAutoConfiguration
+      - org.springframework.boot.autoconfigure.mongo.embedded.EmbeddedMongoAutoConfiguration
 
 #! Mongo
 mongo:

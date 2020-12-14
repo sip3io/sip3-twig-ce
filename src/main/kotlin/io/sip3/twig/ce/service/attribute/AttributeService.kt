@@ -45,7 +45,7 @@ open class AttributeService(private val mongoClient: MongoClient) {
                     if (attribute.options == null) {
                         attribute.options = mutableSetOf()
                     }
-                    
+
                     @Suppress("UNCHECKED_CAST")
                     attribute.options!!.addAll(options as List<String>)
                 }

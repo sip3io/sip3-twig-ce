@@ -27,7 +27,8 @@ class SipMessageUtilTest {
         StringMsgParser.setComputeContentLengthFromMessage(true)
     }
 
-    val request = StringMsgParser().parseSIPMessage("""
+    val request = StringMsgParser().parseSIPMessage(
+        """
         INVITE sip:000155917690@ss63.invite.demo.sip3.io:5060 SIP/2.0
         Via: SIP/2.0/UDP 10.177.131.211:6333;branch=z9hG4bKmqffet30b03pp5mv5jj0.1
         From: <sip:000260971282@demo.sip3.io>;tag=82-2zyzysoabqjb3
@@ -56,9 +57,11 @@ class SipMessageUtilTest {
         a=sendrecv
         a=ptime:20
 
-    """.trimIndent().toByteArray(), true, false, null)
+    """.trimIndent().toByteArray(), true, false, null
+    )
 
-    val response = StringMsgParser().parseSIPMessage("""
+    val response = StringMsgParser().parseSIPMessage(
+        """
         SIP/2.0 183 Session Progress
         Supported: 100rel,precondition,timer
         Content-Type: application/sdp
@@ -83,7 +86,8 @@ class SipMessageUtilTest {
         a=ptime:20
         a=maxptime:20
 
-    """.trimIndent().toByteArray(), true, false, null)
+    """.trimIndent().toByteArray(), true, false, null
+    )
 
     @Test
     fun `check requestUri() method`() {

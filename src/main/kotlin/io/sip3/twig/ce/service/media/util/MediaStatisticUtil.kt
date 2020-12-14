@@ -76,7 +76,7 @@ object MediaStatisticUtil {
                     reportJitter.getDouble("min")
                 }
                 max = max(max, reportJitter.getDouble("max"))
-                avg = avg * firstFraction  + reportJitter.getDouble("avg") * secondFraction
+                avg = avg * firstFraction + reportJitter.getDouble("avg") * secondFraction
             }
 
             duration += reportDuration

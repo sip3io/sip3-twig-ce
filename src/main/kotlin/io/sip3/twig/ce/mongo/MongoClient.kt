@@ -31,11 +31,13 @@ import java.util.*
 import java.util.concurrent.TimeUnit
 
 @Component
-open class MongoClient(@Value("\${time-suffix}") suffix: String,
-                       @Value("\${mongo.uri}") uri: String,
-                       @Value("\${mongo.db}") private val db: String,
-                       @Value("\${mongo.max-execution-time}") private val maxExecutionTime: Long,
-                       @Value("\${mongo.batch-size}") private val batchSize: Int) {
+open class MongoClient(
+    @Value("\${time-suffix}") suffix: String,
+    @Value("\${mongo.uri}") uri: String,
+    @Value("\${mongo.db}") private val db: String,
+    @Value("\${mongo.max-execution-time}") private val maxExecutionTime: Long,
+    @Value("\${mongo.batch-size}") private val batchSize: Int
+) {
 
     private val logger = KotlinLogging.logger {}
 
@@ -59,16 +61,16 @@ open class MongoClient(@Value("\${time-suffix}") suffix: String,
 
                 if (collectionNames.hasNext()) {
                     cursor = client.getDatabase(db)
-                            .getCollection(collectionNames.next())
-                            .run {
-                                filter?.let { find(filter) } ?: find()
-                            }
-                            .apply {
-                                maxTime(maxExecutionTime, TimeUnit.MILLISECONDS)
-                                batchSize(limit ?: batchSize)
-                                sort?.let { sort(it) }
-                            }
-                            .iterator()
+                        .getCollection(collectionNames.next())
+                        .run {
+                            filter?.let { find(filter) } ?: find()
+                        }
+                        .apply {
+                            maxTime(maxExecutionTime, TimeUnit.MILLISECONDS)
+                            batchSize(limit ?: batchSize)
+                            sort?.let { sort(it) }
+                        }
+                        .iterator()
 
                     return hasNext()
                 }
@@ -85,16 +87,16 @@ open class MongoClient(@Value("\${time-suffix}") suffix: String,
 
     open fun listCollectionNames(prefix: String, timeRange: Pair<Long, Long>): List<String> {
         return listCollectionNames(prefix).asSequence()
-                .filter { name -> "${prefix}_${suffix.format(timeRange.first)}" <= name }
-                .filter { name -> "${prefix}_${suffix.format(timeRange.second)}" >= name }
-                .toList()
+            .filter { name -> "${prefix}_${suffix.format(timeRange.first)}" <= name }
+            .filter { name -> "${prefix}_${suffix.format(timeRange.second)}" >= name }
+            .toList()
     }
 
     @Cacheable(value = ["listCollectionNames"], key = "#prefix")
     open fun listCollectionNames(prefix: String): List<String> {
         return client.getDatabase(db).listCollectionNames().asSequence()
-                .filter { name -> name.startsWith(prefix) }
-                .sorted()
-                .toList()
+            .filter { name -> name.startsWith(prefix) }
+            .sorted()
+            .toList()
     }
 }

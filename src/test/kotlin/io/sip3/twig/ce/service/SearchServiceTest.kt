@@ -37,19 +37,19 @@ class SearchServiceTest {
     companion object {
 
         val ATTRIBUTES = listOf(
-                Attribute().apply {
-                    name = "sip.boolean"
-                    type = Attribute.TYPE_BOOLEAN
-                },
-                Attribute().apply {
-                    name = "sip.number"
-                    type = Attribute.TYPE_NUMBER
-                },
-                Attribute().apply {
-                    name = "sip.string"
-                    type = Attribute.TYPE_STRING
-                    options = mutableSetOf("string1", "string2")
-                }
+            Attribute().apply {
+                name = "sip.boolean"
+                type = Attribute.TYPE_BOOLEAN
+            },
+            Attribute().apply {
+                name = "sip.number"
+                type = Attribute.TYPE_NUMBER
+            },
+            Attribute().apply {
+                name = "sip.string"
+                type = Attribute.TYPE_STRING
+                options = mutableSetOf("string1", "string2")
+            }
         )
     }
 

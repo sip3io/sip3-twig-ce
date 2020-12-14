@@ -16,11 +16,7 @@
 
 package io.sip3.twig.ce.service.register
 
-import com.mongodb.client.model.Filters.and
-import com.mongodb.client.model.Filters.eq
-import com.mongodb.client.model.Filters.gte
-import com.mongodb.client.model.Filters.lte
-import com.mongodb.client.model.Filters.or
+import com.mongodb.client.model.Filters.*
 import io.sip3.twig.ce.domain.SearchRequest
 import io.sip3.twig.ce.domain.SearchResponse
 import io.sip3.twig.ce.service.SearchService
@@ -39,8 +35,8 @@ open class RegisterSearchService : SearchService() {
     companion object {
 
         val CREATED_AT = compareBy<Document>(
-                { d -> d.getLong("created_at") },
-                { d -> d.getString("dst_addr") }
+            { d -> d.getLong("created_at") },
+            { d -> d.getString("dst_addr") }
         )
     }
 
@@ -57,32 +53,32 @@ open class RegisterSearchService : SearchService() {
         val processed = mutableSetOf<Document>()
 
         return findInSipIndexBySearchRequest(request).asSequence()
-                .filterNot { processed.contains(it) }
-                .map { leg ->
-                    return@map CorrelatedRegistration().apply {
-                        correlate(leg, processed)
-                        processed.addAll(legs)
-                    }
+            .filterNot { processed.contains(it) }
+            .map { leg ->
+                return@map CorrelatedRegistration().apply {
+                    correlate(leg, processed)
+                    processed.addAll(legs)
                 }
-                .map { correlatedRegistration ->
-                    return@map SearchResponse().apply {
-                        val firstLeg = correlatedRegistration.legs.firstOrNull {
-                            it.getString("src_host") == null
-                        } ?: correlatedRegistration.legs.first()
+            }
+            .map { correlatedRegistration ->
+                return@map SearchResponse().apply {
+                    val firstLeg = correlatedRegistration.legs.firstOrNull {
+                        it.getString("src_host") == null
+                    } ?: correlatedRegistration.legs.first()
 
-                        this.createdAt = firstLeg.getLong("created_at")
-                        this.terminatedAt = firstLeg.getLong("terminated_at")
+                    this.createdAt = firstLeg.getLong("created_at")
+                    this.terminatedAt = firstLeg.getLong("terminated_at")
 
-                        method = "REGISTER"
-                        state = firstLeg.getString("state")
-                        caller = firstLeg.getString("caller")
-                        callee = firstLeg.getString("callee")
-                        callId = correlatedRegistration.legs.map { leg -> leg.getString("call_id") }.toSet()
+                    method = "REGISTER"
+                    state = firstLeg.getString("state")
+                    caller = firstLeg.getString("caller")
+                    callee = firstLeg.getString("callee")
+                    callId = correlatedRegistration.legs.map { leg -> leg.getString("call_id") }.toSet()
 
-                        firstLeg.getString("error_code")?.let { errorCode = it }
-                    }
+                    firstLeg.getString("error_code")?.let { errorCode = it }
                 }
-                .iterator()
+            }
+            .iterator()
     }
 
     private fun findInSipIndexBySearchRequest(request: SearchRequest): Iterator<Document> {
@@ -94,13 +90,13 @@ open class RegisterSearchService : SearchService() {
 
                 // Main filters
                 query.split(" ")
-                        .asSequence()
-                        .filterNot { it.isBlank() }
-                        .filterNot { it.startsWith("rtp.") }
-                        .filterNot { it.startsWith("sip.method") }
-                        .map { filter(it) }
-                        .toList()
-                        .forEach { add(it) }
+                    .asSequence()
+                    .filterNot { it.isBlank() }
+                    .filterNot { it.startsWith("rtp.") }
+                    .filterNot { it.startsWith("sip.method") }
+                    .map { filter(it) }
+                    .toList()
+                    .forEach { add(it) }
             }
 
             return mongoClient.find("sip_register_index", Pair(createdAt - durationTimeout, terminatedAt), and(filters), limit = limit)
@@ -113,8 +109,8 @@ open class RegisterSearchService : SearchService() {
 
         fun correlate(leg: Document, processed: MutableSet<Document>) {
             val matchedLegs = findInSipIndexByDocument(leg).asSequence()
-                    .filterNot { processed.contains(it) }
-                    .toList()
+                .filterNot { processed.contains(it) }
+                .toList()
 
             correlate(leg, matchedLegs)
         }
@@ -138,8 +134,8 @@ open class RegisterSearchService : SearchService() {
                 add(eq("caller", leg.getString("caller")))
                 add(eq("callee", leg.getString("callee")))
                 add(or(
-                        leg.getString("src_host")?.let { eq("dst_host", it) } ?: eq("dst_addr", leg.getString("src_addr")),
-                        leg.getString("dst_host")?.let { eq("src_host", it) } ?: eq("src_addr", leg.getString("dst_addr"))
+                    leg.getString("src_host")?.let { eq("dst_host", it) } ?: eq("dst_addr", leg.getString("src_addr")),
+                    leg.getString("dst_host")?.let { eq("src_host", it) } ?: eq("src_addr", leg.getString("dst_addr"))
                 ))
             }
 
@@ -150,12 +146,12 @@ open class RegisterSearchService : SearchService() {
             // Exclude leg correlation for `registered` state with time intersection
             if (leg.getString("state") == "registered") {
                 if (legs.any { correlatedLeg ->
-                            correlatedLeg.getString("state") == "registered"
-                                    && correlatedLeg.getString("src_addr") == leg.getString("src_addr")
-                                    && correlatedLeg.getString("dst_addr") == leg.getString("dst_addr")
-                                    && correlatedLeg.getLong("terminated_at") >= leg.getLong("created_at")
-                                    && correlatedLeg.getLong("created_at") <= leg.getLong("terminated_at")
-                        }) {
+                        correlatedLeg.getString("state") == "registered"
+                                && correlatedLeg.getString("src_addr") == leg.getString("src_addr")
+                                && correlatedLeg.getString("dst_addr") == leg.getString("dst_addr")
+                                && correlatedLeg.getLong("terminated_at") >= leg.getLong("created_at")
+                                && correlatedLeg.getLong("created_at") <= leg.getLong("terminated_at")
+                    }) {
                     return
                 }
             }
@@ -177,10 +173,10 @@ open class RegisterSearchService : SearchService() {
 
                 // Host filters
                 val filterBySrcHost = leg.getString("src_host")?.let { it == matchedLeg.getString("dst_host") }
-                        ?: (leg.getString("src_addr") == matchedLeg.getString("dst_addr"))
+                    ?: (leg.getString("src_addr") == matchedLeg.getString("dst_addr"))
 
                 val filterByDstHost = leg.getString("dst_host")?.let { it == matchedLeg.getString("src_host") }
-                        ?: (leg.getString("dst_addr") == matchedLeg.getString("src_addr"))
+                    ?: (leg.getString("dst_addr") == matchedLeg.getString("src_addr"))
 
                 // Combine and apply all filters
                 return@filter filterByTime && (filterBySrcHost || filterByDstHost)

@@ -34,7 +34,7 @@ import org.springframework.web.bind.annotation.RestController
 import javax.validation.Valid
 
 @Api(
-        tags = ["Search API"]
+    tags = ["Search API"]
 )
 @RestController
 @RequestMapping("/search")
@@ -54,36 +54,38 @@ class SearchController {
     private lateinit var serviceLocator: ServiceLocator
 
     @ApiOperation(
-            position = 0,
-            value = "Search sessions",
-            produces = "application/json"
+        position = 0,
+        value = "Search sessions",
+        produces = "application/json"
     )
-    @ApiResponses(value = [
-        ApiResponse(code = 200, message = "Returns search results"),
-        ApiResponse(code = 400, message = "Bad request"),
-        ApiResponse(code = 500, message = "InternalServerError"),
-        ApiResponse(code = 504, message = "ConnectionTimeoutError")
-    ])
+    @ApiResponses(
+        value = [
+            ApiResponse(code = 200, message = "Returns search results"),
+            ApiResponse(code = 400, message = "Bad request"),
+            ApiResponse(code = 500, message = "InternalServerError"),
+            ApiResponse(code = 504, message = "ConnectionTimeoutError")
+        ]
+    )
     @PostMapping
     fun search(@Valid @RequestBody request: SearchRequest): List<SearchResponse> {
         val query = request.query
-                .replace(SIP_METHOD_INVITE, Strings.EMPTY)
+            .replace(SIP_METHOD_INVITE, Strings.EMPTY)
 
         if (EXCLUSIVE_ATTRIBUTES.count { query.contains(it) } > 1) {
             throw UnsupportedOperationException("Complex search by `sip.`, `rtp.`, `rtcp.` filters is not supported.")
         }
 
         val searches = SIP_METHOD_REGEX.findAll(request.query)
-                .map { match -> match.groupValues[1] }
-                .mapNotNull { method -> serviceLocator.searchService(method) }
-                .ifEmpty { serviceLocator.searchServices().asSequence() }
-                .map { service -> service.search(request) }
-                .toList()
-                .toTypedArray()
+            .map { match -> match.groupValues[1] }
+            .mapNotNull { method -> serviceLocator.searchService(method) }
+            .ifEmpty { serviceLocator.searchServices().asSequence() }
+            .map { service -> service.search(request) }
+            .toList()
+            .toTypedArray()
 
         return IteratorUtil.merge(*searches)
-                .asSequence()
-                .take(request.limit ?: defaultLimit)
-                .toList()
+            .asSequence()
+            .take(request.limit ?: defaultLimit)
+            .toList()
     }
 }

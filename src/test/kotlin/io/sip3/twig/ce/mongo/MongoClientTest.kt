@@ -62,12 +62,16 @@ class MongoClientTest {
         @JvmStatic
         fun beforeAll() {
             MongoClients.create(MONGO_URI).getDatabase("sip3-test").apply {
-                getCollection("test_20200802").insertMany(mutableListOf(
+                getCollection("test_20200802").insertMany(
+                    mutableListOf(
                         DOCUMENT_1, DOCUMENT_2
-                ))
-                getCollection("test_20200803").insertMany(mutableListOf(
+                    )
+                )
+                getCollection("test_20200803").insertMany(
+                    mutableListOf(
                         DOCUMENT_3, DOCUMENT_4, DOCUMENT_5
-                ))
+                    )
+                )
             }
         }
     }
