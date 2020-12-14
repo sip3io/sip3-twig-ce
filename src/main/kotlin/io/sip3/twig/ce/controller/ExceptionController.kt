@@ -40,34 +40,34 @@ class ExceptionController {
 
         return when (e) {
             is HttpMessageNotReadableException -> ResponseEntity.badRequest()
-                    .body("HttpMessageNotReadableError: Check your HTTP request.")
+                .body("HttpMessageNotReadableError: Check your HTTP request.")
 
             is IllegalArgumentException -> ResponseEntity.badRequest()
-                    .body("IllegalArgumentError: Check `${e.message}` parameter.")
+                .body("IllegalArgumentError: Check `${e.message}` parameter.")
 
             is IllegalStateException -> ResponseEntity.badRequest()
-                    .body("IllegalStateException: `${e.message}`.")
+                .body("IllegalStateException: `${e.message}`.")
 
             is EmptyResultDataAccessException -> ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body("DataAccessException: Entity not found")
+                .body("DataAccessException: Entity not found")
 
             is DuplicateKeyException -> ResponseEntity.status(HttpStatus.CONFLICT)
-                    .body("DuplicateKeyException: `${e.message}`.")
+                .body("DuplicateKeyException: `${e.message}`.")
 
             is UnsupportedOperationException -> ResponseEntity.badRequest()
-                    .body("UnsupportedOperationException: `${e.message}`.")
+                .body("UnsupportedOperationException: `${e.message}`.")
 
             is ValidationException -> ResponseEntity.badRequest()
-                    .body("ValidationException: `${e.message}`.")
+                .body("ValidationException: `${e.message}`.")
 
             is MethodArgumentNotValidException -> ResponseEntity.badRequest()
-                    .body("MethodArgumentNotValidException: Invalid input data")
+                .body("MethodArgumentNotValidException: Invalid input data")
 
             is MongoExecutionTimeoutException -> ResponseEntity.status(HttpStatus.GATEWAY_TIMEOUT)
-                    .body("GatewayTimeoutError: Try to repeat your request or adjust request params.")
+                .body("GatewayTimeoutError: Try to repeat your request or adjust request params.")
 
             else -> ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("InternalServerError: Try to check service logs and contact with Support team if needed")
+                .body("InternalServerError: Try to check service logs and contact with Support team if needed")
         }
     }
 }

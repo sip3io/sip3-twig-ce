@@ -22,27 +22,27 @@ import io.swagger.annotations.ApiModelProperty
 @ApiModel(value = "Participant")
 data class Participant(
 
-        @ApiModelProperty(
-                position = 0,
-                required = true,
-                notes = "Name",
-                example = "192.168.10.5"
-        )
-        val name: String,
+    @ApiModelProperty(
+        position = 0,
+        required = true,
+        notes = "Name",
+        example = "192.168.10.5"
+    )
+    val name: String,
 
-        @ApiModelProperty(
-                position = 1,
-                required = true,
-                notes = "Type of Participant",
-                example = "HOST",
-                allowableValues = "HOST"
-        )
-        val type: String,
+    @ApiModelProperty(
+        position = 1,
+        required = true,
+        notes = "Type of Participant",
+        example = "HOST",
+        allowableValues = "HOST"
+    )
+    val type: String,
 
-        @ApiModelProperty(
-                position = 2,
-                required = false,
-                notes = "Event details"
-        )
-        val details: Any?
+    @ApiModelProperty(
+        position = 2,
+        required = false,
+        notes = "Event details"
+    )
+    val details: Any?
 )

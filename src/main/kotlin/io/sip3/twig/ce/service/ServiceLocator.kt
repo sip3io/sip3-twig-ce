@@ -32,7 +32,7 @@ open class ServiceLocator {
         return searchServices.values
     }
 
-    open fun searchService(method: String) : SearchService {
+    open fun searchService(method: String): SearchService {
         return when (method) {
             "INVITE" -> searchServices["callSearchService"]
             "REGISTER" -> searchServices["registerSearchService"]
@@ -40,7 +40,7 @@ open class ServiceLocator {
         } ?: throw IllegalArgumentException("SearchService for `$method` not found.")
     }
 
-    open fun sessionService(method: String) : SessionService {
+    open fun sessionService(method: String): SessionService {
         return when (method) {
             "INVITE" -> sessionServices["callSessionService"]
             "REGISTER" -> sessionServices["registerSessionService"]

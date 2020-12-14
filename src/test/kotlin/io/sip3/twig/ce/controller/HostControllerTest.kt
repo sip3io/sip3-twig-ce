@@ -23,9 +23,7 @@ import org.hamcrest.Matchers.`is`
 import org.hamcrest.collection.IsCollectionWithSize
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
-import org.mockito.BDDMockito.given
-import org.mockito.BDDMockito.only
-import org.mockito.BDDMockito.verify
+import org.mockito.BDDMockito.*
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.boot.test.mock.mockito.MockBean
@@ -35,11 +33,7 @@ import org.springframework.http.MediaType
 import org.springframework.mock.web.MockMultipartFile
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.test.web.servlet.MockMvc
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers.print
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
@@ -64,13 +58,13 @@ class HostControllerTest {
     fun `Get all hosts`() {
         given(hostService.list()).willReturn(setOf(HOST_1, HOST_2))
         mockMvc.perform(get("/hosts"))
-                .andDo(print())
-                .andExpect(status().isOk)
-                .andExpect(jsonPath("$", IsCollectionWithSize.hasSize<Any>(2)))
-                .andExpect(jsonPath("$[0].id").doesNotExist())
-                .andExpect(jsonPath("$[0].name", `is`(HOST_1.name)))
-                .andExpect(jsonPath("$[0].sip", `is`(HOST_1.sip)))
-                .andExpect(jsonPath("$[0].media", `is`(HOST_1.media)))
+            .andDo(print())
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$", IsCollectionWithSize.hasSize<Any>(2)))
+            .andExpect(jsonPath("$[0].id").doesNotExist())
+            .andExpect(jsonPath("$[0].name", `is`(HOST_1.name)))
+            .andExpect(jsonPath("$[0].sip", `is`(HOST_1.sip)))
+            .andExpect(jsonPath("$[0].media", `is`(HOST_1.media)))
 
     }
 
@@ -79,9 +73,9 @@ class HostControllerTest {
         given(hostService.getByName("host1")).willReturn(HOST_1)
 
         mockMvc.perform(get("/hosts/host1"))
-                .andDo(print())
-                .andExpect(status().isOk)
-                .andExpect(jsonPath("$.name", `is`(HOST_1.name)))
+            .andDo(print())
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.name", `is`(HOST_1.name)))
     }
 
     @Test
@@ -89,7 +83,7 @@ class HostControllerTest {
         given(hostService.getByName("host3")).willThrow(EmptyResultDataAccessException(1))
 
         mockMvc.perform(get("/hosts/host3"))
-                    .andExpect(status().isNotFound())
+            .andExpect(status().isNotFound())
 
     }
 
@@ -97,63 +91,75 @@ class HostControllerTest {
     fun `Add valid host`() {
         given(hostService.create(any())).willReturn(HOST_2)
 
-        mockMvc.perform(post("/hosts")
+        mockMvc.perform(
+            post("/hosts")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("""{"name": "host2", "sip": ["10.10.10.0:5060"], "media": ["10.10.10.0/28", "10.0.0.1"]}"""))
-                .andExpect(status().isOk())
+                .content("""{"name": "host2", "sip": ["10.10.10.0:5060"], "media": ["10.10.10.0/28", "10.0.0.1"]}""")
+        )
+            .andExpect(status().isOk())
     }
 
     @Test
     fun `Add host with bad media address`() {
-        mockMvc.perform(post("/hosts")
+        mockMvc.perform(
+            post("/hosts")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("""{"name": "host2", "sip": ["10.10.10.0:5060"], "media": ["10.10.10.0/280", "10.0.0.1"]}"""))
-                .andExpect(status().isBadRequest)
+                .content("""{"name": "host2", "sip": ["10.10.10.0:5060"], "media": ["10.10.10.0/280", "10.0.0.1"]}""")
+        )
+            .andExpect(status().isBadRequest)
     }
 
     @Test
     fun `Add host already persisted`() {
         given(hostService.create(any())).willThrow(DuplicateKeyException(""))
 
-        mockMvc.perform(post("/hosts")
+        mockMvc.perform(
+            post("/hosts")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("""{"name": "host2", "sip": ["10.10.10.0:5060"], "media": ["10.10.10.0/28", "10.0.0.1"]}"""))
-                .andExpect(status().isConflict)
+                .content("""{"name": "host2", "sip": ["10.10.10.0:5060"], "media": ["10.10.10.0/28", "10.0.0.1"]}""")
+        )
+            .andExpect(status().isConflict)
     }
 
     @Test
     fun `Update valid host`() {
         given(hostService.create(any())).willReturn(HOST_2)
 
-        mockMvc.perform(put("/hosts")
+        mockMvc.perform(
+            put("/hosts")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("""{"name": "host2", "sip": ["10.10.10.0:5060"], "media": ["10.10.10.0/28", "10.0.0.1"]}"""))
-                .andExpect(status().isOk)
+                .content("""{"name": "host2", "sip": ["10.10.10.0:5060"], "media": ["10.10.10.0/28", "10.0.0.1"]}""")
+        )
+            .andExpect(status().isOk)
     }
 
     @Test
     fun `Update host with bad media address`() {
-        mockMvc.perform(put("/hosts")
+        mockMvc.perform(
+            put("/hosts")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("""{"name": "host2", "sip": ["10.10.10.0:5060"], "media": ["10.10.10.0/280", "10.0.0.1"]}"""))
-                .andExpect(status().isBadRequest)
+                .content("""{"name": "host2", "sip": ["10.10.10.0:5060"], "media": ["10.10.10.0/280", "10.0.0.1"]}""")
+        )
+            .andExpect(status().isBadRequest)
     }
 
     @Test
     fun `Update host not persisted yet`() {
         given(hostService.update(any())).willThrow(EmptyResultDataAccessException(1))
 
-        mockMvc.perform(put("/host/")
+        mockMvc.perform(
+            put("/host/")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("""{"name": "host2", "sip": ["10.10.10.0:5060"], "media": ["10.10.10.0/28", "10.0.0.1"]}"""))
-                .andExpect(status().isNotFound)
+                .content("""{"name": "host2", "sip": ["10.10.10.0:5060"], "media": ["10.10.10.0/28", "10.0.0.1"]}""")
+        )
+            .andExpect(status().isNotFound)
 
     }
 
     @Test
     fun `Delete persisted host by name`() {
         this.mockMvc.perform(delete("/hosts/host2"))
-                .andExpect(status().isOk)
+            .andExpect(status().isOk)
 
         verify(hostService, only()).deleteByName(any())
     }
@@ -163,15 +169,17 @@ class HostControllerTest {
         given(hostService.deleteByName(any())).willThrow(EmptyResultDataAccessException(1))
 
         this.mockMvc.perform(delete("/hosts/host2"))
-                .andExpect(status().isNotFound)
+            .andExpect(status().isNotFound)
     }
 
     @Test
     fun `Upload JSON file`() {
         HostControllerTest::class.java.getResourceAsStream("/json/correctHostList.json").use { fileStream ->
             val fileMock = MockMultipartFile("file", "hosts.json", null, fileStream)
-            mockMvc.perform(multipart("/hosts/import")
-                    .file(fileMock)).andExpect(status().isOk)
+            mockMvc.perform(
+                multipart("/hosts/import")
+                    .file(fileMock)
+            ).andExpect(status().isOk)
         }
 
         verify(hostService, only()).saveAll(any())
@@ -182,9 +190,11 @@ class HostControllerTest {
         HostControllerTest::class.java.getResourceAsStream("/json/incorrectAddressHostList.json").use { fileStream ->
             val fileMock = MockMultipartFile("file", "hosts.json", null, fileStream)
 
-            mockMvc.perform(multipart("/hosts/import")
-                    .file(fileMock))
-                    .andExpect(status().isBadRequest)
+            mockMvc.perform(
+                multipart("/hosts/import")
+                    .file(fileMock)
+            )
+                .andExpect(status().isBadRequest)
 
         }
     }
@@ -193,9 +203,11 @@ class HostControllerTest {
     fun `Upload JSON file with duplicate host`() {
         HostControllerTest::class.java.getResourceAsStream("/json/duplicatedHostList.json").use { fileStream ->
             val fileMock = MockMultipartFile("file", "hosts.json", null, fileStream)
-            mockMvc.perform(multipart("/hosts/import")
-                    .file(fileMock))
-                    .andExpect(status().isBadRequest)
+            mockMvc.perform(
+                multipart("/hosts/import")
+                    .file(fileMock)
+            )
+                .andExpect(status().isBadRequest)
         }
     }
 }

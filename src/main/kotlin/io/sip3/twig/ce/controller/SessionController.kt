@@ -38,7 +38,7 @@ import java.util.*
 import javax.servlet.http.HttpServletResponse
 
 @Api(
-        tags = ["Session API"]
+    tags = ["Session API"]
 )
 @RestController
 @RequestMapping("/session")
@@ -56,32 +56,36 @@ class SessionController {
     private lateinit var hostService: HostService
 
     @ApiOperation(
-            position = 0,
-            value = "List session details",
-            produces = "application/json"
+        position = 0,
+        value = "List session details",
+        produces = "application/json"
     )
-    @ApiResponses(value = [
-        ApiResponse(code = 200, message = "Returns session details"),
-        ApiResponse(code = 400, message = "Bad request"),
-        ApiResponse(code = 500, message = "InternalServerError"),
-        ApiResponse(code = 504, message = "ConnectionTimeoutError")
-    ])
+    @ApiResponses(
+        value = [
+            ApiResponse(code = 200, message = "Returns session details"),
+            ApiResponse(code = 400, message = "Bad request"),
+            ApiResponse(code = 500, message = "InternalServerError"),
+            ApiResponse(code = 504, message = "ConnectionTimeoutError")
+        ]
+    )
     @PostMapping("/details")
     fun details(@RequestBody req: SessionRequest): Any? {
         return getSessionService(req).details(req)
     }
 
     @ApiOperation(
-            position = 1,
-            value = "List session content",
-            produces = "application/json"
+        position = 1,
+        value = "List session content",
+        produces = "application/json"
     )
-    @ApiResponses(value = [
-        ApiResponse(code = 200, message = "Returns session messages and host list"),
-        ApiResponse(code = 400, message = "Bad request"),
-        ApiResponse(code = 500, message = "InternalServerError"),
-        ApiResponse(code = 504, message = "ConnectionTimeoutError")
-    ])
+    @ApiResponses(
+        value = [
+            ApiResponse(code = 200, message = "Returns session messages and host list"),
+            ApiResponse(code = 400, message = "Bad request"),
+            ApiResponse(code = 500, message = "InternalServerError"),
+            ApiResponse(code = 504, message = "ConnectionTimeoutError")
+        ]
+    )
     @PostMapping("/content")
     fun content(@RequestBody req: SessionRequest): Map<String, Any> {
         val messages = getSessionService(req).content(req)
@@ -93,35 +97,39 @@ class SessionController {
         }
 
         return mapOf(
-                "hosts" to hosts,
-                "messages" to messages
+            "hosts" to hosts,
+            "messages" to messages
         )
     }
 
     @ApiOperation(
-            position = 2,
-            value = "Build session flow",
-            produces = "application/json"
+        position = 2,
+        value = "Build session flow",
+        produces = "application/json"
     )
-    @ApiResponses(value = [
-        ApiResponse(code = 200, message = "Returns session events and participants info"),
-        ApiResponse(code = 400, message = "Bad request"),
-        ApiResponse(code = 500, message = "InternalServerError"),
-        ApiResponse(code = 504, message = "ConnectionTimeoutError")
-    ])
+    @ApiResponses(
+        value = [
+            ApiResponse(code = 200, message = "Returns session events and participants info"),
+            ApiResponse(code = 400, message = "Bad request"),
+            ApiResponse(code = 500, message = "InternalServerError"),
+            ApiResponse(code = 504, message = "ConnectionTimeoutError")
+        ]
+    )
     @PostMapping("/flow")
     fun flow(@RequestBody req: SessionRequest): Map<String, Any> {
         val events = mutableListOf<Event>()
 
         // Add SIP events
         getSessionService(req).content(req).map { message ->
-            events.add(Event(
+            events.add(
+                Event(
                     message.getLong("created_at"),
                     message.getString("src_host") ?: message.getString("src_addr"),
                     message.getString("dst_host") ?: message.getString("dst_addr"),
                     "SIP",
                     message
-            ))
+                )
+            )
         }
 
         // Add RTPR events only for calls
@@ -129,13 +137,15 @@ class SessionController {
             // Add RTPR events
             mediaSessionService.details(req).forEach { rtpr ->
                 rtpr.values.filterNotNull().minBy { it.createdAt }?.let { legSession ->
-                    events.add(Event(
+                    events.add(
+                        Event(
                             legSession.createdAt,
                             legSession.srcHost ?: legSession.srcAddr,
                             legSession.dstHost ?: legSession.dstAddr,
                             "RTPR",
                             rtpr
-                    ))
+                        )
+                    )
                 }
             }
         }
@@ -153,38 +163,42 @@ class SessionController {
 
         events.sortBy { it.timestamp }
         return mapOf(
-                "participants" to participants,
-                "events" to events
+            "participants" to participants,
+            "events" to events
         )
     }
 
     @ApiOperation(
-            position = 3,
-            value = "Get media session statistics",
-            produces = "application/json"
+        position = 3,
+        value = "Get media session statistics",
+        produces = "application/json"
     )
-    @ApiResponses(value = [
-        ApiResponse(code = 200, message = "Returns media session statistics"),
-        ApiResponse(code = 400, message = "Bad request"),
-        ApiResponse(code = 500, message = "InternalServerError"),
-        ApiResponse(code = 504, message = "ConnectionTimeoutError")
-    ])
+    @ApiResponses(
+        value = [
+            ApiResponse(code = 200, message = "Returns media session statistics"),
+            ApiResponse(code = 400, message = "Bad request"),
+            ApiResponse(code = 500, message = "InternalServerError"),
+            ApiResponse(code = 504, message = "ConnectionTimeoutError")
+        ]
+    )
     @PostMapping("/media")
     fun media(@RequestBody req: SessionRequest): Any? {
         return mediaSessionService.details(req)
     }
 
     @ApiOperation(
-            position = 4,
-            value = "Get PCAP for session",
-            produces = "application/vnd.tcpdump.pcapOutputStream"
+        position = 4,
+        value = "Get PCAP for session",
+        produces = "application/vnd.tcpdump.pcapOutputStream"
     )
-    @ApiResponses(value = [
-        ApiResponse(code = 200, message = "Returns session PCAP file"),
-        ApiResponse(code = 400, message = "Bad request"),
-        ApiResponse(code = 500, message = "InternalServerError"),
-        ApiResponse(code = 504, message = "ConnectionTimeoutError")
-    ])
+    @ApiResponses(
+        value = [
+            ApiResponse(code = 200, message = "Returns session PCAP file"),
+            ApiResponse(code = 400, message = "Bad request"),
+            ApiResponse(code = 500, message = "InternalServerError"),
+            ApiResponse(code = 504, message = "ConnectionTimeoutError")
+        ]
+    )
     @PostMapping("/pcap")
     fun pcap(@RequestBody req: SessionRequest, response: HttpServletResponse) {
         response.contentType = "application/vnd.tcpdump.pcapOutputStream"

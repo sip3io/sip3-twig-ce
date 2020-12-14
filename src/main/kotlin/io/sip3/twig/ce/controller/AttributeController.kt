@@ -28,7 +28,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
 @Api(
-        tags = ["Attributes API"]
+    tags = ["Attributes API"]
 )
 @RestController
 @RequestMapping("/attributes")
@@ -38,15 +38,17 @@ class AttributeController {
     private lateinit var attributeService: AttributeService
 
     @ApiOperation(
-            position = 1,
-            value = "List attributes",
-            produces = "application/json"
+        position = 1,
+        value = "List attributes",
+        produces = "application/json"
     )
-    @ApiResponses(value = [
-        ApiResponse(code = 200, message = "Returns attributes"),
-        ApiResponse(code = 500, message = "InternalServerError"),
-        ApiResponse(code = 504, message = "ConnectionTimeoutError")
-    ])
+    @ApiResponses(
+        value = [
+            ApiResponse(code = 200, message = "Returns attributes"),
+            ApiResponse(code = 500, message = "InternalServerError"),
+            ApiResponse(code = 504, message = "ConnectionTimeoutError")
+        ]
+    )
     @GetMapping
     fun list(): Collection<Attribute> {
         return attributeService.list()

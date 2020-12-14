@@ -26,7 +26,8 @@ class MediaStatisticUtilTest {
 
     companion object {
 
-        val RTPR_RAW_1 = Document.parse("""
+        val RTPR_RAW_1 = Document.parse(
+            """
         {
             "duration" : 5120,
             "packets" : {
@@ -44,8 +45,10 @@ class MediaStatisticUtilTest {
             "mos" : 3.94396066665649,
             "fraction_lost" : 0.0078125
         }
-        """.trimIndent())
-        val RTPR_RAW_2 = Document.parse("""
+        """.trimIndent()
+        )
+        val RTPR_RAW_2 = Document.parse(
+            """
         {
             "duration" : 5120,
             "packets" : {
@@ -63,7 +66,8 @@ class MediaStatisticUtilTest {
             "mos" : 4.39635181427002,
             "fraction_lost" : 0.0
         }
-        """.trimIndent())
+        """.trimIndent()
+        )
     }
 
     @Test

@@ -45,7 +45,8 @@ class SessionServiceTest {
             put("dst_addr", "192.168.10.5")
             put("dst_port", 5060)
             put("dst_host", "pbx")
-            put("raw_data", """
+            put(
+                "raw_data", """
                         REGISTER sip:192.168.10.5:5060 SIP/2.0
                         Via: SIP/2.0/UDP 192.168.10.123:55399;branch=z9hG4bK-d8754z-240d73239a6da57b-1---d8754z-;rport
                         Max-Forwards: 70
@@ -60,7 +61,8 @@ class SessionServiceTest {
                         User-Agent: 3CXPhone 6.0.26523.0
                         Authorization: Digest username="1010",realm="asterisk",nonce="1589932693/afdc97bf8bb891c6c3c8072baeb2d3d6",uri="sip:192.168.10.5:5060",response="1337bca977875e158b7e1b96094521ee",cnonce="557bd23e12dc3db950db3c7e77aa91ad",nc=00000002,qop=auth,algorithm=md5,opaque="5b7b35877f215628"
                         Content-Length: 0
-                    """.trimIndent().trimIndent())
+                    """.trimIndent().trimIndent()
+            )
         }
 
         // Register 1 (2/2)
@@ -71,7 +73,8 @@ class SessionServiceTest {
             put("src_host", "pbx")
             put("dst_addr", "192.168.10.123")
             put("dst_port", 55399)
-            put("raw_data", """
+            put(
+                "raw_data", """
                         SIP/2.0 200 OK
                         Via: SIP/2.0/UDP 192.168.10.123:55399;rport=55399;received=192.168.10.123;branch=z9hG4bK-d8754z-ef77c05e05556d61-1---d8754z-
                         Call-ID: call-id-1
@@ -83,7 +86,8 @@ class SessionServiceTest {
                         Expires: 120
                         Server: FPBX-14.0.13.23(13.29.2)
                         Content-Length:  0
-                    """.trimIndent())
+                    """.trimIndent()
+            )
         }
 
         // Register 2 (1/2)
@@ -94,7 +98,8 @@ class SessionServiceTest {
             put("dst_addr", "192.168.10.5")
             put("dst_port", 5060)
             put("dst_host", "pbx")
-            put("raw_data", """
+            put(
+                "raw_data", """
                         REGISTER sip:192.168.10.5:5060 SIP/2.0
                         Via: SIP/2.0/UDP 192.168.10.234:33456;branch=z9hG4bK-d8754z-240d73239a6da57b-1---d8754z-;rport
                         Max-Forwards: 70
@@ -109,7 +114,8 @@ class SessionServiceTest {
                         User-Agent: 3CXPhone 6.0.26523.0
                         Authorization: Digest username="2020",realm="asterisk",nonce="1589932693/afdc97bf8bb891c6c3c8072baeb2d3d6",uri="sip:192.168.10.5:5060",response="1337bca977875e158b7e1b96094521ee",cnonce="557bd23e12dc3db950db3c7e77aa91ad",nc=00000002,qop=auth,algorithm=md5,opaque="5b7b35877f215628"
                         Content-Length: 0
-                    """.trimIndent().trimIndent())
+                    """.trimIndent().trimIndent()
+            )
         }
 
         // Register 2 (2/2)
@@ -120,7 +126,8 @@ class SessionServiceTest {
             put("src_host", "pbx")
             put("dst_addr", "192.168.10.234")
             put("dst_port", 33456)
-            put("raw_data", """
+            put(
+                "raw_data", """
                         SIP/2.0 200 OK
                         Via: SIP/2.0/UDP 192.168.10.234:33456;rport=33456;received=192.168.10.234;branch=z9hG4bK-d8754z-ef77c05e05556d61-1---d8754z-
                         Call-ID: call-id-2
@@ -132,7 +139,8 @@ class SessionServiceTest {
                         Expires: 120
                         Server: FPBX-14.0.13.23(13.29.2)
                         Content-Length:  0
-                    """.trimIndent())
+                    """.trimIndent()
+            )
         }
 
         val DOCUMENTS = listOf(REGISTER_1, REGISTER_1, REGISTER_1, REGISTER_2, REGISTER_3, REGISTER_4)
@@ -144,10 +152,10 @@ class SessionServiceTest {
     @Test
     fun `Validate 'details()' method`() {
         val request = SessionRequest(
-                createdAt = NOW,
-                terminatedAt = NOW + 900000,
-                method = listOf("REGISTER"),
-                callId = listOf("call-id-1", "call-id-2")
+            createdAt = NOW,
+            terminatedAt = NOW + 900000,
+            method = listOf("REGISTER"),
+            callId = listOf("call-id-1", "call-id-2")
         )
 
         // Execute
@@ -187,10 +195,10 @@ class SessionServiceTest {
     fun `Validate 'content()' method with retransmits`() {
         // Init
         val request = SessionRequest(
-                createdAt = NOW,
-                terminatedAt = NOW + 900000,
-                method = listOf("REGISTER"),
-                callId = listOf("call-id-1", "call-id-2")
+            createdAt = NOW,
+            terminatedAt = NOW + 900000,
+            method = listOf("REGISTER"),
+            callId = listOf("call-id-1", "call-id-2")
         )
 
         // Execute
@@ -217,10 +225,10 @@ class SessionServiceTest {
     fun `Validate 'pcap()' method with retransmits`() {
         // Init
         val request = SessionRequest(
-                createdAt = NOW,
-                terminatedAt = NOW + 900000,
-                method = listOf("REGISTER"),
-                callId = listOf("call-id-1", "call-id-2")
+            createdAt = NOW,
+            terminatedAt = NOW + 900000,
+            method = listOf("REGISTER"),
+            callId = listOf("call-id-1", "call-id-2")
         )
 
         // Execute

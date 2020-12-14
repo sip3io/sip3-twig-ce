@@ -43,43 +43,43 @@ open class SecurityConfiguration : WebSecurityConfigurerAdapter() {
 
     override fun configure(http: HttpSecurity) {
         http.csrf().disable()
-                .authorizeRequests()
-                // Permit all Swagger endpoints
-                .antMatchers("/swagger-resources/**").permitAll()
-                .antMatchers("/swagger-ui/**").permitAll()
-                .antMatchers("/v2/api-docs").permitAll()
-                // Secure the rest of the endpoints accordingly to the settings
-                .anyRequest().apply {
-                    if (securityEnabled) {
-                        authenticated()
-                                // Login form handling
-                                .and()
-                                .formLogin()
-                                .successHandler { _, _, authentication ->
-                                    logger.info { "Login attempt. User: ${authentication.principal}, State: SUCCESSFUL" }
-                                }
-                                .failureHandler { _, response, exception ->
-                                    logger.info { "Login attempt. User: ${exception.message}, State: FAILED" }
-                                    response.sendError(HttpStatus.FORBIDDEN.value())
-                                }
-                                // Basic authorization handling
-                                .and()
-                                .httpBasic()
-                                // Springfox sends `Authorization` header in lowercase
-                                // So, we have to hack a `HttpServletRequest` object :(
-                                .and()
-                                .addFilterBefore({ req, res, chain ->
-                                    val r = (req as? javax.servlet.http.HttpServletRequest)
-                                            ?.let { HttpServletRequest(req) } ?: req
-                                    chain.doFilter(r, res)
-                                }, BasicAuthenticationFilter::class.java)
-                                // Exception handling
-                                .exceptionHandling()
-                                .authenticationEntryPoint(Http403ForbiddenEntryPoint())
-                    } else {
-                        permitAll()
-                    }
+            .authorizeRequests()
+            // Permit all Swagger endpoints
+            .antMatchers("/swagger-resources/**").permitAll()
+            .antMatchers("/swagger-ui/**").permitAll()
+            .antMatchers("/v2/api-docs").permitAll()
+            // Secure the rest of the endpoints accordingly to the settings
+            .anyRequest().apply {
+                if (securityEnabled) {
+                    authenticated()
+                        // Login form handling
+                        .and()
+                        .formLogin()
+                        .successHandler { _, _, authentication ->
+                            logger.info { "Login attempt. User: ${authentication.principal}, State: SUCCESSFUL" }
+                        }
+                        .failureHandler { _, response, exception ->
+                            logger.info { "Login attempt. User: ${exception.message}, State: FAILED" }
+                            response.sendError(HttpStatus.FORBIDDEN.value())
+                        }
+                        // Basic authorization handling
+                        .and()
+                        .httpBasic()
+                        // Springfox sends `Authorization` header in lowercase
+                        // So, we have to hack a `HttpServletRequest` object :(
+                        .and()
+                        .addFilterBefore({ req, res, chain ->
+                            val r = (req as? javax.servlet.http.HttpServletRequest)
+                                ?.let { HttpServletRequest(req) } ?: req
+                            chain.doFilter(r, res)
+                        }, BasicAuthenticationFilter::class.java)
+                        // Exception handling
+                        .exceptionHandling()
+                        .authenticationEntryPoint(Http403ForbiddenEntryPoint())
+                } else {
+                    permitAll()
                 }
+            }
     }
 
     override fun configure(auth: AuthenticationManagerBuilder?) {

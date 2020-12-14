@@ -28,10 +28,7 @@ import org.hamcrest.Matchers.startsWith
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
-import org.mockito.BDDMockito.given
-import org.mockito.BDDMockito.never
-import org.mockito.BDDMockito.only
-import org.mockito.BDDMockito.verify
+import org.mockito.BDDMockito.*
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.boot.test.mock.mockito.MockBean
@@ -39,9 +36,7 @@ import org.springframework.http.MediaType
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
 
 @ExtendWith(SpringExtension::class)
 @WebMvcTest(SearchController::class)
@@ -53,28 +48,28 @@ class SearchControllerTest {
         val TERMINATED_AT = CREATED_AT + 60000
 
         val RESPONSE_1 = sequenceOf(
-                SearchResponse().apply {
-                    createdAt = CREATED_AT
-                    terminatedAt = TERMINATED_AT
-                    method = "INVITE"
-                    state = "answered"
-                    caller = "101"
-                    callee = "102"
-                    callId = setOf("CALL-ID-1", "CALL-ID-2")
-                    duration = 600
-                }
+            SearchResponse().apply {
+                createdAt = CREATED_AT
+                terminatedAt = TERMINATED_AT
+                method = "INVITE"
+                state = "answered"
+                caller = "101"
+                callee = "102"
+                callId = setOf("CALL-ID-1", "CALL-ID-2")
+                duration = 600
+            }
         )
 
         val RESPONSE_2 = sequenceOf(
-                SearchResponse().apply {
-                    createdAt = CREATED_AT
-                    terminatedAt = TERMINATED_AT
-                    method = "REGISTER"
-                    state = "registered"
-                    caller = "101"
-                    callee = "102"
-                    callId = setOf("CALL-ID-1", "CALL-ID-2")
-                }
+            SearchResponse().apply {
+                createdAt = CREATED_AT
+                terminatedAt = TERMINATED_AT
+                method = "REGISTER"
+                state = "registered"
+                caller = "101"
+                callee = "102"
+                callId = setOf("CALL-ID-1", "CALL-ID-2")
+            }
         )
 
 
@@ -107,12 +102,14 @@ class SearchControllerTest {
 
         given(callSearchService.search(any())).willReturn(RESPONSE_1.iterator())
 
-        mockMvc.perform(post("/search")
+        mockMvc.perform(
+            post("/search")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(request)))
-                .andExpect(status().isOk)
-                .andExpect(jsonPath("$[0].created_at", `is`(CREATED_AT)))
-                .andExpect(jsonPath("$[0].method", `is`("INVITE")))
+                .content(objectMapper.writeValueAsString(request))
+        )
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$[0].created_at", `is`(CREATED_AT)))
+            .andExpect(jsonPath("$[0].method", `is`("INVITE")))
 
         verify(callSearchService, only()).search(any())
         verify(registerSearchService, never()).search(any())
@@ -125,12 +122,14 @@ class SearchControllerTest {
 
         given(registerSearchService.search(any())).willReturn(RESPONSE_2.iterator())
 
-        mockMvc.perform(post("/search")
+        mockMvc.perform(
+            post("/search")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(request)))
-                .andExpect(status().isOk)
-                .andExpect(jsonPath("$[0].created_at", `is`(CREATED_AT)))
-                .andExpect(jsonPath("$[0].method", `is`("REGISTER")))
+                .content(objectMapper.writeValueAsString(request))
+        )
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$[0].created_at", `is`(CREATED_AT)))
+            .andExpect(jsonPath("$[0].method", `is`("REGISTER")))
 
         verify(callSearchService, never()).search(any())
         verify(registerSearchService, only()).search(any())
@@ -144,14 +143,16 @@ class SearchControllerTest {
         given(callSearchService.search(any())).willReturn(RESPONSE_1.iterator())
         given(registerSearchService.search(any())).willReturn(RESPONSE_2.iterator())
 
-        mockMvc.perform(post("/search")
+        mockMvc.perform(
+            post("/search")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(request)))
-                .andExpect(status().isOk)
-                .andExpect(jsonPath("$[0].created_at", `is`(CREATED_AT)))
-                .andExpect(jsonPath("$[0].method", `is`("INVITE")))
-                .andExpect(jsonPath("$[1].created_at", `is`(CREATED_AT)))
-                .andExpect(jsonPath("$[1].method", `is`("REGISTER")))
+                .content(objectMapper.writeValueAsString(request))
+        )
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$[0].created_at", `is`(CREATED_AT)))
+            .andExpect(jsonPath("$[0].method", `is`("INVITE")))
+            .andExpect(jsonPath("$[1].created_at", `is`(CREATED_AT)))
+            .andExpect(jsonPath("$[1].method", `is`("REGISTER")))
 
         verify(callSearchService, only()).search(any())
         verify(registerSearchService, only()).search(any())
@@ -161,10 +162,12 @@ class SearchControllerTest {
     fun `Handle bad request`() {
         given(callSearchService.search(any())).willReturn(RESPONSE_1.iterator())
 
-        mockMvc.perform(post("/search")
+        mockMvc.perform(
+            post("/search")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("""{"created_at": -1, "terminated_at": -1}"""))
-                .andExpect(status().isBadRequest)
+                .content("""{"created_at": -1, "terminated_at": -1}""")
+        )
+            .andExpect(status().isBadRequest)
 
         verify(callSearchService, never()).search(any())
         verify(registerSearchService, never()).search(any())
@@ -175,11 +178,13 @@ class SearchControllerTest {
         val query = "sip.method=INVITE sip.callee=1001 rtp.mos<3"
         val request = SearchRequest(CREATED_AT, TERMINATED_AT, query, 50)
 
-        mockMvc.perform(post("/search")
+        mockMvc.perform(
+            post("/search")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(request)))
-                .andExpect(status().is4xxClientError)
-                .andExpect(content().string(startsWith("UnsupportedOperationException")))
+                .content(objectMapper.writeValueAsString(request))
+        )
+            .andExpect(status().is4xxClientError)
+            .andExpect(content().string(startsWith("UnsupportedOperationException")))
 
         verify(callSearchService, never()).search(any())
         verify(registerSearchService, never()).search(any())

@@ -23,9 +23,7 @@ import org.bson.Document
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Test
-import org.mockito.BDDMockito.`when`
-import org.mockito.BDDMockito.times
-import org.mockito.BDDMockito.verify
+import org.mockito.BDDMockito.*
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.mock.mockito.MockBean
@@ -35,7 +33,8 @@ class MediaSessionServiceTest {
 
     companion object {
 
-        val RTPR_INDEX_OUT = Document.parse("""
+        val RTPR_INDEX_OUT = Document.parse(
+            """
             {
               "_id": "5f5979da8f5db2164b2b7721",
               "call_id": "NjBlMTZhOWQ1Y2JjMzk1NTY3MjFlZTc0MTU4OTA1NDA.",
@@ -66,9 +65,11 @@ class MediaSessionServiceTest {
               "ssrc": 24767,
               "started_at": 1599699368433
             }
-          """.trimIndent())
+          """.trimIndent()
+        )
 
-        val RTPR_INDEX_IN = Document.parse("""
+        val RTPR_INDEX_IN = Document.parse(
+            """
             {
               "_id": "5f5979da8f5db2164b2b7724",
               "call_id": "NjBlMTZhOWQ1Y2JjMzk1NTY3MjFlZTc0MTU4OTA1NDA.",
@@ -99,9 +100,11 @@ class MediaSessionServiceTest {
               "started_at": 1599699368452,
               "src_host": "PBX-2"
             }
-          """.trimIndent())
+          """.trimIndent()
+        )
 
-        val RTPR_RAW_1 = Document.parse("""
+        val RTPR_RAW_1 = Document.parse(
+            """
         {
             "_id": "5f5979b28f5db2164b2b765e",
             "call_id": "NjBlMTZhOWQ1Y2JjMzk1NTY3MjFlZTc0MTU4OTA1NDA.",
@@ -132,8 +135,10 @@ class MediaSessionServiceTest {
             "ssrc": 24767,
             "started_at": 1599699368433
         }
-        """.trimIndent())
-        val RTPR_RAW_2 = Document.parse("""
+        """.trimIndent()
+        )
+        val RTPR_RAW_2 = Document.parse(
+            """
         {
             "_id": "5f5979b28f5db2164b2b7661",
             "call_id": "NjBlMTZhOWQ1Y2JjMzk1NTY3MjFlZTc0MTU4OTA1NDA.",
@@ -163,8 +168,10 @@ class MediaSessionServiceTest {
             "ssrc": 1675032981,
             "started_at": 1599699368452,
             "src_host": "PBX-2"
-        }""".trimIndent())
-        val RTPR_RAW_3 = Document.parse("""
+        }""".trimIndent()
+        )
+        val RTPR_RAW_3 = Document.parse(
+            """
         {
             "_id": "5f5979b78f5db2164b2b7690",
             "call_id": "NjBlMTZhOWQ1Y2JjMzk1NTY3MjFlZTc0MTU4OTA1NDA.",
@@ -195,8 +202,10 @@ class MediaSessionServiceTest {
             "ssrc": 24767,
             "started_at": 1599699373553
         }
-        """.trimIndent())
-        val RTPR_RAW_4 = Document.parse("""
+        """.trimIndent()
+        )
+        val RTPR_RAW_4 = Document.parse(
+            """
         {
             "_id": "5f5979b78f5db2164b2b7693",
             "call_id": "NjBlMTZhOWQ1Y2JjMzk1NTY3MjFlZTc0MTU4OTA1NDA.",
@@ -226,9 +235,11 @@ class MediaSessionServiceTest {
             "ssrc": 1675032981,
             "started_at": 1599699373568,
             "src_host": "PBX-2"
-        }""".trimIndent())
+        }""".trimIndent()
+        )
 
-        val RTPR_RAW_5 = Document.parse("""
+        val RTPR_RAW_5 = Document.parse(
+            """
         {
             "_id": "5f5979da8f5db2164b2b7725",
             "call_id": "NjBlMTZhOWQ1Y2JjMzk1NTY3MjFlZTc0MTU4OTA1NDA.",
@@ -259,8 +270,10 @@ class MediaSessionServiceTest {
             "ssrc": 24767,
             "started_at": 1599699378672
         }
-        """.trimIndent())
-        val RTPR_RAW_6 = Document.parse("""
+        """.trimIndent()
+        )
+        val RTPR_RAW_6 = Document.parse(
+            """
         {
             "_id": "5f5979da8f5db2164b2b7728",
             "call_id": "NjBlMTZhOWQ1Y2JjMzk1NTY3MjFlZTc0MTU4OTA1NDA.",
@@ -291,7 +304,8 @@ class MediaSessionServiceTest {
             "started_at": 1599699378688,
             "src_host": "PBX-2"
         }
-        """.trimIndent())
+        """.trimIndent()
+        )
     }
 
     @MockBean
@@ -306,12 +320,12 @@ class MediaSessionServiceTest {
         val rtprIndex = listOf(RTPR_INDEX_OUT, RTPR_INDEX_IN)
         val rtprRaw = listOf(RTPR_RAW_1, RTPR_RAW_2, RTPR_RAW_3, RTPR_RAW_4, RTPR_RAW_5, RTPR_RAW_6)
         `when`(client.find(any(), any(), any(), any(), any()))
-                // RTP
-                .thenReturn(rtprIndex.iterator())
-                .thenReturn(rtprRaw.iterator())
-                // RTCP
-                .thenReturn(rtprIndex.iterator())
-                .thenReturn(rtprRaw.iterator())
+            // RTP
+            .thenReturn(rtprIndex.iterator())
+            .thenReturn(rtprRaw.iterator())
+            // RTCP
+            .thenReturn(rtprIndex.iterator())
+            .thenReturn(rtprRaw.iterator())
 
         val request = SessionRequest().apply {
             createdAt = 1581383715357

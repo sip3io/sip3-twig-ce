@@ -23,17 +23,10 @@ import io.sip3.twig.ce.mongo.MongoClient
 import io.sip3.twig.ce.service.attribute.AttributeService
 import org.bson.Document
 import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertFalse
-import org.junit.jupiter.api.Assertions.assertNull
-import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
-import org.mockito.BDDMockito.`when`
-import org.mockito.BDDMockito.given
-import org.mockito.BDDMockito.reset
-import org.mockito.BDDMockito.times
-import org.mockito.BDDMockito.verify
+import org.mockito.BDDMockito.*
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.mock.mockito.MockBean
@@ -44,16 +37,16 @@ class RegisterSearchServiceTest {
     companion object {
 
         val ATTRIBUTES = listOf(
-                Attribute().apply {
-                    name = "sip.callee"
-                    type = Attribute.TYPE_STRING
-                    options = mutableSetOf()
-                },
-                Attribute().apply {
-                    name = "sip.call_id"
-                    type = Attribute.TYPE_STRING
-                    options = mutableSetOf()
-                }
+            Attribute().apply {
+                name = "sip.callee"
+                type = Attribute.TYPE_STRING
+                options = mutableSetOf()
+            },
+            Attribute().apply {
+                name = "sip.call_id"
+                type = Attribute.TYPE_STRING
+                options = mutableSetOf()
+            }
         )
 
         val NOW = System.currentTimeMillis()
@@ -189,10 +182,10 @@ class RegisterSearchServiceTest {
         // Init
         given(attributeService.list()).willReturn(ATTRIBUTES)
         `when`(client.find(any(), any(), any(), any(), any()))
-                // Search by SearchRequest
-                .thenReturn(sequenceOf(LEG_1, LEG_2, LEG_3).iterator())
-                // Search by correlated Registrations for `LEG_1`
-                .thenReturn(sequenceOf(LEG_2, LEG_3).iterator())
+            // Search by SearchRequest
+            .thenReturn(sequenceOf(LEG_1, LEG_2, LEG_3).iterator())
+            // Search by correlated Registrations for `LEG_1`
+            .thenReturn(sequenceOf(LEG_2, LEG_3).iterator())
 
         val request = SearchRequest(NOW, NOW + 80000, "sip.callee=101", 50)
 
@@ -221,16 +214,16 @@ class RegisterSearchServiceTest {
         // Init
         given(attributeService.list()).willReturn(ATTRIBUTES)
         `when`(client.find(any(), any(), any(), any(), any()))
-                // Search by SearchRequest
-                .thenReturn(sequenceOf(LEG_1, LEG_4, LEG_6, LEG_7).iterator())
-                // Search by correlated Registrations for `LEG_1`
-                .thenReturn(sequenceOf(LEG_2, LEG_3).iterator())
-                // Search by correlated Registrations for `LEG_4`
-                .thenReturn(sequenceOf(LEG_4).iterator())
-                // Search by correlated Registrations for `LEG_6`
-                .thenReturn(sequenceOf(LEG_6, LEG_7).iterator())
-                // Search by correlated Registrations for `LEG_7`
-                .thenReturn(sequenceOf(LEG_6).iterator())
+            // Search by SearchRequest
+            .thenReturn(sequenceOf(LEG_1, LEG_4, LEG_6, LEG_7).iterator())
+            // Search by correlated Registrations for `LEG_1`
+            .thenReturn(sequenceOf(LEG_2, LEG_3).iterator())
+            // Search by correlated Registrations for `LEG_4`
+            .thenReturn(sequenceOf(LEG_4).iterator())
+            // Search by correlated Registrations for `LEG_6`
+            .thenReturn(sequenceOf(LEG_6, LEG_7).iterator())
+            // Search by correlated Registrations for `LEG_7`
+            .thenReturn(sequenceOf(LEG_6).iterator())
 
         val request = SearchRequest(NOW, NOW + 80000, "", 50)
 

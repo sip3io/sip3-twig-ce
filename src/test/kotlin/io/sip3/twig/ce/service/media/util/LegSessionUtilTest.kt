@@ -28,7 +28,8 @@ class LegSessionUtilTest {
 
     companion object {
 
-        val RTPR_INDEX_A = Document.parse("""
+        val RTPR_INDEX_A = Document.parse(
+            """
         {
             "_id" : "5e42002336501e14550cf962",
             "created_at" : 1581383715356,
@@ -59,9 +60,11 @@ class LegSessionUtilTest {
             "mos" : 4.39635181427002,
             "fraction_lost" : 0.0
         }
-        """.trimIndent())
+        """.trimIndent()
+        )
 
-        val RTPR_INDEX_B = Document.parse("""
+        val RTPR_INDEX_B = Document.parse(
+            """
         {
             "_id" : "5e42002336501e14550cf964",
             "created_at" : 1581383715357,
@@ -92,7 +95,8 @@ class LegSessionUtilTest {
             "mos" : 4.39635181427002,
             "fraction_lost" : 0.0
         }
-        """.trimIndent())
+        """.trimIndent()
+        )
     }
 
     @Test
@@ -109,13 +113,13 @@ class LegSessionUtilTest {
     fun `Create Leg Session`() {
         val legSession = createLegSession(listOf(RTPR_INDEX_A, RTPR_INDEX_B), 24)
 
-        assertEquals(RTPR_INDEX_A.getLong("started_at" ),legSession.createdAt)
-        assertEquals(RTPR_INDEX_A.getLong("started_at" ) + RTPR_INDEX_A.getInteger("duration" ),legSession.terminatedAt)
-        assertEquals(RTPR_INDEX_A.getInteger("duration" ), legSession.duration)
+        assertEquals(RTPR_INDEX_A.getLong("started_at"), legSession.createdAt)
+        assertEquals(RTPR_INDEX_A.getLong("started_at") + RTPR_INDEX_A.getInteger("duration"), legSession.terminatedAt)
+        assertEquals(RTPR_INDEX_A.getInteger("duration"), legSession.duration)
 
         assertEquals(RTPR_INDEX_A.getString("call_id"), legSession.callId)
 
-        assertEquals(RTPR_INDEX_A.getInteger("duration" ),legSession.duration)
+        assertEquals(RTPR_INDEX_A.getInteger("duration"), legSession.duration)
         assertEquals(RTPR_INDEX_A.getString("src_addr"), legSession.srcAddr)
         assertEquals(RTPR_INDEX_A.getInteger("src_port"), legSession.srcPort)
 
@@ -129,16 +133,16 @@ class LegSessionUtilTest {
 
         legSession.out.first().apply {
             assertEquals(RTPR_INDEX_A.getInteger("duration"), duration)
-            assertEquals(RTPR_INDEX_A.getLong("started_at" ), createdAt)
-            assertEquals(RTPR_INDEX_A.getLong("started_at" ) + RTPR_INDEX_A.getInteger("duration"), terminatedAt)
+            assertEquals(RTPR_INDEX_A.getLong("started_at"), createdAt)
+            assertEquals(RTPR_INDEX_A.getLong("started_at") + RTPR_INDEX_A.getInteger("duration"), terminatedAt)
             assertEquals(0, RTPR_INDEX_A.getDouble("mos").compareTo(mos))
             assertEquals(0, RTPR_INDEX_A.getDouble("r_factor").compareTo(rFactor))
 
             RTPR_INDEX_A.get("packets", Document::class.java).apply {
-                assertEquals( getInteger("expected"), packets.expected)
-                assertEquals( getInteger("received"), packets.received)
-                assertEquals( getInteger("lost"), packets.lost)
-                assertEquals( getInteger("rejected"), packets.rejected)
+                assertEquals(getInteger("expected"), packets.expected)
+                assertEquals(getInteger("received"), packets.received)
+                assertEquals(getInteger("lost"), packets.lost)
+                assertEquals(getInteger("rejected"), packets.rejected)
             }
 
             RTPR_INDEX_A.get("jitter", Document::class.java).apply {
@@ -150,16 +154,16 @@ class LegSessionUtilTest {
 
         legSession.`in`.first().apply {
             assertEquals(RTPR_INDEX_B.getInteger("duration"), duration)
-            assertEquals(RTPR_INDEX_B.getLong("started_at" ), createdAt)
-            assertEquals(RTPR_INDEX_B.getLong("started_at" ) + RTPR_INDEX_B.getInteger("duration"), terminatedAt)
+            assertEquals(RTPR_INDEX_B.getLong("started_at"), createdAt)
+            assertEquals(RTPR_INDEX_B.getLong("started_at") + RTPR_INDEX_B.getInteger("duration"), terminatedAt)
             assertEquals(0, RTPR_INDEX_B.getDouble("mos").compareTo(mos))
             assertEquals(0, RTPR_INDEX_B.getDouble("r_factor").compareTo(rFactor))
 
             RTPR_INDEX_B.get("packets", Document::class.java).apply {
-                assertEquals( getInteger("expected"), packets.expected)
-                assertEquals( getInteger("received"), packets.received)
-                assertEquals( getInteger("lost"), packets.lost)
-                assertEquals( getInteger("rejected"), packets.rejected)
+                assertEquals(getInteger("expected"), packets.expected)
+                assertEquals(getInteger("received"), packets.received)
+                assertEquals(getInteger("lost"), packets.lost)
+                assertEquals(getInteger("rejected"), packets.rejected)
             }
 
             RTPR_INDEX_B.get("jitter", Document::class.java).apply {
