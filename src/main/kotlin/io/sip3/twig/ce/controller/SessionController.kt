@@ -136,7 +136,7 @@ class SessionController {
         if (req.method?.firstOrNull() == "INVITE") {
             // Add RTPR events
             mediaSessionService.details(req).forEach { rtpr ->
-                rtpr.values.filterNotNull().minBy { it.createdAt }?.let { legSession ->
+                rtpr.values.filterNotNull().minByOrNull { it.createdAt }?.let { legSession ->
                     events.add(
                         Event(
                             legSession.createdAt,

@@ -83,7 +83,7 @@ object LegSessionUtil {
     private fun createMediaSession(reports: List<Document>, blockCount: Int): MediaSession {
         return MediaSession(blockCount).apply {
             createdAt = reports.first().getLong("started_at")
-            terminatedAt = reports.map { it.getLong("started_at") + it.getInteger("duration") }.max()!!
+            terminatedAt = reports.map { it.getLong("started_at") + it.getInteger("duration") }.maxOrNull()!!
             duration = (terminatedAt - createdAt).toInt()
 
             mos = reports.sumByDouble { it.getDouble("mos") } / reports.size
@@ -99,8 +99,8 @@ object LegSessionUtil {
 
             val reportJitter = reports.map { it.get("jitter") as Document }
             jitter.apply {
-                reportJitter.map { it.getDouble("min") }.filter { it != 0.0 }.min()?.let { min = it }
-                max = reportJitter.map { it.getDouble("max") }.max()!!
+                reportJitter.map { it.getDouble("min") }.filter { it != 0.0 }.minOrNull()?.let { min = it }
+                max = reportJitter.map { it.getDouble("max") }.maxOrNull()!!
                 avg = reportJitter.sumByDouble { it.getDouble("avg") } / reports.size
             }
         }

@@ -40,7 +40,7 @@ class GrafanaAuthenticationProvider(private val config: GrafanaSecurityConfigura
     override fun authenticate(auth: Authentication?): Authentication {
         requireNotNull(auth) { "Authentication data required." }
         val username = auth.name
-        val password = auth.credentials as? String
+        val password = auth.credentials as String
 
         val headers = HttpHeaders()
         headers.setBasicAuth(username, password)
