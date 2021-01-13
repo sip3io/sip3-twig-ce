@@ -47,10 +47,10 @@ abstract class SessionService {
     }
 
     @Autowired
-    internal lateinit var mongoClient: MongoClient
+    protected lateinit var mongoClient: MongoClient
 
     @Value("\${session.show-retransmits}")
-    private var showRetransmits: Boolean = true
+    protected var showRetransmits: Boolean = true
 
     abstract fun findInRawBySessionRequest(req: SessionRequest): Iterator<Document>
 

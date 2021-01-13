@@ -23,10 +23,10 @@ import org.springframework.stereotype.Component
 open class ServiceLocator {
 
     @Autowired
-    private lateinit var searchServices: Map<String, SearchService>
+    lateinit var searchServices: Map<String, SearchService>
 
     @Autowired
-    private lateinit var sessionServices: Map<String, SessionService>
+    lateinit var sessionServices: Map<String, SessionService>
 
     open fun searchServices(): Collection<SearchService> {
         return searchServices.values

@@ -27,6 +27,7 @@ import io.swagger.annotations.ApiResponses
 import org.apache.logging.log4j.util.Strings
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.stereotype.Component
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
@@ -42,9 +43,7 @@ class SearchController {
 
     companion object {
 
-        const val SIP_METHOD_INVITE = "sip.method=INVITE"
         val SIP_METHOD_REGEX = Regex("sip.method=(\\w*)")
-        val EXCLUSIVE_ATTRIBUTES = listOf("sip.", "rtp.", "rtcp.")
     }
 
     @Value("\${session.default-limit}")
@@ -52,6 +51,9 @@ class SearchController {
 
     @Autowired
     private lateinit var serviceLocator: ServiceLocator
+
+    @Autowired
+    private lateinit var searchRequestValidator: SearchRequestValidator
 
     @ApiOperation(
         position = 0,
@@ -68,12 +70,7 @@ class SearchController {
     )
     @PostMapping
     fun search(@Valid @RequestBody request: SearchRequest): List<SearchResponse> {
-        val query = request.query
-            .replace(SIP_METHOD_INVITE, Strings.EMPTY)
-
-        if (EXCLUSIVE_ATTRIBUTES.count { query.contains(it) } > 1) {
-            throw UnsupportedOperationException("Complex search by `sip.`, `rtp.`, `rtcp.` filters is not supported.")
-        }
+        searchRequestValidator.validate(request)
 
         val searches = SIP_METHOD_REGEX.findAll(request.query)
             .map { match -> match.groupValues[1] }
@@ -87,5 +84,25 @@ class SearchController {
             .asSequence()
             .take(request.limit ?: defaultLimit)
             .toList()
+    }
+}
+
+@Component
+open class SearchRequestValidator {
+
+    companion object {
+
+        const val SIP_METHOD_INVITE = "sip.method=INVITE"
+
+        val EXCLUSIVE_ATTRIBUTES = listOf("sip.", "rtp.", "rtcp.")
+    }
+
+    open fun validate(request: SearchRequest) {
+        val query = request.query
+            .replace(SIP_METHOD_INVITE, Strings.EMPTY)
+
+        if (EXCLUSIVE_ATTRIBUTES.count { query.contains(it) } > 1) {
+            throw UnsupportedOperationException("Complex search by `sip.`, `rtp.`, `rtcp.` filters is not supported.")
+        }
     }
 }

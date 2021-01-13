@@ -16,7 +16,10 @@
 
 package io.sip3.twig.ce.service.call
 
-import com.mongodb.client.model.Filters.*
+import com.mongodb.client.model.Filters.`in`
+import com.mongodb.client.model.Filters.and
+import com.mongodb.client.model.Filters.gte
+import com.mongodb.client.model.Filters.lte
 import io.sip3.twig.ce.domain.SessionRequest
 import io.sip3.twig.ce.service.SessionService
 import org.bson.Document
@@ -28,7 +31,7 @@ import org.springframework.stereotype.Component
 open class CallSessionService : SessionService() {
 
     @Value("\${session.call.termination-timeout}")
-    private val terminationTimeout: Long = 10000
+    protected val terminationTimeout: Long = 10000
 
     override fun findInRawBySessionRequest(req: SessionRequest): Iterator<Document> {
         requireNotNull(req.createdAt) { "created_at" }
