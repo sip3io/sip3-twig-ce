@@ -45,16 +45,16 @@ open class CallSearchService : SearchService() {
     }
 
     @Value("\${session.use-x-correlation-header}")
-    private var useXCorrelationHeader: Boolean = true
+    protected var useXCorrelationHeader: Boolean = true
 
     @Value("\${session.call.max-legs}")
-    private var maxLegs: Int = 10
+    protected var maxLegs: Int = 10
 
     @Value("\${session.call.aggregation-timeout}")
-    private var aggregationTimeout: Long = 60000
+    protected var aggregationTimeout: Long = 60000
 
     @Value("\${session.call.termination-timeout}")
-    private var terminationTimeout: Long = 10000
+    protected var terminationTimeout: Long = 10000
 
     override fun search(request: SearchRequest): Iterator<SearchResponse> {
         val (createdAt, terminatedAt, query) = request
@@ -94,7 +94,7 @@ open class CallSearchService : SearchService() {
         }
     }
 
-    private fun findInRtprIndexBySearchRequest(createdAt: Long, terminatedAt: Long, query: String): Iterator<Document> {
+    protected open fun findInRtprIndexBySearchRequest(createdAt: Long, terminatedAt: Long, query: String): Iterator<Document> {
         val filters = mutableListOf<Bson>().apply {
             // Time filters
             add(gte("started_at", createdAt))
@@ -122,7 +122,7 @@ open class CallSearchService : SearchService() {
             .let { IteratorUtil.merge(*it) }
     }
 
-    private fun findInSipIndexBySearchRequest(createdAt: Long, terminatedAt: Long, query: String): Iterator<Document> {
+    protected open fun findInSipIndexBySearchRequest(createdAt: Long, terminatedAt: Long, query: String): Iterator<Document> {
         val filters = mutableListOf<Bson>().apply {
             // Time filters
             add(gte("created_at", createdAt))
