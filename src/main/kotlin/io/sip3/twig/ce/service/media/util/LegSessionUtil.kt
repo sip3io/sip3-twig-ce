@@ -70,7 +70,11 @@ object LegSessionUtil {
             dstPort = firstReport.getInteger("dst_port")
             firstReport.getString("dst_host")?.let { dstHost = it }
 
-            codecs.add(LegSession.Codec(firstReport.getString("codec_name"), firstReport.getInteger("payload_type")))
+            documents.forEach { document ->
+                val payloadType = document.getInteger("payload_type")
+                val codecName = document.getString("codec_name") ?: "UNDEFINED($payloadType)"
+                codecs.add(LegSession.Codec(codecName, payloadType))
+            }
 
             this.out.add(createMediaSession(out, blockCount))
 
@@ -86,9 +90,6 @@ object LegSessionUtil {
             terminatedAt = reports.map { it.getLong("started_at") + it.getInteger("duration") }.maxOrNull()!!
             duration = (terminatedAt - createdAt).toInt()
 
-            mos = reports.sumByDouble { it.getDouble("mos") } / reports.size
-            rFactor = reports.sumByDouble { it.getDouble("r_factor") } / reports.size
-
             val reportPackets = reports.map { it.get("packets") as Document }
             packets.apply {
                 expected = reportPackets.sumBy { it.getInteger("expected") }
@@ -97,12 +98,19 @@ object LegSessionUtil {
                 lost = expected - received
             }
 
-            val reportJitter = reports.map { it.get("jitter") as Document }
-            jitter.apply {
-                reportJitter.map { it.getDouble("min") }.filter { it != 0.0 }.minOrNull()?.let { min = it }
-                max = reportJitter.map { it.getDouble("max") }.maxOrNull()!!
-                avg = reportJitter.sumByDouble { it.getDouble("avg") } / reports.size
-            }
+            reports.filter { it.getDouble("r_factor") > 0.0 }
+                .takeIf { it.isNotEmpty() }
+                ?.let { validReports ->
+                    mos = validReports.sumByDouble { it.getDouble("mos") } / validReports.size
+                    rFactor = validReports.sumByDouble { it.getDouble("r_factor") } / validReports.size
+
+                    val reportJitter = validReports.map { it.get("jitter") as Document }
+                    jitter.apply {
+                        reportJitter.map { it.getDouble("min") }.filter { it != 0.0 }.minOrNull()?.let { min = it }
+                        max = reportJitter.map { it.getDouble("max") }.maxOrNull()!!
+                        avg = reportJitter.sumByDouble { it.getDouble("avg") } / validReports.size
+                    }
+                }
         }
     }
 }
