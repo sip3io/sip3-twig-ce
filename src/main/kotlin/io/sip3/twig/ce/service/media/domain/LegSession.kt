@@ -36,5 +36,5 @@ class LegSession {
     val out = mutableListOf<MediaSession>()
     val `in` = mutableListOf<MediaSession>()
 
-    data class Codec(val name: String?, val payloadType: Int)
+    data class Codec(val name: String, val payloadType: Int)
 }
