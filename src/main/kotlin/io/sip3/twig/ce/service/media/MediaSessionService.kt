@@ -117,7 +117,11 @@ open class MediaSessionService {
         }
 
         val blocks = ArrayList<MediaStatistic>(blockCount)
-        val blockDuration = legSession.duration / blockCount
+        val blockDuration = if (legSession.duration / blockCount > 0) {
+            legSession.duration / blockCount
+        } else {
+            legSession.duration
+        }
 
         var remainingDuration: Int
         var currentBlock = MediaStatistic()
@@ -141,7 +145,9 @@ open class MediaSessionService {
                 }
 
                 reportDuration > remainingDuration -> {
-                    val chunks = splitReport(report, remainingDuration, blockDuration)
+                    val chunks = mutableListOf<Document>()
+                    splitReport(chunks, report, remainingDuration, blockDuration)
+
                     val iterator = chunks.iterator()
 
                     updateMediaStatistic(currentBlock, iterator.next())
