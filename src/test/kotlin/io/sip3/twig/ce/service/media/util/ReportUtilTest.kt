@@ -50,7 +50,8 @@ class ReportUtilTest {
 
     @Test
     fun `Split report`() {
-        val chunks = splitReport(RTPR_RAW, 820, 1000)
+        val chunks = mutableListOf<Document>()
+        splitReport(chunks, RTPR_RAW, 820, 1000)
         assertEquals(6, chunks.size)
         assertEquals(820, chunks.first().getInteger("duration"))
         assertEquals(300, chunks.last().getInteger("duration"))
