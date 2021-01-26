@@ -48,12 +48,12 @@ object LegSessionUtil {
 
         // Define timestamps
         val legCreatedAt = min(
-            out.first().getLong("started_at"),
-            `in`.firstOrNull()?.getLong("started_at") ?: Long.MAX_VALUE
+            out.first().getLong("created_at"),
+            `in`.firstOrNull()?.getLong("created_at") ?: Long.MAX_VALUE
         )
 
-        val legTerminatedAt = max(out.last().getLong("started_at") + out.last().getInteger("duration"),
-            `in`.lastOrNull()?.let { it.getLong("started_at") + it.getInteger("duration") } ?: 0)
+        val legTerminatedAt = max(out.maxOf { it.getLong("terminated_at") },
+            `in`.maxOfOrNull { it.getLong("terminated_at") } ?: 0)
 
 
         return LegSession().apply {
@@ -86,8 +86,8 @@ object LegSessionUtil {
 
     private fun createMediaSession(reports: List<Document>, blockCount: Int): MediaSession {
         return MediaSession(blockCount).apply {
-            createdAt = reports.first().getLong("started_at")
-            terminatedAt = reports.map { it.getLong("started_at") + it.getInteger("duration") }.maxOrNull()!!
+            createdAt = reports.first().getLong("created_at")
+            terminatedAt = reports.maxOf { it.getLong("terminated_at") }
             duration = (terminatedAt - createdAt).toInt()
 
             val reportPackets = reports.map { it.get("packets") as Document }
