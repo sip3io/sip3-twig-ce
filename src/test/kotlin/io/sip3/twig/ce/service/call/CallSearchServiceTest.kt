@@ -23,10 +23,17 @@ import io.sip3.twig.ce.mongo.MongoClient
 import io.sip3.twig.ce.service.attribute.AttributeService
 import org.bson.Document
 import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.Assertions.assertNull
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
-import org.mockito.BDDMockito.*
+import org.mockito.BDDMockito.`when`
+import org.mockito.BDDMockito.given
+import org.mockito.BDDMockito.reset
+import org.mockito.BDDMockito.times
+import org.mockito.BDDMockito.verify
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.mock.mockito.MockBean
@@ -169,8 +176,8 @@ class CallSearchServiceTest {
             put("x_call_id", "some-call-id-5")
         }
 
-        val RTPR_1 = Document().apply {
-            put("started_at", NOW + 20)
+        val MEDIA_INDEX_1 = Document().apply {
+            put("created_at", NOW + 20)
             put("call_id", "some-call-id-1")
         }
     }
@@ -229,7 +236,7 @@ class CallSearchServiceTest {
         given(attributeService.list()).willReturn(ATTRIBUTES)
         `when`(client.find(any(), any(), any(), any(), any()))
             // Search by SearchRequest
-            .thenReturn(sequenceOf(RTPR_1).iterator())
+            .thenReturn(sequenceOf(MEDIA_INDEX_1).iterator())
             // Search by callId SearchRequest
             .thenReturn(sequenceOf(LEG_1).iterator())
             // Search by callee and caller for `LEG_1`
@@ -265,7 +272,7 @@ class CallSearchServiceTest {
         given(attributeService.list()).willReturn(ATTRIBUTES)
         `when`(client.find(any(), any(), any(), any(), any()))
             // Search by SearchRequest
-            .thenReturn(sequenceOf(RTPR_1).iterator())
+            .thenReturn(sequenceOf(MEDIA_INDEX_1).iterator())
             // Search by callId SearchRequest
             .thenReturn(sequenceOf(LEG_1).iterator())
             // Search by callee and caller for `LEG_1`

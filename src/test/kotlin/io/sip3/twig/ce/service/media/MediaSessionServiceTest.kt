@@ -22,8 +22,11 @@ import io.sip3.twig.ce.mongo.MongoClient
 import org.bson.Document
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
+import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Test
-import org.mockito.BDDMockito.*
+import org.mockito.BDDMockito.`when`
+import org.mockito.BDDMockito.times
+import org.mockito.BDDMockito.verify
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.mock.mockito.MockBean
@@ -33,13 +36,12 @@ class MediaSessionServiceTest {
 
     companion object {
 
-        val RTPR_INDEX_OUT = Document.parse(
+        val RTPR_OUT = Document.parse(
             """
             {
               "_id": "5f5979da8f5db2164b2b7721",
               "call_id": "NjBlMTZhOWQ1Y2JjMzk1NTY3MjFlZTc0MTU4OTA1NDA.",
               "codec_name": "PCMU",
-              "created_at": 1599699418686,
               "dst_addr": "192.168.10.5",
               "dst_host": "PBX-2",
               "dst_port": 11958,
@@ -63,18 +65,18 @@ class MediaSessionServiceTest {
               "src_addr": "192.168.10.109",
               "src_port": 40042,
               "ssrc": 24767,
-              "started_at": 1599699368433
+              "created_at": 1599699368433,
+              "terminated_at": 1599699388212
             }
           """.trimIndent()
         )
 
-        val RTPR_INDEX_IN = Document.parse(
+        val RTPR_IN = Document.parse(
             """
             {
               "_id": "5f5979da8f5db2164b2b7724",
               "call_id": "NjBlMTZhOWQ1Y2JjMzk1NTY3MjFlZTc0MTU4OTA1NDA.",
               "codec_name": "PCMU",
-              "created_at": 1599699418686,
               "dst_addr": "192.168.10.109",
               "dst_port": 40042,
               "duration": 19657,
@@ -97,10 +99,42 @@ class MediaSessionServiceTest {
               "src_addr": "192.168.10.5",
               "src_port": 11958,
               "ssrc": 1675032981,
-              "started_at": 1599699368452,
+              "created_at": 1599699368452,
+              "terminated_at": 1599699388109,
               "src_host": "PBX-2"
             }
           """.trimIndent()
+        )
+
+        val MEDIA_INDEX = Document.parse(
+            """
+            {
+              "created_at" : ${RTPR_IN.getLong("created_at")}
+              "terminated_at" : ${RTPR_OUT.getLong("terminated_at")}
+               
+              "src_addr": "192.168.10.109",
+              "src_port": 40042,
+              "dst_addr": "192.168.10.5",
+              "dst_host": "PBX-2",
+              "dst_port": 11958,
+
+              "call_id": "NjBlMTZhOWQ1Y2JjMzk1NTY3MjFlZTc0MTU4OTA1NDA.",
+              "codec_names": [ "PCMU" ],
+              "duration": ${RTPR_OUT.getLong("terminated_at") - RTPR_IN.getLong("created_at")}
+
+              "report_count": 4,
+              "bad_report_count": 0,
+              "bad_report_fraction": 0,
+
+              "one_way": false,
+              "undefined_codec": false,
+              "mos": 4.408666610717773,
+              "r_factor": 93.19705963134766, 
+
+              "forward_rtp": ${RTPR_OUT.toJson()},
+              "reverse_rtp": ${RTPR_IN.toJson()}
+            }  
+            """.trimIndent()
         )
 
         val RTPR_RAW_1 = Document.parse(
@@ -109,7 +143,6 @@ class MediaSessionServiceTest {
             "_id": "5f5979b28f5db2164b2b765e",
             "call_id": "NjBlMTZhOWQ1Y2JjMzk1NTY3MjFlZTc0MTU4OTA1NDA.",
             "codec_name": "PCMU",
-            "created_at": 1599699378652,
             "dst_addr": "192.168.10.5",
             "dst_host": "PBX-2",
             "dst_port": 11958,
@@ -133,7 +166,7 @@ class MediaSessionServiceTest {
             "src_addr": "192.168.10.109",
             "src_port": 40042,
             "ssrc": 24767,
-            "started_at": 1599699368433
+            "created_at": 1599699368433
         }
         """.trimIndent()
         )
@@ -143,7 +176,6 @@ class MediaSessionServiceTest {
             "_id": "5f5979b28f5db2164b2b7661",
             "call_id": "NjBlMTZhOWQ1Y2JjMzk1NTY3MjFlZTc0MTU4OTA1NDA.",
             "codec_name": "PCMU",
-            "created_at": 1599699378668,
             "dst_addr": "192.168.10.109",
             "dst_port": 40042,
             "duration": 5116,
@@ -166,7 +198,7 @@ class MediaSessionServiceTest {
             "src_addr": "192.168.10.5",
             "src_port": 11958,
             "ssrc": 1675032981,
-            "started_at": 1599699368452,
+            "created_at": 1599699368452,
             "src_host": "PBX-2"
         }""".trimIndent()
         )
@@ -176,7 +208,6 @@ class MediaSessionServiceTest {
             "_id": "5f5979b78f5db2164b2b7690",
             "call_id": "NjBlMTZhOWQ1Y2JjMzk1NTY3MjFlZTc0MTU4OTA1NDA.",
             "codec_name": "PCMU",
-            "created_at": 1599699383772,
             "dst_addr": "192.168.10.5",
             "dst_host": "PBX-2",
             "dst_port": 11958,
@@ -200,7 +231,7 @@ class MediaSessionServiceTest {
             "src_addr": "192.168.10.109",
             "src_port": 40042,
             "ssrc": 24767,
-            "started_at": 1599699373553
+            "created_at": 1599699373553
         }
         """.trimIndent()
         )
@@ -210,7 +241,6 @@ class MediaSessionServiceTest {
             "_id": "5f5979b78f5db2164b2b7693",
             "call_id": "NjBlMTZhOWQ1Y2JjMzk1NTY3MjFlZTc0MTU4OTA1NDA.",
             "codec_name": "PCMU",
-            "created_at": 1599699383789,
             "dst_addr": "192.168.10.109",
             "dst_port": 40042,
             "duration": 5120,
@@ -233,7 +263,7 @@ class MediaSessionServiceTest {
             "src_addr": "192.168.10.5",
             "src_port": 11958,
             "ssrc": 1675032981,
-            "started_at": 1599699373568,
+            "created_at": 1599699373568,
             "src_host": "PBX-2"
         }""".trimIndent()
         )
@@ -268,7 +298,7 @@ class MediaSessionServiceTest {
             "src_addr": "192.168.10.109",
             "src_port": 40042,
             "ssrc": 24767,
-            "started_at": 1599699378672
+            "created_at": 1599699378672
         }
         """.trimIndent()
         )
@@ -301,7 +331,7 @@ class MediaSessionServiceTest {
             "src_addr": "192.168.10.5",
             "src_port": 11958,
             "ssrc": 1675032981,
-            "started_at": 1599699378688,
+            "created_at": 1599699378688,
             "src_host": "PBX-2"
         }
         """.trimIndent()
@@ -317,14 +347,14 @@ class MediaSessionServiceTest {
     @Test
     fun `Validate 'details()' method`() {
         // Init
-        val rtprIndex = listOf(RTPR_INDEX_OUT, RTPR_INDEX_IN)
+        val mediaIndex = listOf(MEDIA_INDEX)
         val rtprRaw = listOf(RTPR_RAW_1, RTPR_RAW_2, RTPR_RAW_3, RTPR_RAW_4, RTPR_RAW_5, RTPR_RAW_6)
         `when`(client.find(any(), any(), any(), any(), any()))
             // RTP
-            .thenReturn(rtprIndex.iterator())
+            .thenReturn(mediaIndex.iterator())
             .thenReturn(rtprRaw.iterator())
             // RTCP
-            .thenReturn(rtprIndex.iterator())
+            .thenReturn(mediaIndex.iterator())
             .thenReturn(rtprRaw.iterator())
 
         val request = SessionRequest().apply {
@@ -341,35 +371,35 @@ class MediaSessionServiceTest {
         val media = result.first()
         val rtp = media["rtp"]
         assertNotNull(rtp)
-        assertEquals(RTPR_INDEX_OUT.getLong("started_at"), rtp!!.createdAt)
-        assertEquals(RTPR_INDEX_OUT.getString("call_id"), rtp.callId)
-        assertEquals(RTPR_INDEX_OUT.getInteger("duration"), rtp.duration)
+        assertEquals(RTPR_OUT.getLong("created_at"), rtp!!.createdAt)
+        assertEquals(RTPR_OUT.getString("call_id"), rtp.callId)
+        assertEquals(RTPR_OUT.getInteger("duration"), rtp.duration)
 
-        assertEquals(RTPR_INDEX_OUT.getString("src_addr"), rtp.srcAddr)
-        assertEquals(RTPR_INDEX_OUT.getString("src_host"), rtp.srcHost)
-        assertEquals(RTPR_INDEX_OUT.getInteger("src_port"), rtp.srcPort)
+        assertEquals(RTPR_OUT.getString("src_addr"), rtp.srcAddr)
+        assertEquals(RTPR_OUT.getString("src_host"), rtp.srcHost)
+        assertEquals(RTPR_OUT.getInteger("src_port"), rtp.srcPort)
 
-        assertEquals(RTPR_INDEX_OUT.getString("dst_addr"), rtp.dstAddr)
-        assertEquals(RTPR_INDEX_OUT.getString("dst_host"), rtp.dstHost)
-        assertEquals(RTPR_INDEX_OUT.getInteger("dst_port"), rtp.dstPort)
+        assertEquals(RTPR_OUT.getString("dst_addr"), rtp.dstAddr)
+        assertEquals(RTPR_OUT.getString("dst_host"), rtp.dstHost)
+        assertEquals(RTPR_OUT.getInteger("dst_port"), rtp.dstPort)
 
         rtp.`in`.first().apply {
-            assertEquals(RTPR_INDEX_IN.getLong("started_at"), createdAt)
+            assertEquals(RTPR_IN.getLong("created_at"), createdAt)
             assertEquals(packets.expected, blocks.sumBy { it.packets.expected })
-            assertEquals(RTPR_INDEX_IN.get("packets", Document::class.java).getInteger("expected"), packets.expected)
-            assertEquals(RTPR_INDEX_IN.get("jitter", Document::class.java).getDouble("avg"), jitter.avg)
+            assertEquals(RTPR_IN.get("packets", Document::class.java).getInteger("expected"), packets.expected)
+            assertEquals(RTPR_IN.get("jitter", Document::class.java).getDouble("avg"), jitter.avg)
         }
 
         rtp.out.first().apply {
-            assertEquals(RTPR_INDEX_OUT.getLong("started_at"), createdAt)
+            assertEquals(RTPR_OUT.getLong("created_at"), createdAt)
             assertEquals(packets.expected, blocks.sumBy { it.packets.expected })
-            assertEquals(RTPR_INDEX_OUT.get("packets", Document::class.java).getInteger("expected"), packets.expected)
-            assertEquals(RTPR_INDEX_OUT.get("jitter", Document::class.java).getDouble("avg"), jitter.avg)
+            assertEquals(RTPR_OUT.get("packets", Document::class.java).getInteger("expected"), packets.expected)
+            assertEquals(RTPR_OUT.get("jitter", Document::class.java).getDouble("avg"), jitter.avg)
         }
 
         val rtcp = media["rtcp"]
-        assertNotNull(rtcp)
+        assertNull(rtcp)
 
-        verify(client, times(4)).find(any(), any(), any(), any(), any())
+        verify(client, times(3)).find(any(), any(), any(), any(), any())
     }
 }
