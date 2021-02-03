@@ -60,9 +60,9 @@ open class CallSearchService : SearchService() {
 
         val matchedDocuments = when {
             query.contains("media.") || (query.contains("rtp.") || query.contains("rtcp.")) -> {
-                // Filter documents in `media_call_index` collection
+                // Filter documents in `rtpr_media_index` collection
                 findInMediaIndexBySearchRequest(createdAt, terminatedAt, query).map { document ->
-                    // Map `media_call_index` document to `sip_call_index` document
+                    // Map `rtpr_media_index` document to `sip_call_index` document
                     document.getString("call_id")?.let { callId ->
                         val startedAt = document.getLong("created_at")
                         val byCallId = "sip.call_id=$callId"
@@ -125,7 +125,7 @@ open class CallSearchService : SearchService() {
                 }
         }
 
-        return mongoClient.find("media_call_index", Pair(createdAt, terminatedAt), and(filters))
+        return mongoClient.find("rtpr_media_index", Pair(createdAt, terminatedAt), and(filters))
     }
 
     protected open fun findInSipIndexBySearchRequest(createdAt: Long, terminatedAt: Long, query: String): Iterator<Document> {

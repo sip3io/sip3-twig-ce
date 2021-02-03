@@ -192,7 +192,7 @@ open class MediaSessionService {
             add(Filters.`in`("call_id", callId))
         }
 
-        return mongoClient.find("media_call_index",
+        return mongoClient.find("rtpr_media_index",
             Pair(createdAt, terminatedAt + terminationTimeout),
             Filters.and(filters))
     }
