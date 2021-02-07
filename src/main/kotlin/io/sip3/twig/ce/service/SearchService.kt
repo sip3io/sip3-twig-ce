@@ -40,31 +40,31 @@ abstract class SearchService {
 
     abstract fun search(request: SearchRequest): Iterator<SearchResponse>
 
-    fun filter(expression: String): Bson {
+    fun filter(expression: String, transform: ((String) -> String)? = null): Bson {
         return when {
             expression.contains("!=") -> {
                 val (field, value) = readAttribute(expression, "!=")
-                ne(field, value)
+                ne(transform?.invoke(field) ?: field, value)
             }
             expression.contains(">") -> {
                 val (field, value) = readAttribute(expression, ">")
-                gt(field, value)
+                gt(transform?.invoke(field) ?: field, value)
             }
             expression.contains("<") -> {
                 val (field, value) = readAttribute(expression, "<")
-                lt(field, value)
+                lt(transform?.invoke(field) ?: field, value)
             }
             expression.contains("=~") -> {
                 val (field, value) = readAttribute(expression, "=~")
                 if (value is String) {
-                    regex(field, value)
+                    regex(transform?.invoke(field) ?: field, value)
                 } else {
                     throw ValidationException("Attribute doesn't support regex query: $expression")
                 }
             }
             expression.contains("=") -> {
                 val (field, value) = readAttribute(expression, "=")
-                eq(field, value)
+                eq(transform?.invoke(field) ?: field, value)
             }
             else -> {
                 throw ValidationException("Couldn't parse the expression: $expression")

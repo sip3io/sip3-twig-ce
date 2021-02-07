@@ -23,10 +23,17 @@ import io.sip3.twig.ce.mongo.MongoClient
 import io.sip3.twig.ce.service.attribute.AttributeService
 import org.bson.Document
 import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.Assertions.assertNull
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
-import org.mockito.BDDMockito.*
+import org.mockito.BDDMockito.`when`
+import org.mockito.BDDMockito.given
+import org.mockito.BDDMockito.reset
+import org.mockito.BDDMockito.times
+import org.mockito.BDDMockito.verify
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.mock.mockito.MockBean
@@ -55,7 +62,12 @@ class CallSearchServiceTest {
             Attribute().apply {
                 name = "rtcp.mos"
                 type = Attribute.TYPE_NUMBER
+            },
+            Attribute().apply {
+                name = "media.mos"
+                type = Attribute.TYPE_NUMBER
             }
+
         )
 
         val NOW = System.currentTimeMillis()
@@ -169,8 +181,8 @@ class CallSearchServiceTest {
             put("x_call_id", "some-call-id-5")
         }
 
-        val RTPR_1 = Document().apply {
-            put("started_at", NOW + 20)
+        val MEDIA_INDEX_1 = Document().apply {
+            put("created_at", NOW + 20)
             put("call_id", "some-call-id-1")
         }
     }
@@ -229,7 +241,7 @@ class CallSearchServiceTest {
         given(attributeService.list()).willReturn(ATTRIBUTES)
         `when`(client.find(any(), any(), any(), any(), any()))
             // Search by SearchRequest
-            .thenReturn(sequenceOf(RTPR_1).iterator())
+            .thenReturn(sequenceOf(MEDIA_INDEX_1).iterator())
             // Search by callId SearchRequest
             .thenReturn(sequenceOf(LEG_1).iterator())
             // Search by callee and caller for `LEG_1`
@@ -265,7 +277,7 @@ class CallSearchServiceTest {
         given(attributeService.list()).willReturn(ATTRIBUTES)
         `when`(client.find(any(), any(), any(), any(), any()))
             // Search by SearchRequest
-            .thenReturn(sequenceOf(RTPR_1).iterator())
+            .thenReturn(sequenceOf(MEDIA_INDEX_1).iterator())
             // Search by callId SearchRequest
             .thenReturn(sequenceOf(LEG_1).iterator())
             // Search by callee and caller for `LEG_1`
@@ -274,6 +286,42 @@ class CallSearchServiceTest {
             .thenReturn(Collections.emptyIterator())
 
         val request = SearchRequest(NOW, NOW + 80000, "rtcp.mos>3", 50)
+
+        // Execute
+        val iterator = service.search(request)
+
+        // Assert
+        assertTrue(iterator.hasNext())
+        iterator.next().apply {
+            assertEquals(NOW, createdAt)
+            assertEquals(NOW + 60000, terminatedAt)
+            assertEquals("101", caller)
+            assertEquals("2909090", callee)
+            assertEquals(1, callId.size)
+            assertEquals(callId.first(), "some-call-id-1")
+            assertEquals(60000, duration)
+            assertNull(errorCode)
+        }
+        assertFalse(iterator.hasNext())
+
+        verify(client, times(4)).find(any(), any(), any(), any(), any())
+    }
+
+    @Test
+    fun `Search by MEDIA attribute`() {
+        // Init
+        given(attributeService.list()).willReturn(ATTRIBUTES)
+        `when`(client.find(any(), any(), any(), any(), any()))
+            // Search by SearchRequest
+            .thenReturn(sequenceOf(MEDIA_INDEX_1).iterator())
+            // Search by callId SearchRequest
+            .thenReturn(sequenceOf(LEG_1).iterator())
+            // Search by callee and caller for `LEG_1`
+            .thenReturn(Collections.emptyIterator())
+            // Search by x-call-id for `LEG_1`
+            .thenReturn(Collections.emptyIterator())
+
+        val request = SearchRequest(NOW, NOW + 80000, "media.mos>3", 50)
 
         // Execute
         val iterator = service.search(request)

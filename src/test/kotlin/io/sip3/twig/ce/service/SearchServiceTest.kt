@@ -78,6 +78,13 @@ class SearchServiceTest {
         assertEquals(Filters.ne("number", 1.0), service.filter("sip.number!=1"))
         assertEquals(Filters.gt("number", 1.0), service.filter("sip.number>1"))
         assertEquals(Filters.lt("number", 1.0), service.filter("sip.number<1"))
+
+        // Field name with prefix
+        assertEquals(Filters.ne("prefix.number", 1.0), service.filter("sip.number!=1") { "prefix.$it" })
+        assertEquals(Filters.gt("prefix.number", 1.0), service.filter("sip.number>1") { "prefix.$it" })
+        assertEquals(Filters.lt("prefix.number", 1.0), service.filter("sip.number<1") { "prefix.$it" })
+        assertEquals(Filters.regex("prefix.string", "value"), service.filter("sip.string=~value") { "prefix.$it" })
+        assertEquals(Filters.eq("prefix.number", 1.0), service.filter("sip.number=1") { "prefix.$it" })
     }
 }
 

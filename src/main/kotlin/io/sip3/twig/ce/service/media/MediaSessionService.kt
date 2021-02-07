@@ -17,7 +17,6 @@
 package io.sip3.twig.ce.service.media
 
 import com.mongodb.client.model.Filters
-import com.mongodb.client.model.Sorts
 import io.sip3.twig.ce.domain.SessionRequest
 import io.sip3.twig.ce.mongo.MongoClient
 import io.sip3.twig.ce.service.media.domain.LegSession
@@ -63,14 +62,21 @@ open class MediaSessionService {
         createdAt: Long,
         terminatedAt: Long,
         callId: List<String>,
-        withBlocks: Boolean = true
+        withBlocks: Boolean = true,
     ): Map<String, LegSession> {
         val sessions = mutableMapOf<String, LegSession>()
         val reports = mutableListOf<Document>()
 
         // Create leg sessions from reports index
-        find("rtpr_${source}_index", createdAt, terminatedAt, callId)
+        findMediaSessions(createdAt, terminatedAt, callId)
             .asSequence()
+            .flatMap { document ->
+                mutableListOf<Document>().apply {
+                    document.get("forward_${source}", Document::class.java)?.let { add(it) }
+                    document.get("reverse_${source}", Document::class.java)?.let { add(it) }
+                }
+            }
+            .sortedBy { it.getLong("created_at") }
             .groupBy { generateLegId(it) }
             .forEach { (legId, documents) ->
                 sessions[legId] = createLegSession(documents, blockCount)
@@ -179,6 +185,18 @@ open class MediaSessionService {
         mediaSession.blocks.addAll(blocks)
     }
 
+    open fun findMediaSessions(createdAt: Long, terminatedAt: Long, callId: List<String>): Iterator<Document> {
+        val filters = mutableListOf<Bson>().apply {
+            add(Filters.gte("created_at", createdAt))
+            add(Filters.lte("created_at", terminatedAt + terminationTimeout))
+            add(Filters.`in`("call_id", callId))
+        }
+
+        return mongoClient.find("rtpr_media_index",
+            Pair(createdAt, terminatedAt + terminationTimeout),
+            Filters.and(filters))
+    }
+
     open fun find(prefix: String, createdAt: Long, terminatedAt: Long, callId: List<String>): Iterator<Document> {
         val filters = mutableListOf<Bson>().apply {
             add(Filters.gte("started_at", createdAt))
@@ -186,9 +204,6 @@ open class MediaSessionService {
             add(Filters.`in`("call_id", callId))
         }
 
-        return mongoClient.find(
-            prefix, Pair(createdAt, terminatedAt + terminationTimeout),
-            Filters.and(filters), Sorts.ascending("started_at")
-        )
+        return mongoClient.find(prefix, Pair(createdAt, terminatedAt + terminationTimeout), Filters.and(filters))
     }
 }

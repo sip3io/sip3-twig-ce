@@ -32,8 +32,8 @@ class LegSessionUtilTest {
             """
         {
             "_id" : "5e42002336501e14550cf962",
-            "created_at" : 1581383715356,
-            "started_at" : 1581383606801,
+            "created_at" : 1581383606801,
+            "terminated_at" : 1581383683483,
             "src_addr" : "192.168.10.113",
             "src_port" : 40030,
             "dst_addr" : "192.168.10.5",
@@ -67,8 +67,8 @@ class LegSessionUtilTest {
             """
         {
             "_id" : "5e42002336501e14550cf964",
-            "created_at" : 1581383715357,
-            "started_at" : 1581383606830,
+            "created_at" : 1581383606830,
+            "terminated_at" : 1581383683464,
             "src_addr" : "192.168.10.5",
             "src_port" : 10244,
             "src_host" : "PBX-2",
@@ -113,8 +113,8 @@ class LegSessionUtilTest {
     fun `Create Leg Session`() {
         val legSession = createLegSession(listOf(RTPR_INDEX_A, RTPR_INDEX_B), 24)
 
-        assertEquals(RTPR_INDEX_A.getLong("started_at"), legSession.createdAt)
-        assertEquals(RTPR_INDEX_A.getLong("started_at") + RTPR_INDEX_A.getInteger("duration"), legSession.terminatedAt)
+        assertEquals(RTPR_INDEX_A.getLong("created_at"), legSession.createdAt)
+        assertEquals(RTPR_INDEX_A.getLong("created_at") + RTPR_INDEX_A.getInteger("duration"), legSession.terminatedAt)
         assertEquals(RTPR_INDEX_A.getInteger("duration"), legSession.duration)
 
         assertEquals(RTPR_INDEX_A.getString("call_id"), legSession.callId)
@@ -133,8 +133,8 @@ class LegSessionUtilTest {
 
         legSession.out.first().apply {
             assertEquals(RTPR_INDEX_A.getInteger("duration"), duration)
-            assertEquals(RTPR_INDEX_A.getLong("started_at"), createdAt)
-            assertEquals(RTPR_INDEX_A.getLong("started_at") + RTPR_INDEX_A.getInteger("duration"), terminatedAt)
+            assertEquals(RTPR_INDEX_A.getLong("created_at"), createdAt)
+            assertEquals(RTPR_INDEX_A.getLong("created_at") + RTPR_INDEX_A.getInteger("duration"), terminatedAt)
             assertEquals(0, RTPR_INDEX_A.getDouble("mos").compareTo(mos))
             assertEquals(0, RTPR_INDEX_A.getDouble("r_factor").compareTo(rFactor))
 
@@ -154,8 +154,8 @@ class LegSessionUtilTest {
 
         legSession.`in`.first().apply {
             assertEquals(RTPR_INDEX_B.getInteger("duration"), duration)
-            assertEquals(RTPR_INDEX_B.getLong("started_at"), createdAt)
-            assertEquals(RTPR_INDEX_B.getLong("started_at") + RTPR_INDEX_B.getInteger("duration"), terminatedAt)
+            assertEquals(RTPR_INDEX_B.getLong("created_at"), createdAt)
+            assertEquals(RTPR_INDEX_B.getLong("created_at") + RTPR_INDEX_B.getInteger("duration"), terminatedAt)
             assertEquals(0, RTPR_INDEX_B.getDouble("mos").compareTo(mos))
             assertEquals(0, RTPR_INDEX_B.getDouble("r_factor").compareTo(rFactor))
 
