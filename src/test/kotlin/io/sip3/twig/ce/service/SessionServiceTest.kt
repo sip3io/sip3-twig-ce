@@ -29,6 +29,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.stereotype.Component
 import java.io.ByteArrayInputStream
+import java.util.*
 
 @SpringBootTest(classes = [TestSessionService::class, MongoClient::class])
 class SessionServiceTest {
@@ -252,5 +253,9 @@ open class TestSessionService : SessionService() {
 
     override fun findInRawBySessionRequest(req: SessionRequest): Iterator<Document> {
         return SessionServiceTest.DOCUMENTS.iterator()
+    }
+
+    override fun findRecInRawBySessionRequest(req: SessionRequest): Iterator<Document> {
+        return Collections.emptyIterator()
     }
 }

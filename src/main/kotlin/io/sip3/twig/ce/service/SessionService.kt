@@ -16,6 +16,7 @@
 
 package io.sip3.twig.ce.service
 
+import com.mongodb.client.model.Filters.*
 import gov.nist.javax.sip.message.SIPMessage
 import gov.nist.javax.sip.parser.StringMsgParser
 import io.pkts.PcapOutputStream
@@ -24,12 +25,10 @@ import io.pkts.frame.PcapGlobalHeader
 import io.pkts.packet.PacketFactory
 import io.sip3.twig.ce.domain.SessionRequest
 import io.sip3.twig.ce.mongo.MongoClient
-import io.sip3.twig.ce.util.callId
-import io.sip3.twig.ce.util.fromUri
-import io.sip3.twig.ce.util.requestUri
-import io.sip3.twig.ce.util.toUri
+import io.sip3.twig.ce.util.*
 import mu.KotlinLogging
 import org.bson.Document
+import org.bson.conversions.Bson
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import java.io.ByteArrayOutputStream
@@ -132,19 +131,14 @@ abstract class SessionService {
         val os = ByteArrayOutputStream()
 
         PcapOutputStream.create(PcapGlobalHeader.createDefaultHeader(), os).use { pos ->
-            findInRawBySessionRequest(req).asSequence()
+            IteratorUtil.merge(findInRawBySessionRequest(req), findRecInRawBySessionRequest(req))
+                .asSequence()
                 .sortedWith(CREATED_AT)
-                .groupBy { document -> "${document.getString("src_addr")}:${document.getString("dst_addr")}:${document.getString("raw_data")}" }
-                .flatMap { (_, documents) ->
-                    if (showRetransmits) {
-                        documents
-                    } else {
-                        listOf(documents.first())
-                    }
-                }
                 .forEach { document ->
+                    val raw = document.getString("raw_data").toByteArray(Charsets.ISO_8859_1)
+
                     val packet = PacketFactory.getInstance().transportFactory
-                        .createUDP(document.getLong("created_at"), Buffers.wrap(document.getString("raw_data")))
+                        .createUDP(document.getLong("created_at"), Buffers.wrap(raw))
 
                     packet.destinationIP = document.getString("dst_addr")
                     packet.sourceIP = document.getString("src_addr")
@@ -157,5 +151,33 @@ abstract class SessionService {
         }
 
         return os
+    }
+
+    open fun findRecInRawBySessionRequest(req: SessionRequest): Iterator<Document> {
+        requireNotNull(req.createdAt) { "created_at" }
+        requireNotNull(req.terminatedAt) { "terminated_at" }
+        requireNotNull(req.callId) { "call_id" }
+
+        val filters = mutableListOf<Bson>().apply {
+            add(gte("created_at", req.createdAt!!))
+            add(lte("created_at", req.terminatedAt!!))
+            add(`in`("call_id", req.callId!!))
+        }
+
+        return mongoClient.find("rec_raw", Pair(req.createdAt!!, req.terminatedAt!!), and(filters))
+            .asSequence()
+            .filter { it.getString("raw_data").length < 16}
+            .flatMap { document ->
+                document.getList("packets", Document::class.java)
+                    .map { packet ->
+                        packet.put("src_addr", document.getString("src_addr"))
+                        packet.put("src_port", document.getInteger("src_port"))
+                        packet.put("dst_addr", document.getString("dst_addr"))
+                        packet.put("dst_port", document.getInteger("dst_port"))
+
+                        return@map packet
+                    }
+            }
+            .iterator()
     }
 }
