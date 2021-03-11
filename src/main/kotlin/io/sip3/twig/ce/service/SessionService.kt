@@ -51,6 +51,9 @@ abstract class SessionService {
     @Value("\${session.show-retransmits}")
     protected var showRetransmits: Boolean = true
 
+    @Value("\${session.media.termination-timeout}")
+    private var terminationTimeout: Long = 60000
+
     abstract fun findInRawBySessionRequest(req: SessionRequest): Iterator<Document>
 
     open fun details(req: SessionRequest): List<Document> {
@@ -160,13 +163,13 @@ abstract class SessionService {
 
         val filters = mutableListOf<Bson>().apply {
             add(gte("created_at", req.createdAt!!))
-            add(lte("created_at", req.terminatedAt!!))
+            add(lte("created_at", req.terminatedAt!! + terminationTimeout))
             add(`in`("call_id", req.callId!!))
         }
 
-        return mongoClient.find("rec_raw", Pair(req.createdAt!!, req.terminatedAt!!), and(filters))
+        return mongoClient.find("rec_raw", Pair(req.createdAt!!, req.terminatedAt!! + terminationTimeout), and(filters))
             .asSequence()
-            .filter { it.getString("raw_data").length < 16}
+            .filter { it.getString("raw_data").length > 20 }
             .flatMap { document ->
                 document.getList("packets", Document::class.java)
                     .map { packet ->
