@@ -169,9 +169,9 @@ abstract class SessionService {
 
         return mongoClient.find("rec_raw", Pair(req.createdAt!!, req.terminatedAt!! + terminationTimeout), and(filters))
             .asSequence()
-            .filter { it.getString("raw_data").length > 20 }
             .flatMap { document ->
                 document.getList("packets", Document::class.java)
+                    .filter { it.getString("raw_data").length > 20 }
                     .map { packet ->
                         packet.put("src_addr", document.getString("src_addr"))
                         packet.put("src_port", document.getInteger("src_port"))
