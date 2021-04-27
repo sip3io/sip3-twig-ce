@@ -36,5 +36,19 @@ class LegSession {
     val out = mutableListOf<MediaSession>()
     val `in` = mutableListOf<MediaSession>()
 
+    fun swapAddresses() {
+        val tmpAddr = srcAddr
+        val tmpPort = srcPort
+        val tmpHost = srcHost
+
+        srcAddr = dstAddr
+        srcPort = dstPort
+        srcHost = dstHost
+
+        dstAddr = tmpAddr
+        dstPort = tmpPort
+        dstHost = tmpHost
+    }
+
     data class Codec(val name: String, val payloadType: Int)
 }

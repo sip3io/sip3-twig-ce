@@ -46,9 +46,9 @@ open class MediaSessionService {
     private lateinit var mongoClient: MongoClient
 
     open fun details(req: SessionRequest): List<Map<String, LegSession?>> {
-        requireNotNull(req.createdAt, { "created_at" })
-        requireNotNull(req.terminatedAt, { "terminated_at" })
-        requireNotNull(req.callId, { "call_id" })
+        requireNotNull(req.createdAt) { "created_at" }
+        requireNotNull(req.terminatedAt) { "terminated_at" }
+        requireNotNull(req.callId) { "call_id" }
 
         val rtp = findLegSessions("rtp", req.createdAt!!, req.terminatedAt!!, req.callId!!)
         val rtcp = findLegSessions("rtcp", req.createdAt!!, req.terminatedAt!!, req.callId!!)
@@ -102,6 +102,8 @@ open class MediaSessionService {
                     .groupBy { generatePartyId(it) }
                     .forEach { (_, reports) -> updateMediaSession(legSession, reports) }
             }
+
+            if (source == "rtcp") legSession.swapAddresses()
         }
 
         return sessions
