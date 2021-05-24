@@ -42,7 +42,7 @@ data class Participant(
     @ApiModelProperty(
         position = 2,
         required = false,
-        notes = "Event details"
+        notes = "Participant details"
     )
     val details: Any?
 )

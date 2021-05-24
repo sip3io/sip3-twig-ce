@@ -171,7 +171,7 @@ abstract class SessionService {
             .asSequence()
             .flatMap { document ->
                 document.getList("packets", Document::class.java)
-                    .filter { it.getString("raw_data").length > 20 }
+//                    .filter { it.getString("raw_data").length > 20 }
                     .map { packet ->
                         packet.put("src_addr", document.getString("src_addr"))
                         packet.put("src_port", document.getInteger("src_port"))
