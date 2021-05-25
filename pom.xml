@@ -37,7 +37,7 @@
         <dependency>
             <groupId>io.sip3.commons</groupId>
             <artifactId>sip3-commons</artifactId>
-            <version>2021.2.2-SNAPSHOT</version>
+            <version>2021.2.3-SNAPSHOT</version>
         </dependency>
 
         <!-- SIP -->

@@ -23,7 +23,6 @@ import io.sip3.twig.ce.domain.Participant
 import io.sip3.twig.ce.domain.SessionRequest
 import io.sip3.twig.ce.service.ServiceLocator
 import io.sip3.twig.ce.service.call.CallSessionService
-import io.sip3.twig.ce.service.host.HostService
 import io.sip3.twig.ce.service.media.MediaSessionService
 import io.sip3.twig.ce.service.media.domain.LegSession
 import io.sip3.twig.ce.service.participant.ParticipantService
