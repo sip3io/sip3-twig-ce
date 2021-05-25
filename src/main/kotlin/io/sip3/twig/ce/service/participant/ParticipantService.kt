@@ -16,8 +16,6 @@
 
 package io.sip3.twig.ce.service.participant
 
-import gov.nist.javax.sdp.parser.SDPAnnounceParser
-import gov.nist.javax.sdp.parser.SDPParser
 import gov.nist.javax.sip.message.SIPMessage
 import gov.nist.javax.sip.parser.StringMsgParser
 import io.sip3.twig.ce.domain.Event
@@ -34,6 +32,10 @@ import org.springframework.stereotype.Component
 
 @Component
 open class ParticipantService {
+
+    init {
+        StringMsgParser.setComputeContentLengthFromMessage(true)
+    }
 
     protected val logger = KotlinLogging.logger {}
 
@@ -53,7 +55,7 @@ open class ParticipantService {
                             isFirst = false
                             return@flatMap listOf(mediaDescription.address(), event.src, event.dst)
                         } else {
-                            return@flatMap listOf(event.src, event.dst, mediaDescription.address())
+                            return@flatMap listOf(event.dst, event.src, mediaDescription.address())
                         }
                     }
                 }
