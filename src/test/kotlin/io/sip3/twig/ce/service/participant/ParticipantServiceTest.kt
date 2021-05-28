@@ -72,7 +72,13 @@ class ParticipantServiceTest {
                 a=rtpmap:8 PCMA/8000
                 a=sendrecv
                 a=ptime:20
-
+                a=candidate:2342127660 1 udp 2122260223 172.18.32.1 61818 typ host generation 0 network-id 1
+                a=candidate:1621512748 1 udp 2122194687 10.242.2.7 61819 typ host generation 0 network-id 2
+                a=candidate:1897852119 1 udp 2122129151 192.168.1.28 61820 typ host generation 0 network-id 3
+                a=candidate:3306812636 1 tcp 1518280447 172.18.32.1 9 typ host tcptype active generation 0 network-id 1
+                a=candidate:774221532 1 tcp 1518214911 10.242.2.7 9 typ host tcptype active generation 0 network-id 2
+                a=candidate:1067257895 1 tcp 1518149375 192.168.1.28 9 typ host tcptype active generation 0 network-id 3
+                a=candidate:2265879811 1 udp 1685921535 8.8.8.8 41999 typ srflx raddr 192.168.1.28 rport 61820 generation 0 network-id 3 
                 """.trimIndent()
             )
         })
@@ -144,6 +150,11 @@ class ParticipantServiceTest {
                 """.trimIndent()
             )
         })
+
+        val EVENT_4 = Event(System.currentTimeMillis(), "10.242.2.7", "10.177.116.41", "RTPR", Document().apply {
+            put("src", "10.242.2.7")
+            put("dst", "10.177.116.41")
+       })
     }
 
     @MockBean
@@ -157,17 +168,20 @@ class ParticipantServiceTest {
         given(hostService.findByNameIgnoreCase("id1")).willReturn(HOST_1)
         given(hostService.findByNameIgnoreCase("id2")).willReturn(HOST_2)
 
-        val participants = participantService.collectParticipants(listOf(EVENT_1, EVENT_2, EVENT_3))
+        val participants = participantService.collectParticipants(listOf(EVENT_1, EVENT_2, EVENT_3, EVENT_4))
 
-        assertEquals(7, participants.size)
-        assertEquals("10.177.131.228", participants[0].name)
+        assertEquals(6, participants.size)
+        // Media from candidate matched with IP from RTPR event
+        assertEquals("10.242.2.7", participants[0].name)
+        // SIP Source from `EVENT_1`
         assertEquals("id1", participants[1].name)
-
+        // SIP Destination from `EVENT_1`
         assertEquals("10.20.30.40", participants[2].name)
+        // Media address from SDP from `EVENT_2`
         assertEquals("10.177.116.41", participants[3].name)
 
-        assertEquals("id2", participants[4].name)
-        assertEquals("20.20.30.40", participants[5].name)
-        assertEquals("20.177.116.41", participants[6].name)
+        // Only SIP addresses from `EVENT_3` (No media)
+        assertEquals("20.20.30.40", participants[4].name)
+        assertEquals("id2", participants[5].name)
     }
 }

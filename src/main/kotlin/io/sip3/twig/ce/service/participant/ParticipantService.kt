@@ -45,24 +45,41 @@ open class ParticipantService {
     open fun collectParticipants(events: List<Event>): List<Participant> {
         var isFirst = true
 
-        return events.flatMap { event ->
+        val namesFromEvents = mutableSetOf<String>().apply {
+            events.forEach{ event ->
+                add(event.src)
+                add(event.dst)
+            }
+        }
+
+        val names = mutableSetOf<String>()
+        events.forEach { event ->
+                val eventHosts = listOf(event.src, event.dst)
                 if (event.type == "SIP") {
                     val sipMessage = parseSIPMessage(event)
                     if (sipMessage != null && sipMessage.hasSdp()) {
                         val mediaDescription = sipMessage.sessionDescription()!!.getMediaDescription("audio")
+                        val mediaAddresses = mutableSetOf<String>().apply {
+                            add(mediaDescription.address())
+                            mediaDescription.candidates?.forEach { candidate ->
+                                candidate.address?.let { add(it) }
+                                candidate.relatedAddress?.let { add(it) }
+                            }
+                        }
 
                         if (sipMessage.method() == "INVITE" && isFirst) {
                             isFirst = false
-                            return@flatMap listOf(mediaDescription.address(), event.src, event.dst)
+                            names.addAll(mediaAddresses)
+                            names.addAll(eventHosts)
                         } else {
-                            return@flatMap listOf(event.dst, event.src, mediaDescription.address())
+                            names.addAll(eventHosts)
+                            names.addAll(mediaAddresses)
                         }
                     }
                 }
-
-                return@flatMap listOf(event.src, event.dst)
             }
-            .toSet()
+
+        return names.intersect(namesFromEvents)
             .map { name ->
                 val host = hostService.findByNameIgnoreCase(name) ?: Document()
                 Participant(name, "host", host)
