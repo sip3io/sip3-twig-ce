@@ -80,7 +80,7 @@ class CallSearchServiceTest {
             put("dst_host", "pbx")
 
             put("created_at", NOW)
-            put("terminated_at", NOW + 60000)
+            put("terminated_at", NOW + 50000)
             put("answered_at", NOW + 10000)
             put("duration", 60000)
             put("state", "answered")
@@ -221,7 +221,7 @@ class CallSearchServiceTest {
         assertTrue(iterator.hasNext())
         iterator.next().apply {
             assertEquals(NOW, createdAt)
-            assertEquals(NOW + 60000, terminatedAt)
+            assertEquals(NOW + 60000 - 600, terminatedAt)
             assertEquals("INVITE", method)
             assertEquals("answered", state)
             assertEquals("101 - 2000000", caller)
@@ -258,7 +258,7 @@ class CallSearchServiceTest {
         assertTrue(iterator.hasNext())
         iterator.next().apply {
             assertEquals(NOW, createdAt)
-            assertEquals(NOW + 60000, terminatedAt)
+            assertEquals(NOW + 50000, terminatedAt)
             assertEquals("101", caller)
             assertEquals("2909090", callee)
             assertEquals(1, callId.size)
@@ -294,7 +294,7 @@ class CallSearchServiceTest {
         assertTrue(iterator.hasNext())
         iterator.next().apply {
             assertEquals(NOW, createdAt)
-            assertEquals(NOW + 60000, terminatedAt)
+            assertEquals(NOW + 50000, terminatedAt)
             assertEquals("101", caller)
             assertEquals("2909090", callee)
             assertEquals(1, callId.size)
@@ -330,7 +330,7 @@ class CallSearchServiceTest {
         assertTrue(iterator.hasNext())
         iterator.next().apply {
             assertEquals(NOW, createdAt)
-            assertEquals(NOW + 60000, terminatedAt)
+            assertEquals(NOW + 50000, terminatedAt)
             assertEquals("101", caller)
             assertEquals("2909090", callee)
             assertEquals(1, callId.size)
