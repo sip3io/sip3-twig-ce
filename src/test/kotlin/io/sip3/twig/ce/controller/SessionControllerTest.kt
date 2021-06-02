@@ -19,12 +19,13 @@ package io.sip3.twig.ce.controller
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.sip3.twig.ce.MockitoExtension.any
 import io.sip3.twig.ce.domain.Host
+import io.sip3.twig.ce.domain.Participant
 import io.sip3.twig.ce.domain.SessionRequest
 import io.sip3.twig.ce.service.ServiceLocator
 import io.sip3.twig.ce.service.call.CallSessionService
-import io.sip3.twig.ce.service.host.HostService
 import io.sip3.twig.ce.service.media.MediaSessionService
 import io.sip3.twig.ce.service.media.domain.LegSession
+import io.sip3.twig.ce.service.participant.ParticipantService
 import io.sip3.twig.ce.service.register.RegisterSessionService
 import org.bson.Document
 import org.hamcrest.Matchers
@@ -133,7 +134,7 @@ class SessionControllerTest {
     private lateinit var mockMvc: MockMvc
 
     @MockBean
-    private lateinit var hostService: HostService
+    private lateinit var participantService: ParticipantService
 
     @MockBean
     private lateinit var callSessionService: CallSessionService
@@ -237,7 +238,12 @@ class SessionControllerTest {
 
         given(registerSessionService.details(any())).willReturn(RESPONSE_1)
         given(registerSessionService.content(any())).willReturn(RESPONSE_2)
-        given(hostService.findByNameIgnoreCase(any())).willReturn(Host(null, "pbx", listOf("192.168.10.5"), null))
+        given(participantService.collectParticipants(any())).willReturn(
+            listOf(
+                Participant("192.168.10.123", "HOST", null),
+                Participant("pbx", "HOST", Host(null, "pbx", listOf("192.168.10.5"), null))
+            )
+        )
 
         mockMvc.perform(
             post("/session/flow")
@@ -288,8 +294,12 @@ class SessionControllerTest {
             )
         )
 
-        given(hostService.findByNameIgnoreCase(any())).willReturn(Host(null, "pbx", listOf("192.168.10.5"), null))
-
+        given(participantService.collectParticipants(any())).willReturn(
+            listOf(
+                Participant("192.168.10.123", "HOST", null),
+                Participant("pbx", "HOST", Host(null, "pbx", listOf("192.168.10.5"), null))
+            )
+        )
         mockMvc.perform(
             post("/session/flow")
                 .contentType(MediaType.APPLICATION_JSON)

@@ -46,6 +46,18 @@
             <artifactId>jain-sip-ri</artifactId>
         </dependency>
 
+        <!-- SDP -->
+        <dependency>
+            <groupId>org.restcomm.media</groupId>
+            <artifactId>sdp</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.jboss.microcontainer</groupId>
+                    <artifactId>jboss-dependency</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
         <!-- Spring Web -->
         <dependency>
             <groupId>org.springframework.boot</groupId>

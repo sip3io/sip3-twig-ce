@@ -21,8 +21,8 @@ import io.sip3.twig.ce.domain.Participant
 import io.sip3.twig.ce.domain.SessionRequest
 import io.sip3.twig.ce.service.ServiceLocator
 import io.sip3.twig.ce.service.SessionService
-import io.sip3.twig.ce.service.host.HostService
 import io.sip3.twig.ce.service.media.MediaSessionService
+import io.sip3.twig.ce.service.participant.ParticipantService
 import io.swagger.annotations.Api
 import io.swagger.annotations.ApiOperation
 import io.swagger.annotations.ApiResponse
@@ -53,7 +53,7 @@ class SessionController {
     private lateinit var mediaSessionService: MediaSessionService
 
     @Autowired
-    private lateinit var hostService: HostService
+    private lateinit var participantService: ParticipantService
 
     @ApiOperation(
         position = 0,
@@ -151,15 +151,7 @@ class SessionController {
         }
 
         // Collect participants
-        val participants = mutableSetOf<String>().apply {
-            events.forEach {
-                add(it.src)
-                add(it.dst)
-            }
-        }.map { name ->
-            val host = hostService.findByNameIgnoreCase(name) ?: Document()
-            Participant(name, "host", host)
-        }
+        val participants = participantService.collectParticipants(events)
 
         events.sortBy { it.timestamp }
         return mapOf(

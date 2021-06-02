@@ -16,8 +16,10 @@
 
 package io.sip3.twig.ce.util
 
+import gov.nist.javax.sip.message.Content
 import gov.nist.javax.sip.message.SIPMessage
 import gov.nist.javax.sip.message.SIPRequest
+import org.restcomm.media.sdp.SessionDescription
 
 fun SIPMessage.requestUri(): String? {
     return (this as? SIPRequest)?.requestLine
@@ -43,4 +45,38 @@ fun SIPMessage.method(): String? {
 
 fun SIPMessage.callId(): String? {
     return callId?.callId
+}
+
+fun SIPMessage.hasSdp(): Boolean {
+    contentTypeHeader?.let { contentType ->
+        if (contentType.mediaSubType == "sdp") {
+            return true
+        } else {
+            multipartMimeContent?.contents?.forEach { mimeContent ->
+                if (mimeContent.matches("sdp")) {
+                    return true
+                }
+            }
+        }
+    }
+
+    return false
+}
+
+fun SIPMessage.sessionDescription(): SessionDescription? {
+    if (this.contentTypeHeader?.mediaSubType == "sdp") {
+        return SessionDescriptionParser.parse(this.messageContent)
+    } else {
+        this.multipartMimeContent?.contents?.forEach { mimeContent ->
+            if (mimeContent.matches("sdp")) {
+                return SessionDescriptionParser.parse(mimeContent.content.toString())
+            }
+        }
+    }
+
+    return null
+}
+
+fun Content.matches(proto: String): Boolean {
+    return contentTypeHeader?.contentSubType?.toLowerCase()?.contains(proto.toLowerCase()) ?: false
 }
