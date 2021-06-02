@@ -84,7 +84,10 @@ open class CallSearchService : SearchService() {
                 val firstLeg = correlatedCall.legs.first()
 
                 this.createdAt = firstLeg.getLong("created_at")
-                correlatedCall.legs.maxOfOrNull { it.getLong("terminated_at") } ?.let { this.terminatedAt = it }
+                correlatedCall.legs
+                    .mapNotNull { it.getLong("terminated_at") }
+                    .maxOrNull()
+                    ?.let { this.terminatedAt = it }
 
                 method = "INVITE"
                 state = firstLeg.getString("state")
