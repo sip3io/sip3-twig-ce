@@ -165,15 +165,23 @@ class HostController {
     }
 
     private fun validate(host: Host) {
-        host.sip?.forEach { address ->
+        if (host.addr.isEmpty()) {
+            throw IllegalArgumentException("addr")
+        }
+
+        host.addr.forEach { address ->
             if (!isValid(address)) {
-                throw IllegalArgumentException("sip")
+                throw IllegalArgumentException("addr")
             }
         }
 
-        host.media?.forEach { address ->
-            if (!isValid(address)) {
-                throw IllegalArgumentException("media")
+        host.mapping.forEach { mapping ->
+            if (!isValid(mapping.source)) {
+                throw IllegalArgumentException("mapping.source")
+            }
+
+            if (!isValid(mapping.target)) {
+                throw IllegalArgumentException("mapping.target")
             }
         }
     }

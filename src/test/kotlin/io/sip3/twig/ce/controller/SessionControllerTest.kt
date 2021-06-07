@@ -241,7 +241,7 @@ class SessionControllerTest {
         given(participantService.collectParticipants(any())).willReturn(
             listOf(
                 Participant("192.168.10.123", "HOST", null),
-                Participant("pbx", "HOST", Host(null, "pbx", listOf("192.168.10.5"), null))
+                Participant("pbx", "HOST", Host(null, "pbx", listOf("192.168.10.5"), listOf()))
             )
         )
 
@@ -297,7 +297,7 @@ class SessionControllerTest {
         given(participantService.collectParticipants(any())).willReturn(
             listOf(
                 Participant("192.168.10.123", "HOST", null),
-                Participant("pbx", "HOST", Host(null, "pbx", listOf("192.168.10.5"), null))
+                Participant("pbx", "HOST", Host(null, "pbx", listOf("192.168.10.5"), listOf()))
             )
         )
         mockMvc.perform(

@@ -17,6 +17,7 @@
 package io.sip3.twig.ce.service.host
 
 import io.sip3.twig.ce.MockitoExtension.any
+import io.sip3.twig.ce.domain.AddressMapping
 import io.sip3.twig.ce.domain.Host
 import io.sip3.twig.ce.repository.HostRepository
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -38,8 +39,18 @@ class HostServiceTest {
 
     companion object {
 
-        val HOST_1 = Host("id1", "host1", listOf("10.10.10.0:5060", "10.10.10.0/28"), listOf("10.0.0.1"))
-        val HOST_2 = Host("id2", "host2", listOf("10.10.20.0:5060", "10.10.20.0/28"), listOf("10.0.0.2"))
+        val HOST_1 = Host(
+            "id1",
+            "host1",
+            listOf("10.10.10.0:5060", "10.10.10.0/28"),
+            listOf(AddressMapping("10.0.0.1", "10.0.0.1"))
+        )
+        val HOST_2 = Host(
+            "id2",
+            "host2",
+            listOf("10.10.20.0:5060", "10.10.20.0/28"),
+            listOf(AddressMapping("10.0.0.1", "10.0.0.1"))
+        )
     }
 
     @MockBean

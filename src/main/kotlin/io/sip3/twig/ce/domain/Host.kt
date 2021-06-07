@@ -42,17 +42,17 @@ data class Host(
 
     @ApiModelProperty(
         position = 1,
-        required = false,
-        notes = "SIP network IP addresses",
+        required = true,
+        notes = "IP addresses",
         example = "[\"192.168.10.10\", \"192.168.10.11:5061\", \"192.168.10.0/24\"]"
     )
-    var sip: List<String>?,
+    var addr: List<String>,
 
     @ApiModelProperty(
         position = 2,
         required = false,
-        notes = "RTP network IP addresses",
-        example = "[\"192.168.10.10\", \"192.168.10.11:32766\", \"192.168.10.0/24\"]"
+        notes = "List of IP Address mapping",
+        example = "[{\"source\": \"217.117.177.177\", \"target\": \"192.168.10.10\"}]"
     )
-    var media: List<String>?
+    var mapping: List<AddressMapping> = emptyList()
 )

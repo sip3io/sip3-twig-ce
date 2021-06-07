@@ -50,8 +50,8 @@ open class HostService {
 
     open fun update(host: Host): Host {
         return hostRepository.getByNameIgnoreCase(host.name).let { existingHost ->
-            existingHost.sip = host.sip
-            existingHost.media = host.media
+            existingHost.addr = host.addr
+            existingHost.mapping = host.mapping
             hostRepository.save(existingHost)
         }
     }
@@ -67,8 +67,8 @@ open class HostService {
             if (existingHost == null) {
                 hostRepository.save(host)
             } else {
-                existingHost.sip = host.sip
-                existingHost.media = host.media
+                existingHost.addr = host.addr
+                existingHost.mapping = host.mapping
                 hostRepository.save(existingHost)
             }
         }
