@@ -155,6 +155,31 @@ class ParticipantServiceTest {
             put("src", "10.242.2.7")
             put("dst", "10.177.116.41")
        })
+
+        val EVENT_5 = Event(System.currentTimeMillis(), "id1", "10.20.30.40", "SIP", Document().apply {
+            put("type", "SIP")
+            put("src", "id1")
+            put("dst", "10.20.30.40")
+
+            put(
+                "raw_data", """
+                        REGISTER sip:192.168.10.5:5060 SIP/2.0
+                        Via: SIP/2.0/UDP 192.168.10.123:55399;branch=z9hG4bK-d8754z-240d73239a6da57b-1---d8754z-;rport
+                        Max-Forwards: 70
+                        Contact: <sip:1010@192.168.10.123:55399;rinstance=13bf343a521442b5>
+                        To: "1010"<sip:1010@192.168.10.5:5060>
+                        From: "1010"<sip:1010@192.168.10.5:5060>;tag=bd285f07
+                        Call-ID: ZDg3ZGU1ZTA1YjZkMThlNzEzOTA0Y2JkZmQ0YWU2ODU.
+                        CSeq: 143 REGISTER
+                        Expires: 120
+                        Allow: INVITE, ACK, CANCEL, OPTIONS, BYE, REGISTER, SUBSCRIBE, NOTIFY, REFER, INFO, MESSAGE
+                        Supported: replaces
+                        User-Agent: 3CXPhone 6.0.26523.0
+                        Authorization: Digest username="1010",realm="asterisk",nonce="1589932693/afdc97bf8bb891c6c3c8072baeb2d3d6",uri="sip:192.168.10.5:5060",response="1337bca977875e158b7e1b96094521ee",cnonce="557bd23e12dc3db950db3c7e77aa91ad",nc=00000002,qop=auth,algorithm=md5,opaque="5b7b35877f215628"
+                        Content-Length: 0
+                        """.trimIndent()
+            )
+        })
     }
 
     @MockBean
@@ -183,5 +208,19 @@ class ParticipantServiceTest {
         // Only SIP addresses from `EVENT_3` (No media)
         assertEquals("20.20.30.40", participants[4].name)
         assertEquals("id2", participants[5].name)
+    }
+
+    @Test
+    fun `Verify participants from REGISTER`() {
+        given(hostService.findByNameIgnoreCase("id1")).willReturn(HOST_1)
+        given(hostService.findByNameIgnoreCase("id2")).willReturn(HOST_2)
+
+        val participants = participantService.collectParticipants(listOf(EVENT_5))
+
+        assertEquals(2, participants.size)
+        // SIP Source from `EVENT_5`
+        assertEquals("id1", participants[0].name)
+        // SIP Destination from `EVENT_5`
+        assertEquals("10.20.30.40", participants[1].name)
     }
 }

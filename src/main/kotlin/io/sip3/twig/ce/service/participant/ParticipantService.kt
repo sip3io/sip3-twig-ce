@@ -75,6 +75,8 @@ open class ParticipantService {
                             names.addAll(eventHosts)
                             names.addAll(mediaAddresses)
                         }
+                    } else {
+                        names.addAll(eventHosts)
                     }
                 }
             }
