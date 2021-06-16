@@ -58,14 +58,7 @@ open class ParticipantService {
                 if (event.type == "SIP") {
                     val sipMessage = parseSIPMessage(event)
                     if (sipMessage != null && sipMessage.hasSdp()) {
-                        val mediaDescription = sipMessage.sessionDescription()!!.getMediaDescription("audio")
-                        val mediaAddresses = mutableSetOf<String>().apply {
-                            add(mediaDescription.address())
-                            mediaDescription.candidates?.forEach { candidate ->
-                                candidate.address?.let { add(it) }
-                                candidate.relatedAddress?.let { add(it) }
-                            }
-                        }
+                        val mediaAddresses = collectMediaAddresses(sipMessage)
 
                         if (sipMessage.method() == "INVITE" && isFirst) {
                             isFirst = false
@@ -94,8 +87,26 @@ open class ParticipantService {
         try {
             return StringMsgParser().parseSIPMessage(rawData.toByteArray(Charsets.ISO_8859_1), true, false, null)
         } catch (e: Exception) {
-            logger.error("StringMsgParser 'parseSIPMessage()' failed.", e)
+            logger.error(e) { "StringMsgParser 'parseSIPMessage()' failed." }
             return null
+        }
+    }
+
+    open fun collectMediaAddresses(sipMessage: SIPMessage): Set<String> {
+        val sessionDescription = try {
+            sipMessage.sessionDescription()
+        } catch (e: Exception) {
+            logger.error(e) { "SIPMessage 'sessionDescription()' failed." }
+            null
+        }
+
+        val mediaDescription = sessionDescription?.getMediaDescription("audio") ?: return emptySet()
+        return mutableSetOf<String>().apply {
+            add(mediaDescription.address())
+            mediaDescription.candidates?.forEach { candidate ->
+                candidate.address?.let { add(it) }
+                candidate.relatedAddress?.let { add(it) }
+            }
         }
     }
 }

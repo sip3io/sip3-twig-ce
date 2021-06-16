@@ -180,6 +180,52 @@ class ParticipantServiceTest {
                         """.trimIndent()
             )
         })
+
+        val EVENT_6 = Event(System.currentTimeMillis(), "id1", "10.20.30.40", "SIP", Document().apply {
+            put("type", "SIP")
+            put("src", "id1")
+            put("dst", "10.20.30.40")
+
+            put(
+                "raw_data", """
+                INVITE sip:000155917690@ss63.invite.demo.sip3.io:5060 SIP/2.0
+                Via: SIP/2.0/UDP 10.177.131.211:6333;branch=z9hG4bKmqffet30b03pp5mv5jj0.1
+                From: <sip:000260971282@demo.sip3.io>;tag=82-2zyzysoabqjb3
+                To: <sip:000155917690@demo.sip3.io:5060>
+                Call-ID: 2dnuu30ktosoky1uad3nzzk3nkk3nzz3-wdsrwt7@UAC-e-e
+                CSeq: 1 INVITE
+                Contact: <sip:signode-82-gxp92pqazkbzz@10.177.131.211:6333;transport=udp>
+                Allow: INVITE,ACK,CANCEL,BYE,INFO,REFER,SUBSCRIBE,NOTIFY
+                Allow-Events: keep-alive
+                Supported: timer
+                Session-Expires: 7200
+                Expires: 300
+                Min-SE: 900
+                Max-Forwards: 63
+                User-Agent: ITLCS 3.8.1
+                Content-Type: application/sdp
+                Content-Length: 179
+        
+                v=0
+                o=- 677480114 3140674329 IN IP4 10.177.131.228
+                s=centrex-mediagateway
+                t=0 0
+                m=audio 35176 RTP/AVP 8
+                c=IN IP4 10.177.131.228
+                a=rtpmap:8 PCMA/8000
+                a=rtcp:59282 IN IP4
+                a=sendrecv
+                a=ptime:20
+                a=candidate:2342127660 1 udp 2122260223 172.18.32.1 61818 typ host generation 0 network-id 1
+                a=candidate:1621512748 1 udp 2122194687 10.242.2.7 61819 typ host generation 0 network-id 2
+                a=candidate:1897852119 1 udp 2122129151 192.168.1.28 61820 typ host generation 0 network-id 3
+                a=candidate:3306812636 1 tcp 1518280447 172.18.32.1 9 typ host tcptype active generation 0 network-id 1
+                a=candidate:774221532 1 tcp 1518214911 10.242.2.7 9 typ host tcptype active generation 0 network-id 2
+                a=candidate:1067257895 1 tcp 1518149375 192.168.1.28 9 typ host tcptype active generation 0 network-id 3
+                a=candidate:2265879811 1 udp 1685921535 8.8.8.8 41999 typ srflx raddr 192.168.1.28 rport 61820 generation 0 network-id 3 
+                """.trimIndent()
+            )
+        })
     }
 
     @MockBean
@@ -221,6 +267,20 @@ class ParticipantServiceTest {
         // SIP Source from `EVENT_5`
         assertEquals("id1", participants[0].name)
         // SIP Destination from `EVENT_5`
+        assertEquals("10.20.30.40", participants[1].name)
+    }
+
+    @Test
+    fun `Verify participants from INVITE with bad SDP`() {
+        given(hostService.findByNameIgnoreCase("id1")).willReturn(HOST_1)
+        given(hostService.findByNameIgnoreCase("id2")).willReturn(HOST_2)
+
+        val participants = participantService.collectParticipants(listOf(EVENT_6))
+
+        assertEquals(2, participants.size)
+        // SIP Source from `EVENT_6`
+        assertEquals("id1", participants[0].name)
+        // SIP Destination from `EVENT_6`
         assertEquals("10.20.30.40", participants[1].name)
     }
 }
