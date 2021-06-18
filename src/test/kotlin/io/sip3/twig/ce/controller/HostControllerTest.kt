@@ -17,6 +17,7 @@
 package io.sip3.twig.ce.controller
 
 import io.sip3.twig.ce.MockitoExtension.any
+import io.sip3.twig.ce.domain.AddressMapping
 import io.sip3.twig.ce.domain.Host
 import io.sip3.twig.ce.service.host.HostService
 import org.hamcrest.Matchers.`is`
@@ -44,8 +45,19 @@ class HostControllerTest {
 
     companion object {
 
-        val HOST_1 = Host("id1", "host1", listOf("10.10.10.0:5060", "10.10.10.0/28"), listOf("10.0.0.1"))
-        val HOST_2 = Host("id2", "host2", listOf("10.10.20.0:5060", "10.10.20.0/28"), listOf("10.0.0.2"))
+        val HOST_1 = Host(
+            "id1",
+            "host1",
+            listOf("10.10.10.0:5060", "10.10.10.0/28"),
+            listOf(AddressMapping("10.0.0.1", "10.0.0.1"))
+        )
+
+        val HOST_2 = Host(
+            "id2",
+            "host2",
+            listOf("10.10.20.0:5060", "10.10.20.0/28"),
+            listOf(AddressMapping("10.0.0.1", "10.0.0.1"))
+        )
     }
 
     @Autowired
@@ -63,8 +75,9 @@ class HostControllerTest {
             .andExpect(jsonPath("$", IsCollectionWithSize.hasSize<Any>(2)))
             .andExpect(jsonPath("$[0].id").doesNotExist())
             .andExpect(jsonPath("$[0].name", `is`(HOST_1.name)))
-            .andExpect(jsonPath("$[0].sip", `is`(HOST_1.sip)))
-            .andExpect(jsonPath("$[0].media", `is`(HOST_1.media)))
+            .andExpect(jsonPath("$[0].addr", `is`(HOST_1.addr)))
+            .andExpect(jsonPath("$[0].mapping[0].source", `is`(HOST_1.mapping.first().source)))
+            .andExpect(jsonPath("$[0].mapping[0].target", `is`(HOST_1.mapping.first().target)))
 
     }
 
@@ -94,17 +107,17 @@ class HostControllerTest {
         mockMvc.perform(
             post("/hosts")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("""{"name": "host2", "sip": ["10.10.10.0:5060"], "media": ["10.10.10.0/28", "10.0.0.1"]}""")
+                .content("""{"name": "host2", "addr": ["10.10.10.0:5060"], "mapping": [{"source": "10.0.0.1","target": "10.0.0.1"}]}""")
         )
             .andExpect(status().isOk())
     }
 
     @Test
-    fun `Add host with bad media address`() {
+    fun `Add host with bad mapping address`() {
         mockMvc.perform(
             post("/hosts")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("""{"name": "host2", "sip": ["10.10.10.0:5060"], "media": ["10.10.10.0/280", "10.0.0.1"]}""")
+                .content("""{"name": "host2", "addr": ["10.10.10.0:5060"], "mapping": [{"source": "10.0.0.1024","target": "10.0.0.1"}]}""")
         )
             .andExpect(status().isBadRequest)
     }
@@ -116,7 +129,7 @@ class HostControllerTest {
         mockMvc.perform(
             post("/hosts")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("""{"name": "host2", "sip": ["10.10.10.0:5060"], "media": ["10.10.10.0/28", "10.0.0.1"]}""")
+                .content("""{"name": "host2", "addr": ["10.10.10.0:5060"], "mapping": [{"source": "10.0.0.1","target": "10.0.0.1"}]}""")
         )
             .andExpect(status().isConflict)
     }
@@ -128,7 +141,7 @@ class HostControllerTest {
         mockMvc.perform(
             put("/hosts")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("""{"name": "host2", "sip": ["10.10.10.0:5060"], "media": ["10.10.10.0/28", "10.0.0.1"]}""")
+                .content("""{"name": "host2", "addr": ["10.10.10.0:5060"], "mapping": [{"source": "10.0.0.1","target": "10.0.0.1"}]}""")
         )
             .andExpect(status().isOk)
     }
@@ -138,7 +151,7 @@ class HostControllerTest {
         mockMvc.perform(
             put("/hosts")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("""{"name": "host2", "sip": ["10.10.10.0:5060"], "media": ["10.10.10.0/280", "10.0.0.1"]}""")
+                .content("""{"name": "host2", "addr": ["10.10.10.0:5060"], "mapping": [{"source": "10.0.0.1/280","target": "10.0.0.1"}]}""")
         )
             .andExpect(status().isBadRequest)
     }
@@ -150,7 +163,7 @@ class HostControllerTest {
         mockMvc.perform(
             put("/host/")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("""{"name": "host2", "sip": ["10.10.10.0:5060"], "media": ["10.10.10.0/28", "10.0.0.1"]}""")
+                .content("""{"name": "host2", "addr": ["10.10.10.0:5060"], "mapping": [{"source": "10.0.0.1","target": "10.0.0.1"}]}""")
         )
             .andExpect(status().isNotFound)
 

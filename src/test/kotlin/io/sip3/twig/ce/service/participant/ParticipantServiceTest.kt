@@ -16,6 +16,7 @@
 
 package io.sip3.twig.ce.service.participant
 
+import io.sip3.twig.ce.domain.AddressMapping
 import io.sip3.twig.ce.domain.Event
 import io.sip3.twig.ce.domain.Host
 import io.sip3.twig.ce.service.host.HostService
@@ -35,8 +36,18 @@ class ParticipantServiceTest {
 
     companion object {
 
-        val HOST_1 = Host("id1", "host1", listOf("10.10.10.0:5060", "10.10.10.0/28"), listOf("10.0.0.1"))
-        val HOST_2 = Host("id2", "host2", listOf("10.10.20.0:5060", "10.10.20.0/28"), listOf("10.0.0.2"))
+        val HOST_1 = Host(
+            "id1",
+            "host1",
+            listOf("10.10.10.0:5060", "10.10.10.0/28"),
+            listOf(AddressMapping("10.0.0.1", "10.0.0.1"))
+        )
+        val HOST_2 = Host(
+            "id2",
+            "host2",
+            listOf("10.10.20.0:5060", "10.10.20.0/28"),
+            listOf(AddressMapping("10.0.0.1", "10.0.0.1"))
+        )
 
         val EVENT_1 = Event(System.currentTimeMillis(), "id1", "10.20.30.40", "SIP", Document().apply {
             put("type", "SIP")
