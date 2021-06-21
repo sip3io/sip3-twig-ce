@@ -54,5 +54,13 @@ data class Host(
         notes = "List of IP Address mapping",
         example = "[{\"source\": \"217.117.177.177\", \"target\": \"192.168.10.10\"}]"
     )
-    var mapping: List<AddressMapping> = emptyList()
+    var mapping: List<AddressMapping> = emptyList(),
+
+    @ApiModelProperty(
+        position = 3,
+        required = false,
+        notes = "Set of host features",
+        example = "[\"proxy\"]"
+    )
+    var feature: Set<String> = emptySet()
 )
