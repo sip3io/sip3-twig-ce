@@ -52,6 +52,7 @@ open class HostService {
         return hostRepository.getByNameIgnoreCase(host.name).let { existingHost ->
             existingHost.addr = host.addr
             existingHost.mapping = host.mapping
+            existingHost.feature = host.feature
             hostRepository.save(existingHost)
         }
     }
@@ -69,6 +70,7 @@ open class HostService {
             } else {
                 existingHost.addr = host.addr
                 existingHost.mapping = host.mapping
+                existingHost.feature = host.feature
                 hostRepository.save(existingHost)
             }
         }

@@ -49,7 +49,8 @@ class HostControllerTest {
             "id1",
             "host1",
             listOf("10.10.10.0:5060", "10.10.10.0/28"),
-            listOf(AddressMapping("10.0.0.1", "10.0.0.1"))
+            listOf(AddressMapping("10.0.0.1", "10.0.0.1")),
+            setOf("proxy")
         )
 
         val HOST_2 = Host(
@@ -78,7 +79,7 @@ class HostControllerTest {
             .andExpect(jsonPath("$[0].addr", `is`(HOST_1.addr)))
             .andExpect(jsonPath("$[0].mapping[0].source", `is`(HOST_1.mapping.first().source)))
             .andExpect(jsonPath("$[0].mapping[0].target", `is`(HOST_1.mapping.first().target)))
-
+            .andExpect(jsonPath("$[0].feature[0]", `is`(HOST_1.feature.first())))
     }
 
     @Test
