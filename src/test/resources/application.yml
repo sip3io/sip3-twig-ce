@@ -22,6 +22,7 @@ time-suffix: yyyyMMdd
 session:
   default-limit: 50
   use-x-correlation-header: true
+  use-delayed-correlation: true
   show-retransmits: true
   call:
     max-legs: 10

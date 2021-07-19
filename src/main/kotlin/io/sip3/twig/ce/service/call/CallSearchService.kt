@@ -46,6 +46,9 @@ open class CallSearchService : SearchService() {
     @Value("\${session.use-x-correlation-header}")
     protected var useXCorrelationHeader: Boolean = true
 
+    @Value("\${session.use-delayed-correlation}")
+    protected var useDelayedCorrelation: Boolean = true
+
     @Value("\${session.call.max-legs}")
     protected var maxLegs: Int = 10
 
@@ -165,7 +168,15 @@ open class CallSearchService : SearchService() {
                 if (!processed.contains(matchedDocument.getString("call_id"))) {
                     // Create and correlate call
                     val correlatedCall = CorrelatedCall().apply {
-                        correlate(matchedDocument)
+                        findCorrelation(matchedDocument)
+
+                        if (legs.isEmpty()) {
+                            if (useDelayedCorrelation) {
+                                correlate(matchedDocument)
+                            } else {
+                                legs.add(matchedDocument)
+                            }
+                        }
                     }
 
                     // Update `processed` with new `call_id`
@@ -198,6 +209,12 @@ open class CallSearchService : SearchService() {
 
         private val callers = mutableSetOf<Pair<String, String>>()
 
+        fun findCorrelation(leg: Document) {
+            findCallCorrelation(leg).forEach {
+                if (legs.size < maxLegs) legs.add(it)
+            }
+        }
+
         fun correlate(leg: Document) {
             val caller = leg.getString("caller")
             val callee = leg.getString("callee")
@@ -212,6 +229,34 @@ open class CallSearchService : SearchService() {
             } else if (legs.size < maxLegs && legs.add(leg)) {
                 findInSipIndexByCallIdsAndXCallIds().forEach { correlate(it) }
             }
+        }
+
+        private fun findCallCorrelation(leg: Document): List<Document> {
+            val createdAt = leg.getLong("created_at")
+            val terminatedAt = leg.getLong("terminated_at")
+            val callId = leg.getString("call_id")
+
+            val filters = mutableListOf<Bson>().apply {
+                // Time filters
+                add(gte("created_at", createdAt - aggregationTimeout))
+                add(lte("created_at", (terminatedAt ?: createdAt) + aggregationTimeout))
+
+                add(eq("call_ids", callId))
+            }
+
+            val timeRange = Pair(createdAt - aggregationTimeout, (terminatedAt ?: createdAt) + aggregationTimeout)
+            return mongoClient.find("sip_call_correlation", timeRange, and(filters)).nextOrNull()?.let { correlation ->
+                val callIds = correlation.getList("call_ids", String::class.java)
+                val callFilters = mutableListOf<Bson>().apply {
+                    // Time filters
+                    add(gte("created_at", createdAt - aggregationTimeout))
+                    add(lte("created_at", (terminatedAt ?: createdAt) + aggregationTimeout))
+
+                    add(`in`("call_id", callIds))
+                }
+
+                return@let mongoClient.find("sip_call_index", timeRange, and(callFilters)).asSequence().toList()
+            } ?: emptyList()
         }
 
         private fun findInSipIndexByCallerAndCallee(leg: Document): List<Document> {
