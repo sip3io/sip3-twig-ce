@@ -203,6 +203,8 @@ class CallSearchServiceTest {
         `when`(client.find(any(), any(), any(), any(), any()))
             // Search by SearchRequest
             .thenReturn(sequenceOf(LEG_1).iterator())
+            // Search correlation for call
+            .thenReturn(Collections.emptyIterator())
             // Search by callee and caller for `LEG_2`
             .thenReturn(sequenceOf(LEG_2).iterator())
             // Search by x-call-id for `LEG_1`
@@ -232,7 +234,7 @@ class CallSearchServiceTest {
         }
         assertFalse(iterator.hasNext())
 
-        verify(client, times(5)).find(any(), any(), any(), any(), any())
+        verify(client, times(6)).find(any(), any(), any(), any(), any())
     }
 
     @Test
@@ -244,6 +246,8 @@ class CallSearchServiceTest {
             .thenReturn(sequenceOf(MEDIA_INDEX_1).iterator())
             // Search by callId SearchRequest
             .thenReturn(sequenceOf(LEG_1).iterator())
+            // Search correlation for call
+            .thenReturn(Collections.emptyIterator())
             // Search by callee and caller for `LEG_1`
             .thenReturn(Collections.emptyIterator())
             // Search by x-call-id for `LEG_1`
@@ -268,7 +272,7 @@ class CallSearchServiceTest {
         }
         assertFalse(iterator.hasNext())
 
-        verify(client, times(4)).find(any(), any(), any(), any(), any())
+        verify(client, times(5)).find(any(), any(), any(), any(), any())
     }
 
     @Test
@@ -280,6 +284,8 @@ class CallSearchServiceTest {
             .thenReturn(sequenceOf(MEDIA_INDEX_1).iterator())
             // Search by callId SearchRequest
             .thenReturn(sequenceOf(LEG_1).iterator())
+            // Search correlation for call
+            .thenReturn(Collections.emptyIterator())
             // Search by callee and caller for `LEG_1`
             .thenReturn(Collections.emptyIterator())
             // Search by x-call-id for `LEG_1`
@@ -304,7 +310,7 @@ class CallSearchServiceTest {
         }
         assertFalse(iterator.hasNext())
 
-        verify(client, times(4)).find(any(), any(), any(), any(), any())
+        verify(client, times(5)).find(any(), any(), any(), any(), any())
     }
 
     @Test
@@ -316,6 +322,8 @@ class CallSearchServiceTest {
             .thenReturn(sequenceOf(MEDIA_INDEX_1).iterator())
             // Search by callId SearchRequest
             .thenReturn(sequenceOf(LEG_1).iterator())
+            // Search correlation for call
+            .thenReturn(Collections.emptyIterator())
             // Search by callee and caller for `LEG_1`
             .thenReturn(Collections.emptyIterator())
             // Search by x-call-id for `LEG_1`
@@ -340,7 +348,7 @@ class CallSearchServiceTest {
         }
         assertFalse(iterator.hasNext())
 
-        verify(client, times(4)).find(any(), any(), any(), any(), any())
+        verify(client, times(5)).find(any(), any(), any(), any(), any())
     }
 
     @Nested
@@ -350,6 +358,8 @@ class CallSearchServiceTest {
         fun `Correlate 2 calls`() {
             // Init
             `when`(client.find(any(), any(), any(), any(), any()))
+                // Search correlation for call
+                .thenReturn(Collections.emptyIterator())
                 // Search by callee and caller for `LEG_1`
                 .thenReturn(sequenceOf(LEG_1, LEG_2).iterator())
                 // Search by x-call-id for `LEG_1`

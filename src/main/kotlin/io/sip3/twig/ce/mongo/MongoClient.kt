@@ -46,6 +46,7 @@ open class MongoClient(
 
     open fun find(prefix: String, timeRange: Pair<Long, Long>, filter: Bson, sort: Bson? = null, limit: Int? = null): Iterator<Document> {
         val collections = listCollectionNames(prefix, timeRange)
+        logger.debug { "find() collections: $collections, timeRange: $timeRange, filter: $filter" }
         return find(collections, filter, sort, limit)
     }
 
