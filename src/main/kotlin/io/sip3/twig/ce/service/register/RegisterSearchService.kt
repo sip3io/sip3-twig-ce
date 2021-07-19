@@ -112,7 +112,7 @@ open class RegisterSearchService : SearchService() {
                 .filterNot { processed.contains(it) }
                 .toList()
 
-            correlate(leg, matchedLegs)
+            correlate(leg, matchedLegs, processed)
         }
 
         private fun findInSipIndexByDocument(leg: Document): Iterator<Document> {
@@ -121,13 +121,8 @@ open class RegisterSearchService : SearchService() {
 
             val filters = mutableListOf<Bson>().apply {
                 // Time filters
-                if (leg.getString("state") == "registered") {
-                    add(lte("created_at", terminatedAt))
-                    add(gte("terminated_at", createdAt))
-                } else {
-                    add(gte("created_at", createdAt - aggregationTimeout))
-                    add(lte("created_at", createdAt + aggregationTimeout))
-                }
+                add(gte("created_at", createdAt - aggregationTimeout))
+                add(lte("created_at", createdAt + aggregationTimeout))
 
                 // Main filters
                 add(eq("state", leg.getString("state")))
@@ -135,14 +130,15 @@ open class RegisterSearchService : SearchService() {
                 add(eq("callee", leg.getString("callee")))
                 add(or(
                     leg.getString("src_host")?.let { eq("dst_host", it) } ?: eq("dst_addr", leg.getString("src_addr")),
-                    leg.getString("dst_host")?.let { eq("src_host", it) } ?: eq("src_addr", leg.getString("dst_addr"))
+                    leg.getString("dst_host")?.let { eq("src_host", it) } ?: eq("src_addr", leg.getString("dst_addr")),
+                    eq("call_id", leg.getString("call_id"))
                 ))
             }
 
-            return mongoClient.find("sip_register_index", Pair(createdAt - durationTimeout, terminatedAt + aggregationTimeout), and(filters))
+            return mongoClient.find("sip_register_index", Pair(createdAt - aggregationTimeout, terminatedAt + aggregationTimeout), and(filters))
         }
 
-        private fun correlate(leg: Document, matchedLegs: List<Document>) {
+        private fun correlate(leg: Document, matchedLegs: List<Document>, processed: MutableSet<Document>) {
             // Exclude leg correlation for `registered` state with time intersection
             if (leg.getString("state") == "registered") {
                 if (legs.any { correlatedLeg ->
@@ -152,6 +148,7 @@ open class RegisterSearchService : SearchService() {
                                 && correlatedLeg.getLong("terminated_at") >= leg.getLong("created_at")
                                 && correlatedLeg.getLong("created_at") <= leg.getLong("terminated_at")
                     }) {
+                    processed.add(leg)
                     return
                 }
             }
@@ -164,8 +161,8 @@ open class RegisterSearchService : SearchService() {
             matchedLegs.filter { matchedLeg ->
                 // Time filters
                 val filterByTime = if (terminatedAt == null) {
-                    createdAt - aggregationTimeout >= matchedLeg.getLong("created_at")
-                            && createdAt + aggregationTimeout <= matchedLeg.getLong("created_at")
+                    createdAt - aggregationTimeout <= matchedLeg.getLong("created_at")
+                            && createdAt + aggregationTimeout >= matchedLeg.getLong("created_at")
                 } else {
                     terminatedAt >= matchedLeg.getLong("created_at")
                             && createdAt <= matchedLeg.getLong("terminated_at")
@@ -181,7 +178,7 @@ open class RegisterSearchService : SearchService() {
                 // Combine and apply all filters
                 return@filter filterByTime && (filterBySrcHost || filterByDstHost)
             }.forEach { matchedLeg ->
-                correlate(matchedLeg, matchedLegs)
+                correlate(matchedLeg, matchedLegs, processed)
             }
         }
     }
