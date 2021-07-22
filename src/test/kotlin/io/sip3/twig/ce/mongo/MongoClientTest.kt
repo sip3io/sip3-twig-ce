@@ -18,32 +18,22 @@ package io.sip3.twig.ce.mongo
 
 import com.mongodb.client.MongoClients
 import com.mongodb.client.model.Sorts
+import io.sip3.twig.ce.MongoExtension
 import org.bson.Document
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.boot.test.util.TestPropertyValues
-import org.springframework.context.ApplicationContextInitializer
-import org.springframework.context.ConfigurableApplicationContext
 import org.springframework.test.context.ContextConfiguration
-import org.testcontainers.containers.MongoDBContainer
-import org.testcontainers.junit.jupiter.Container
-import org.testcontainers.junit.jupiter.Testcontainers
 
-@Testcontainers
+@ExtendWith(MongoExtension::class)
 @SpringBootTest(classes = [MongoClient::class])
-@ContextConfiguration(initializers = [MongoClientTest.MongoDbInitializer::class])
+@ContextConfiguration(initializers = [MongoExtension.MongoDbInitializer::class])
 class MongoClientTest {
 
     companion object {
-
-        @JvmField
-        @Container
-        val MONGODB_CONTAINER = MongoDBContainer("mongo:4.4").apply {
-            start()
-        }
 
         const val CREATED_AT = 1596326400000    // 2020-08-02 00:00:00 UTC
         const val TERMINATED_AT = 1596499199000 // 2020-08-03 23:59:59 UTC
@@ -72,7 +62,7 @@ class MongoClientTest {
         @BeforeAll
         @JvmStatic
         fun beforeAll() {
-            MongoClients.create(MONGODB_CONTAINER.getReplicaSetUrl("sip3-test")).getDatabase("sip3-test").apply {
+            MongoClients.create(MongoExtension.MONGODB_CONTAINER.getReplicaSetUrl("sip3-test")).getDatabase("sip3-test").apply {
                 getCollection("test_20200802").insertMany(
                     mutableListOf(
                         DOCUMENT_1, DOCUMENT_2
@@ -119,17 +109,5 @@ class MongoClientTest {
         assertEquals(DOCUMENT_1, documents[0])
         assertEquals(DOCUMENT_5, documents[1])
         assertEquals(DOCUMENT_3, documents[2])
-    }
-
-    class MongoDbInitializer : ApplicationContextInitializer<ConfigurableApplicationContext?> {
-        override fun initialize(configurableApplicationContext: ConfigurableApplicationContext?) {
-            TestPropertyValues.of(
-                "time-suffix=yyyyMMdd",
-                "mongo.uri=${MONGODB_CONTAINER.getReplicaSetUrl("sip3-test")}",
-                "mongo.db=sip3-test",
-                "mongo.max-execution-time=1000",
-                "mongo.batch-size=128"
-            ).applyTo(configurableApplicationContext?.environment)
-        }
     }
 }

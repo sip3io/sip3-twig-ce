@@ -18,41 +18,30 @@ package io.sip3.twig.ce.service.call
 
 import com.mongodb.client.MongoClients
 import io.sip3.commons.domain.Attribute
+import io.sip3.twig.ce.MongoExtension
 import io.sip3.twig.ce.domain.SearchRequest
 import io.sip3.twig.ce.mongo.MongoClient
 import io.sip3.twig.ce.service.attribute.AttributeService
 import org.bson.Document
-import org.junit.ClassRule
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.BDDMockito.given
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.mock.mockito.MockBean
-import org.springframework.boot.test.util.TestPropertyValues
-import org.springframework.context.ApplicationContextInitializer
-import org.springframework.context.ConfigurableApplicationContext
 import org.springframework.test.context.ContextConfiguration
-import org.testcontainers.containers.MongoDBContainer
-import org.testcontainers.junit.jupiter.Container
-import org.testcontainers.junit.jupiter.Testcontainers
 
-@Testcontainers
+@ExtendWith(MongoExtension::class)
 @SpringBootTest(classes = [MongoClient::class, CallSearchService::class])
-@ContextConfiguration(initializers = [CallSearchServiceTest.MongoDbInitializer::class])
+@ContextConfiguration(initializers = [MongoExtension.MongoDbInitializer::class])
 class CallSearchServiceTest {
 
     companion object {
-
-        @JvmField
-        @Container
-        val MONGODB_CONTAINER = MongoDBContainer("mongo:4.4").apply {
-            start()
-        }
 
         val ATTRIBUTES = listOf(
             Attribute().apply {
@@ -90,7 +79,7 @@ class CallSearchServiceTest {
         @JvmStatic
         @BeforeAll
         fun beforeAll() {
-            MongoClients.create(MONGODB_CONTAINER.getReplicaSetUrl("sip3-test")).getDatabase("sip3-test").apply {
+            MongoClients.create(MongoExtension.MONGODB_CONTAINER.getReplicaSetUrl("sip3-test")).getDatabase("sip3-test").apply {
                 this.javaClass.getResource("/json/calls/CallSearchServiceTest.json")?.let { file ->
                     val json = Document.parse(file.readText())
                     json.keys.forEach { collectionName ->
@@ -259,17 +248,5 @@ class CallSearchServiceTest {
             assertNull(errorCode)
         }
         assertFalse(iterator.hasNext())
-    }
-
-    class MongoDbInitializer : ApplicationContextInitializer<ConfigurableApplicationContext?> {
-        override fun initialize(configurableApplicationContext: ConfigurableApplicationContext?) {
-            TestPropertyValues.of(
-                "time-suffix=yyyyMMdd",
-                "mongo.uri=${MONGODB_CONTAINER.getReplicaSetUrl("sip3-test")}",
-                "mongo.db=sip3-test",
-                "mongo.max-execution-time=1000",
-                "mongo.batch-size=128"
-            ).applyTo(configurableApplicationContext?.environment)
-        }
     }
 }
