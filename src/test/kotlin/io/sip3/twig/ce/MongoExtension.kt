@@ -22,7 +22,6 @@ import org.springframework.boot.test.util.TestPropertyValues
 import org.springframework.context.ApplicationContextInitializer
 import org.springframework.context.ConfigurableApplicationContext
 import org.testcontainers.containers.MongoDBContainer
-import java.net.ServerSocket
 
 class MongoExtension : BeforeAllCallback {
 
