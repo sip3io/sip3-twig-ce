@@ -44,35 +44,19 @@ class CallSearchServiceTest {
     companion object {
 
         val ATTRIBUTES = listOf(
+            "sip.caller" to Attribute.TYPE_STRING,
+            "sip.call_id" to Attribute.TYPE_STRING,
+            "sip.state" to Attribute.TYPE_STRING,
+            "rtp.mos" to Attribute.TYPE_NUMBER,
+            "rtcp.mos" to Attribute.TYPE_NUMBER,
+            "media.mos" to Attribute.TYPE_NUMBER
+        ).map { (name, type) ->
             Attribute().apply {
-                name = "sip.caller"
-                type = Attribute.TYPE_STRING
-                options = mutableSetOf()
-            },
-            Attribute().apply {
-                name = "sip.call_id"
-                type = Attribute.TYPE_STRING
-                options = mutableSetOf()
-            },
-            Attribute().apply {
-                name = "sip.state"
-                type = Attribute.TYPE_STRING
-                options = mutableSetOf()
-            },
-            Attribute().apply {
-                name = "rtp.mos"
-                type = Attribute.TYPE_NUMBER
-            },
-            Attribute().apply {
-                name = "rtcp.mos"
-                type = Attribute.TYPE_NUMBER
-            },
-            Attribute().apply {
-                name = "media.mos"
-                type = Attribute.TYPE_NUMBER
+                this.name = name
+                this.type = type
+                if (type == Attribute.TYPE_STRING) this.options = mutableSetOf()
             }
-
-        )
+        }
 
         val CREATED_AT = 1626775335000
 
