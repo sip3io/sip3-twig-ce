@@ -147,11 +147,6 @@
             <artifactId>mongodb</artifactId>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>net.java.dev.jna</groupId>
-            <artifactId>jna</artifactId>
-            <scope>test</scope>
-        </dependency>
     </dependencies>
 
     <build>

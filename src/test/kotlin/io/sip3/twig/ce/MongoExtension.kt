@@ -31,6 +31,9 @@ class MongoExtension : BeforeAllCallback {
         val MONGODB_CONTAINER = MongoDBContainer("mongo:4.4").apply {
             start()
         }
+
+        val MONGO_URI
+            get() = "mongodb://${MONGODB_CONTAINER.containerIpAddress}:${MONGODB_CONTAINER.firstMappedPort}"
     }
 
     override fun beforeAll(context: ExtensionContext?) {
@@ -41,7 +44,7 @@ class MongoExtension : BeforeAllCallback {
         override fun initialize(configurableApplicationContext: ConfigurableApplicationContext?) {
             TestPropertyValues.of(
                 "time-suffix=yyyyMMdd",
-                "mongo.uri=${MONGODB_CONTAINER.getReplicaSetUrl("sip3-test")}",
+                "mongo.uri=${MONGO_URI}",
                 "mongo.db=sip3-test",
                 "mongo.max-execution-time=1000",
                 "mongo.batch-size=128"

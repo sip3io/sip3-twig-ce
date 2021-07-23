@@ -62,7 +62,7 @@ class MongoClientTest {
         @BeforeAll
         @JvmStatic
         fun beforeAll() {
-            MongoClients.create(MongoExtension.MONGODB_CONTAINER.getReplicaSetUrl("sip3-test")).getDatabase("sip3-test").apply {
+            MongoClients.create(MongoExtension.MONGO_URI).getDatabase("sip3-test").apply {
                 getCollection("test_20200802").insertMany(
                     mutableListOf(
                         DOCUMENT_1, DOCUMENT_2

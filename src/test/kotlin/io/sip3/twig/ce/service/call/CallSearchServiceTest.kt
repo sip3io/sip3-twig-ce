@@ -63,7 +63,7 @@ class CallSearchServiceTest {
         @JvmStatic
         @BeforeAll
         fun beforeAll() {
-            MongoClients.create(MongoExtension.MONGODB_CONTAINER.getReplicaSetUrl("sip3-test")).getDatabase("sip3-test").apply {
+            MongoClients.create(MongoExtension.MONGO_URI).getDatabase("sip3-test").apply {
                 this.javaClass.getResource("/json/calls/CallSearchServiceTest.json")?.let { file ->
                     val json = Document.parse(file.readText())
                     json.keys.forEach { collectionName ->
