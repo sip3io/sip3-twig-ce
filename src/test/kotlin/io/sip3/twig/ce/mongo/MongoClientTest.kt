@@ -23,16 +23,17 @@ import org.bson.Document
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.extension.ExtendWith
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.test.context.ContextConfiguration
 
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @ExtendWith(MongoExtension::class)
+@SpringBootTest(classes = [MongoClient::class])
+@ContextConfiguration(initializers = [MongoExtension.MongoDbInitializer::class])
 class MongoClientTest {
 
     companion object {
-
-        val MONGO_URI = "mongodb://${MongoExtension.HOST}:${MongoExtension.PORT}"
 
         const val CREATED_AT = 1596326400000    // 2020-08-02 00:00:00 UTC
         const val TERMINATED_AT = 1596499199000 // 2020-08-03 23:59:59 UTC
@@ -61,7 +62,7 @@ class MongoClientTest {
         @BeforeAll
         @JvmStatic
         fun beforeAll() {
-            MongoClients.create(MONGO_URI).getDatabase("sip3-test").apply {
+            MongoClients.create(MongoExtension.MONGO_URI).getDatabase("sip3-test").apply {
                 getCollection("test_20200802").insertMany(
                     mutableListOf(
                         DOCUMENT_1, DOCUMENT_2
@@ -76,7 +77,8 @@ class MongoClientTest {
         }
     }
 
-    private val client: MongoClient = MongoClient("yyyyMMdd", MONGO_URI, "sip3-test", 1000L, 128)
+    @Autowired
+    lateinit var client: MongoClient
 
     @Test
     fun `Validate listCollectionNames() by prefix`() {
