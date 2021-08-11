@@ -40,6 +40,10 @@ open class HostService {
         return hostRepository.findByNameIgnoreCase(name)
     }
 
+    open fun findByAddr(address: String): Host? {
+        return hostRepository.findByAddrContains(address)
+    }
+
     open fun create(host: Host): Host {
         hostRepository.findByNameIgnoreCase(host.name)?.let {
             throw DuplicateKeyException("Host with name \"${host.name}\" already exists")

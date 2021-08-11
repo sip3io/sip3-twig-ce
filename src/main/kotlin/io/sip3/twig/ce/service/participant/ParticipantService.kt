@@ -59,6 +59,7 @@ open class ParticipantService {
                     val sipMessage = parseSIPMessage(event)
                     if (sipMessage != null && sipMessage.hasSdp()) {
                         val mediaAddresses = collectMediaAddresses(sipMessage)
+                            .map { hostService.findByAddr(it)?.name ?: it }
 
                         if (sipMessage.method() == "INVITE" && isFirst) {
                             isFirst = false

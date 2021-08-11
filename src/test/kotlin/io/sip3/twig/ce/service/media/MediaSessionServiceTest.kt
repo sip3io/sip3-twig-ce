@@ -385,14 +385,14 @@ class MediaSessionServiceTest {
 
         rtp.`in`.first().apply {
             assertEquals(RTPR_IN.getLong("created_at"), createdAt)
-            assertEquals(packets.expected, blocks.sumBy { it.packets.expected })
+            assertEquals(packets.expected, blocks.sumOf { it.packets.expected })
             assertEquals(RTPR_IN.get("packets", Document::class.java).getInteger("expected"), packets.expected)
             assertEquals(RTPR_IN.get("jitter", Document::class.java).getDouble("avg"), jitter.avg)
         }
 
         rtp.out.first().apply {
             assertEquals(RTPR_OUT.getLong("created_at"), createdAt)
-            assertEquals(packets.expected, blocks.sumBy { it.packets.expected })
+            assertEquals(packets.expected, blocks.sumOf { it.packets.expected })
             assertEquals(RTPR_OUT.get("packets", Document::class.java).getInteger("expected"), packets.expected)
             assertEquals(RTPR_OUT.get("jitter", Document::class.java).getDouble("avg"), jitter.avg)
         }

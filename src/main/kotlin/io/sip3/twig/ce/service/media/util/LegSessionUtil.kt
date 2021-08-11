@@ -92,23 +92,23 @@ object LegSessionUtil {
 
             val reportPackets = reports.map { it.get("packets") as Document }
             packets.apply {
-                expected = reportPackets.sumBy { it.getInteger("expected") }
-                received = reportPackets.sumBy { it.getInteger("received") }
-                rejected = reportPackets.sumBy { it.getInteger("rejected") }
+                expected = reportPackets.sumOf { it.getInteger("expected") }
+                received = reportPackets.sumOf { it.getInteger("received") }
+                rejected = reportPackets.sumOf { it.getInteger("rejected") }
                 lost = expected - received
             }
 
             reports.filter { it.getDouble("r_factor") > 0.0 }
                 .takeIf { it.isNotEmpty() }
                 ?.let { validReports ->
-                    mos = validReports.sumByDouble { it.getDouble("mos") } / validReports.size
-                    rFactor = validReports.sumByDouble { it.getDouble("r_factor") } / validReports.size
+                    mos = validReports.sumOf { it.getDouble("mos") } / validReports.size
+                    rFactor = validReports.sumOf { it.getDouble("r_factor") } / validReports.size
 
                     val reportJitter = validReports.map { it.get("jitter") as Document }
                     jitter.apply {
                         reportJitter.map { it.getDouble("min") }.filter { it != 0.0 }.minOrNull()?.let { min = it }
                         max = reportJitter.map { it.getDouble("max") }.maxOrNull()!!
-                        avg = reportJitter.sumByDouble { it.getDouble("avg") } / validReports.size
+                        avg = reportJitter.sumOf { it.getDouble("avg") } / validReports.size
                     }
                 }
         }

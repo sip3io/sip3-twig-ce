@@ -76,7 +76,7 @@ class HostController {
     )
     @GetMapping("/{name}")
     fun getByName(@Valid @NotNull @PathVariable("name") name: String): Host {
-        return hostService.getByName(name.toLowerCase())
+        return hostService.getByName(name.lowercase())
     }
 
     @ApiOperation(
@@ -153,7 +153,7 @@ class HostController {
         val hosts: Set<Host> = mapper.readValue(file.inputStream)
 
         // Validate host names
-        val hasDuplicates = hosts.map { it.name.toLowerCase() }.toSet().size != hosts.size
+        val hasDuplicates = hosts.map { it.name.lowercase() }.toSet().size != hosts.size
         if (hasDuplicates) {
             throw IllegalArgumentException("name")
         }

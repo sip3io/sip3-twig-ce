@@ -78,5 +78,5 @@ fun SIPMessage.sessionDescription(): SessionDescription? {
 }
 
 fun Content.matches(proto: String): Boolean {
-    return contentTypeHeader?.contentSubType?.toLowerCase()?.contains(proto.toLowerCase()) ?: false
+    return contentTypeHeader?.contentSubType?.lowercase()?.contains(proto.lowercase()) ?: false
 }
