@@ -24,4 +24,6 @@ interface HostRepository : PagingAndSortingRepository<Host, String> {
     fun getByNameIgnoreCase(name: String): Host
 
     fun findByNameIgnoreCase(name: String): Host?
+
+    fun findByAddrContains(address: String): Host?
 }

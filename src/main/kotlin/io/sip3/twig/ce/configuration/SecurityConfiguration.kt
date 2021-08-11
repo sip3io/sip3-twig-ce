@@ -94,7 +94,7 @@ open class SecurityConfiguration : WebSecurityConfigurerAdapter() {
     class HttpServletRequest(request: javax.servlet.http.HttpServletRequest) : HttpServletRequestWrapper(request) {
 
         override fun getHeader(name: String): String? {
-            return super.getHeader(name) ?: super.getHeader(name.toLowerCase())
+            return super.getHeader(name) ?: super.getHeader(name.lowercase())
         }
     }
 }
