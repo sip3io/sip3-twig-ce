@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2021 SIP3.IO, Inc.
+ * Copyright 2018-2021 SIP3.IO, Corp.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,6 @@
 package io.sip3.twig.ce.controller
 
 import io.sip3.twig.ce.domain.Event
-import io.sip3.twig.ce.domain.Participant
 import io.sip3.twig.ce.domain.SessionRequest
 import io.sip3.twig.ce.service.ServiceLocator
 import io.sip3.twig.ce.service.SessionService
@@ -28,7 +27,6 @@ import io.swagger.annotations.ApiOperation
 import io.swagger.annotations.ApiResponse
 import io.swagger.annotations.ApiResponses
 import mu.KotlinLogging
-import org.bson.Document
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
