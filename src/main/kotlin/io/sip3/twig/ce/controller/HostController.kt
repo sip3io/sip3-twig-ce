@@ -26,6 +26,8 @@ import io.swagger.annotations.ApiOperation
 import io.swagger.annotations.ApiResponse
 import io.swagger.annotations.ApiResponses
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.http.HttpStatus
+import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.multipart.MultipartFile
 import javax.validation.Valid
@@ -132,6 +134,7 @@ class HostController {
         ]
     )
     @DeleteMapping("/{name}")
+    @ResponseStatus(value = HttpStatus.NO_CONTENT)
     fun deleteByName(@Valid @PathVariable("name") @NotNull name: String) {
         hostService.deleteByName(name)
     }
@@ -149,7 +152,8 @@ class HostController {
         ]
     )
     @PostMapping("/import")
-    fun import(@RequestParam("file") @Valid @NotNull file: MultipartFile) {
+    @ResponseStatus(value = HttpStatus.NO_CONTENT)
+    fun import(@RequestPart("file", required = true) @Valid @NotNull file: MultipartFile) {
         val hosts: Set<Host> = mapper.readValue(file.inputStream)
 
         // Validate host names

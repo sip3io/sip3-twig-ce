@@ -173,7 +173,7 @@ class HostControllerTest {
     @Test
     fun `Delete persisted host by name`() {
         this.mockMvc.perform(delete("/hosts/host2"))
-            .andExpect(status().isOk)
+            .andExpect(status().isNoContent)
 
         verify(hostService, only()).deleteByName(any())
     }
@@ -193,7 +193,7 @@ class HostControllerTest {
             mockMvc.perform(
                 multipart("/hosts/import")
                     .file(fileMock)
-            ).andExpect(status().isOk)
+            ).andExpect(status().isNoContent)
         }
 
         verify(hostService, only()).saveAll(any())
