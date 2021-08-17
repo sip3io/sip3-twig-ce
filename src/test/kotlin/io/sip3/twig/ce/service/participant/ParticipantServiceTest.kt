@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2021 SIP3.IO, Inc.
+ * Copyright 2018-2021 SIP3.IO, Corp.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,10 +21,13 @@ import io.sip3.twig.ce.domain.Event
 import io.sip3.twig.ce.domain.Host
 import io.sip3.twig.ce.service.host.HostService
 import org.bson.Document
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.BDDMockito.given
+import org.mockito.internal.util.MockUtil.resetMock
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.mock.mockito.MockBean
@@ -48,10 +51,16 @@ class ParticipantServiceTest {
             listOf("10.10.20.0:5060", "10.10.20.0/28"),
             listOf(AddressMapping("10.0.0.1", "10.0.0.1"))
         )
+        val HOST_3 = Host(
+            "id3",
+            "host3",
+            listOf("10.242.2.7"),
+            emptyList()
+        )
 
-        val EVENT_1 = Event(System.currentTimeMillis(), "id1", "10.20.30.40", "SIP", null, Document().apply {
+        val EVENT_1 = Event(System.currentTimeMillis(), HOST_1.name, "10.20.30.40", "SIP", null, Document().apply {
             put("type", "SIP")
-            put("src", "id1")
+            put("src", HOST_1.name)
             put("dst", "10.20.30.40")
 
             put(
@@ -94,10 +103,10 @@ class ParticipantServiceTest {
             )
         })
 
-        val EVENT_2 = Event(System.currentTimeMillis(), "10.20.30.40", "id1", "SIP", null, Document().apply {
+        val EVENT_2 = Event(System.currentTimeMillis(), "10.20.30.40", HOST_1.name, "SIP", null, Document().apply {
             put("type", "SIP")
             put("src", "10.20.30.40")
-            put("dst", "id1")
+            put("dst", HOST_1.name)
 
             put(
                 "raw_data", """
@@ -128,10 +137,10 @@ class ParticipantServiceTest {
             )
         })
 
-        val EVENT_3 = Event(System.currentTimeMillis(), "20.20.30.40", "id2", "SIP", null, Document().apply {
+        val EVENT_3 = Event(System.currentTimeMillis(), "20.20.30.40", HOST_2.name, "SIP", null, Document().apply {
             put("type", "SIP")
             put("src", "20.20.30.40")
-            put("dst", "id2")
+            put("dst", HOST_2.name)
 
             put(
                 "raw_data", """
@@ -162,14 +171,14 @@ class ParticipantServiceTest {
             )
         })
 
-        val EVENT_4 = Event(System.currentTimeMillis(), "10.242.2.7", "10.177.116.41", "RTPR", null, Document().apply {
-            put("src", "10.242.2.7")
+        val EVENT_4 = Event(System.currentTimeMillis(), HOST_3.name, "10.177.116.41", "RTPR", null, Document().apply {
+            put("src", HOST_3.name)
             put("dst", "10.177.116.41")
        })
 
-        val EVENT_5 = Event(System.currentTimeMillis(), "id1", "10.20.30.40", "SIP", null, Document().apply {
+        val EVENT_5 = Event(System.currentTimeMillis(), HOST_1.name, "10.20.30.40", "SIP", null, Document().apply {
             put("type", "SIP")
-            put("src", "id1")
+            put("src", HOST_1.name)
             put("dst", "10.20.30.40")
 
             put(
@@ -192,9 +201,9 @@ class ParticipantServiceTest {
             )
         })
 
-        val EVENT_6 = Event(System.currentTimeMillis(), "id1", "10.20.30.40", "SIP", null, Document().apply {
+        val EVENT_6 = Event(System.currentTimeMillis(), HOST_1.name, "10.20.30.40", "SIP", null, Document().apply {
             put("type", "SIP")
-            put("src", "id1")
+            put("src", HOST_1.name)
             put("dst", "10.20.30.40")
 
             put(
@@ -245,18 +254,22 @@ class ParticipantServiceTest {
     @Autowired
     private lateinit var participantService: ParticipantService
 
+    @BeforeEach
+    fun init() {
+        given(hostService.findByNameIgnoreCase(HOST_1.name)).willReturn(HOST_1)
+        given(hostService.findByNameIgnoreCase(HOST_2.name)).willReturn(HOST_2)
+        given(hostService.findByAddr("10.242.2.7")).willReturn(HOST_3)
+    }
+
     @Test
     fun `Verify participants from SDP`() {
-        given(hostService.findByNameIgnoreCase("id1")).willReturn(HOST_1)
-        given(hostService.findByNameIgnoreCase("id2")).willReturn(HOST_2)
-
         val participants = participantService.collectParticipants(listOf(EVENT_1, EVENT_2, EVENT_3, EVENT_4))
 
         assertEquals(6, participants.size)
         // Media from candidate matched with IP from RTPR event
-        assertEquals("10.242.2.7", participants[0].name)
+        assertEquals(HOST_3.name, participants[0].name)
         // SIP Source from `EVENT_1`
-        assertEquals("id1", participants[1].name)
+        assertEquals(HOST_1.name, participants[1].name)
         // SIP Destination from `EVENT_1`
         assertEquals("10.20.30.40", participants[2].name)
         // Media address from SDP from `EVENT_2`
@@ -264,34 +277,33 @@ class ParticipantServiceTest {
 
         // Only SIP addresses from `EVENT_3` (No media)
         assertEquals("20.20.30.40", participants[4].name)
-        assertEquals("id2", participants[5].name)
+        assertEquals(HOST_2.name, participants[5].name)
     }
 
     @Test
     fun `Verify participants from REGISTER`() {
-        given(hostService.findByNameIgnoreCase("id1")).willReturn(HOST_1)
-        given(hostService.findByNameIgnoreCase("id2")).willReturn(HOST_2)
-
         val participants = participantService.collectParticipants(listOf(EVENT_5))
 
         assertEquals(2, participants.size)
         // SIP Source from `EVENT_5`
-        assertEquals("id1", participants[0].name)
+        assertEquals(HOST_1.name, participants[0].name)
         // SIP Destination from `EVENT_5`
         assertEquals("10.20.30.40", participants[1].name)
     }
 
     @Test
     fun `Verify participants from INVITE with bad SDP`() {
-        given(hostService.findByNameIgnoreCase("id1")).willReturn(HOST_1)
-        given(hostService.findByNameIgnoreCase("id2")).willReturn(HOST_2)
-
         val participants = participantService.collectParticipants(listOf(EVENT_6))
 
         assertEquals(2, participants.size)
         // SIP Source from `EVENT_6`
-        assertEquals("id1", participants[0].name)
+        assertEquals(HOST_1.name, participants[0].name)
         // SIP Destination from `EVENT_6`
         assertEquals("10.20.30.40", participants[1].name)
+    }
+
+    @AfterEach
+    fun reset() {
+        resetMock(hostService)
     }
 }

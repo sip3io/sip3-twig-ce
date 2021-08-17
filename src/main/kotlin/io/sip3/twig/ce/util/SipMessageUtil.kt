@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2021 SIP3.IO, Inc.
+ * Copyright 2018-2021 SIP3.IO, Corp.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -90,5 +90,5 @@ fun SIPMessage.sessionDescription(): SessionDescription? {
 }
 
 fun Content.matches(proto: String): Boolean {
-    return contentTypeHeader?.contentSubType?.toLowerCase()?.contains(proto.toLowerCase()) ?: false
+    return contentTypeHeader?.contentSubType?.lowercase()?.contains(proto.lowercase()) ?: false
 }

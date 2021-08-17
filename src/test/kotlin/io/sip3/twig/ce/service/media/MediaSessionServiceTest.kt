@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2021 SIP3.IO, Inc.
+ * Copyright 2018-2021 SIP3.IO, Corp.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,13 +20,9 @@ import io.sip3.twig.ce.MockitoExtension.any
 import io.sip3.twig.ce.domain.SessionRequest
 import io.sip3.twig.ce.mongo.MongoClient
 import org.bson.Document
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertNotNull
-import org.junit.jupiter.api.Assertions.assertNull
+import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
-import org.mockito.BDDMockito.`when`
-import org.mockito.BDDMockito.times
-import org.mockito.BDDMockito.verify
+import org.mockito.BDDMockito.*
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.mock.mockito.MockBean
@@ -385,14 +381,14 @@ class MediaSessionServiceTest {
 
         rtp.`in`.first().apply {
             assertEquals(RTPR_IN.getLong("created_at"), createdAt)
-            assertEquals(packets.expected, blocks.sumBy { it.packets.expected })
+            assertEquals(packets.expected, blocks.sumOf { it.packets.expected })
             assertEquals(RTPR_IN.get("packets", Document::class.java).getInteger("expected"), packets.expected)
             assertEquals(RTPR_IN.get("jitter", Document::class.java).getDouble("avg"), jitter.avg)
         }
 
         rtp.out.first().apply {
             assertEquals(RTPR_OUT.getLong("created_at"), createdAt)
-            assertEquals(packets.expected, blocks.sumBy { it.packets.expected })
+            assertEquals(packets.expected, blocks.sumOf { it.packets.expected })
             assertEquals(RTPR_OUT.get("packets", Document::class.java).getInteger("expected"), packets.expected)
             assertEquals(RTPR_OUT.get("jitter", Document::class.java).getDouble("avg"), jitter.avg)
         }
