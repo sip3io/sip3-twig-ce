@@ -16,10 +16,7 @@
 
 package io.sip3.twig.ce.service.call
 
-import com.mongodb.client.model.Filters.`in`
-import com.mongodb.client.model.Filters.and
-import com.mongodb.client.model.Filters.gte
-import com.mongodb.client.model.Filters.lte
+import com.mongodb.client.model.Filters.*
 import io.sip3.twig.ce.domain.SessionRequest
 import io.sip3.twig.ce.service.SessionService
 import org.bson.Document
@@ -42,6 +39,21 @@ open class CallSessionService : SessionService() {
             add(gte("created_at", req.createdAt!! - terminationTimeout))
             add(lte("created_at", req.terminatedAt!! + terminationTimeout))
             add(`in`("call_id", req.callId!!))
+
+            if (req.srcAddr != null && req.dstAddr != null) {
+                add(
+                    or(
+                        and(
+                            `in`("src_addr", req.srcAddr!!),
+                            `in`("dst_addr", req.dstAddr!!)
+                        ),
+                        and(
+                            `in`("src_addr", req.dstAddr!!),
+                            `in`("dst_addr", req.srcAddr!!)
+                        )
+                    )
+                )
+            }
         }
 
         return mongoClient.find("sip_call_raw", Pair(req.createdAt!!, req.terminatedAt!!), and(filters))

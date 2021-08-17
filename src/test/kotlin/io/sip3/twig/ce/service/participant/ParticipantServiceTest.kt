@@ -49,7 +49,7 @@ class ParticipantServiceTest {
             listOf(AddressMapping("10.0.0.1", "10.0.0.1"))
         )
 
-        val EVENT_1 = Event(System.currentTimeMillis(), "id1", "10.20.30.40", "SIP", Document().apply {
+        val EVENT_1 = Event(System.currentTimeMillis(), "id1", "10.20.30.40", "SIP", null, Document().apply {
             put("type", "SIP")
             put("src", "id1")
             put("dst", "10.20.30.40")
@@ -94,7 +94,7 @@ class ParticipantServiceTest {
             )
         })
 
-        val EVENT_2 = Event(System.currentTimeMillis(), "10.20.30.40", "id1", "SIP", Document().apply {
+        val EVENT_2 = Event(System.currentTimeMillis(), "10.20.30.40", "id1", "SIP", null, Document().apply {
             put("type", "SIP")
             put("src", "10.20.30.40")
             put("dst", "id1")
@@ -128,7 +128,7 @@ class ParticipantServiceTest {
             )
         })
 
-        val EVENT_3 = Event(System.currentTimeMillis(), "20.20.30.40", "id2", "SIP", Document().apply {
+        val EVENT_3 = Event(System.currentTimeMillis(), "20.20.30.40", "id2", "SIP", null, Document().apply {
             put("type", "SIP")
             put("src", "20.20.30.40")
             put("dst", "id2")
@@ -162,12 +162,12 @@ class ParticipantServiceTest {
             )
         })
 
-        val EVENT_4 = Event(System.currentTimeMillis(), "10.242.2.7", "10.177.116.41", "RTPR", Document().apply {
+        val EVENT_4 = Event(System.currentTimeMillis(), "10.242.2.7", "10.177.116.41", "RTPR", null, Document().apply {
             put("src", "10.242.2.7")
             put("dst", "10.177.116.41")
        })
 
-        val EVENT_5 = Event(System.currentTimeMillis(), "id1", "10.20.30.40", "SIP", Document().apply {
+        val EVENT_5 = Event(System.currentTimeMillis(), "id1", "10.20.30.40", "SIP", null, Document().apply {
             put("type", "SIP")
             put("src", "id1")
             put("dst", "10.20.30.40")
@@ -192,7 +192,7 @@ class ParticipantServiceTest {
             )
         })
 
-        val EVENT_6 = Event(System.currentTimeMillis(), "id1", "10.20.30.40", "SIP", Document().apply {
+        val EVENT_6 = Event(System.currentTimeMillis(), "id1", "10.20.30.40", "SIP", null, Document().apply {
             put("type", "SIP")
             put("src", "id1")
             put("dst", "10.20.30.40")
