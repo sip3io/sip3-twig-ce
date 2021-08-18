@@ -58,7 +58,7 @@ class ParticipantServiceTest {
             emptyList()
         )
 
-        val EVENT_1 = Event(System.currentTimeMillis(), HOST_1.name, "10.20.30.40", "SIP", null, Document().apply {
+        val EVENT_1 = Event(System.currentTimeMillis(), HOST_1.name, "10.20.30.40", "SIP", "2dnuu30ktosoky1uad3nzzk3nkk3nzz3-wdsrwt7@UAC-e-e:z9hG4bKmqffet30b03pp5mv5jj0.1:1", Document().apply {
             put("type", "SIP")
             put("src", HOST_1.name)
             put("dst", "10.20.30.40")
@@ -103,7 +103,7 @@ class ParticipantServiceTest {
             )
         })
 
-        val EVENT_2 = Event(System.currentTimeMillis(), "10.20.30.40", HOST_1.name, "SIP", null, Document().apply {
+        val EVENT_2 = Event(System.currentTimeMillis(), "10.20.30.40", HOST_1.name, "SIP", "2dnuu30ktosoky1uad3nzzk3nkk3nzz3-wdsrwt7@UAC-e-e:z9hG4bKmqffet30b03pp5mv5jj0.1:1", Document().apply {
             put("type", "SIP")
             put("src", "10.20.30.40")
             put("dst", HOST_1.name)
@@ -137,7 +137,7 @@ class ParticipantServiceTest {
             )
         })
 
-        val EVENT_3 = Event(System.currentTimeMillis(), "20.20.30.40", HOST_2.name, "SIP", null, Document().apply {
+        val EVENT_3 = Event(System.currentTimeMillis(), "20.20.30.40", HOST_2.name, "SIP", "2dnuu30ktosoky1uad3nzzk3nkk3nzz3-wdsrwt7@UAC-e-e:z9hG4bKmqffet30b03pp5mv5jj0.1:1", Document().apply {
             put("type", "SIP")
             put("src", "20.20.30.40")
             put("dst", HOST_2.name)
@@ -176,7 +176,7 @@ class ParticipantServiceTest {
             put("dst", "10.177.116.41")
        })
 
-        val EVENT_5 = Event(System.currentTimeMillis(), HOST_1.name, "10.20.30.40", "SIP", null, Document().apply {
+        val EVENT_5 = Event(System.currentTimeMillis(), HOST_1.name, "10.20.30.40", "SIP", "ZDg3ZGU1ZTA1YjZkMThlNzEzOTA0Y2JkZmQ0YWU2ODU.:z9hG4bK-d8754z-240d73239a6da57b-1---d8754z-:143", Document().apply {
             put("type", "SIP")
             put("src", HOST_1.name)
             put("dst", "10.20.30.40")
@@ -201,7 +201,7 @@ class ParticipantServiceTest {
             )
         })
 
-        val EVENT_6 = Event(System.currentTimeMillis(), HOST_1.name, "10.20.30.40", "SIP", null, Document().apply {
+        val EVENT_6 = Event(System.currentTimeMillis(), HOST_1.name, "10.20.30.40", "SIP", "2dnuu30ktosoky1uad3nzzk3nkk3nzz3-wdsrwt7@UAC-e-e:z9hG4bKmqffet30b03pp5mv5jj0.1:1", Document().apply {
             put("type", "SIP")
             put("src", HOST_1.name)
             put("dst", "10.20.30.40")

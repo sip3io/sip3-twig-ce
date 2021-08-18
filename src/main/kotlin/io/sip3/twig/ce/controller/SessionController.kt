@@ -125,7 +125,7 @@ class SessionController {
                     message.getString("src_host") ?: message.getString("src_addr"),
                     message.getString("dst_host") ?: message.getString("dst_addr"),
                     "SIP",
-                    message.getString("transaction_id"),
+                    message.remove("transaction_id") as? String,
                     message
                 )
             )
