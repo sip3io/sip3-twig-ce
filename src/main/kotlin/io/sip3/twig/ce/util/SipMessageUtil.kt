@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2021 SIP3.IO, Inc.
+ * Copyright 2018-2021 SIP3.IO, Corp.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,18 @@ import gov.nist.javax.sip.message.Content
 import gov.nist.javax.sip.message.SIPMessage
 import gov.nist.javax.sip.message.SIPRequest
 import org.restcomm.media.sdp.SessionDescription
+
+fun SIPMessage.callId(): String? {
+    return callId?.callId
+}
+
+fun SIPMessage.branchId(): String? {
+    return topmostVia?.branch
+}
+
+fun SIPMessage.cseqNumber(): Long? {
+    return cSeq?.seqNumber
+}
 
 fun SIPMessage.requestUri(): String? {
     return (this as? SIPRequest)?.requestLine
@@ -43,8 +55,8 @@ fun SIPMessage.method(): String? {
     return (this as? SIPRequest)?.requestLine?.method
 }
 
-fun SIPMessage.callId(): String? {
-    return callId?.callId
+fun SIPMessage.transactionId(): String {
+    return "${callId()}:${branchId()}:${cseqNumber()}"
 }
 
 fun SIPMessage.hasSdp(): Boolean {
@@ -78,5 +90,5 @@ fun SIPMessage.sessionDescription(): SessionDescription? {
 }
 
 fun Content.matches(proto: String): Boolean {
-    return contentTypeHeader?.contentSubType?.toLowerCase()?.contains(proto.toLowerCase()) ?: false
+    return contentTypeHeader?.contentSubType?.lowercase()?.contains(proto.lowercase()) ?: false
 }

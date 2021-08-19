@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2021 SIP3.IO, Inc.
+ * Copyright 2018-2021 SIP3.IO, Corp.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -55,7 +55,7 @@ class ReportUtilTest {
         assertEquals(6, chunks.size)
         assertEquals(820, chunks.first().getInteger("duration"))
         assertEquals(300, chunks.last().getInteger("duration"))
-        assertEquals(RTPR_RAW.getInteger("duration"), chunks.sumBy { it.getInteger("duration") })
+        assertEquals(RTPR_RAW.getInteger("duration"), chunks.sumOf { it.getInteger("duration") })
 
         chunks.forEach { chunk ->
             assertEquals(RTPR_RAW.get("jitter"), chunk.get("jitter"))
@@ -64,10 +64,10 @@ class ReportUtilTest {
         }
 
         RTPR_RAW.get("packets", Document::class.java).apply {
-            assertEquals(getInteger("expected"), chunks.sumBy { it.get("packets", Document::class.java).getInteger("expected") })
-            assertEquals(getInteger("received"), chunks.sumBy { it.get("packets", Document::class.java).getInteger("received") })
-            assertEquals(getInteger("lost"), chunks.sumBy { it.get("packets", Document::class.java).getInteger("lost") })
-            assertEquals(getInteger("rejected"), chunks.sumBy { it.get("packets", Document::class.java).getInteger("rejected") })
+            assertEquals(getInteger("expected"), chunks.sumOf { it.get("packets", Document::class.java).getInteger("expected") })
+            assertEquals(getInteger("received"), chunks.sumOf { it.get("packets", Document::class.java).getInteger("received") })
+            assertEquals(getInteger("lost"), chunks.sumOf { it.get("packets", Document::class.java).getInteger("lost") })
+            assertEquals(getInteger("rejected"), chunks.sumOf { it.get("packets", Document::class.java).getInteger("rejected") })
         }
 
     }

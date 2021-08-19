@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2021 SIP3.IO, Inc.
+ * Copyright 2018-2021 SIP3.IO, Corp.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -121,8 +121,18 @@ abstract class SessionService {
                     put("dst_addr", document.getString("dst_addr"))
                     put("dst_port", document.getInteger("dst_port"))
                     document.getString("dst_host")?.let { put("dst_host", it) }
+
                     // raw_data
-                    put("raw_data", document.getString("raw_data"))
+                    val rawData = document.getString("raw_data")
+                    try {
+                        StringMsgParser().parseSIPMessage(rawData.toByteArray(Charsets.ISO_8859_1), true, false, null)?.let { message ->
+                            put("transaction_id", message.transactionId())
+                        }
+                    } catch (e: Exception) {
+                        logger.error("StringMsgParser 'parseSIPMessage()' failed.", e)
+                    }
+                    // raw_data
+                    put("raw_data", rawData)
                 }
             }
             .toList()
@@ -165,6 +175,21 @@ abstract class SessionService {
             add(gte("created_at", req.createdAt!!))
             add(lte("created_at", req.terminatedAt!! + terminationTimeout))
             add(`in`("call_id", req.callId!!))
+
+            if (req.srcAddr != null && req.dstAddr != null) {
+                add(
+                    or(
+                        and(
+                            `in`("src_addr", req.srcAddr!!),
+                            `in`("dst_addr", req.dstAddr!!)
+                        ),
+                        and(
+                            `in`("src_addr", req.dstAddr!!),
+                            `in`("dst_addr", req.srcAddr!!)
+                        )
+                    )
+                )
+            }
         }
 
         return mongoClient.find("rec_raw", Pair(req.createdAt!!, req.terminatedAt!! + terminationTimeout), and(filters))
