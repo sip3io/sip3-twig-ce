@@ -60,7 +60,7 @@ data class Host(
         position = 3,
         required = false,
         notes = "Set of host features",
-        example = "[\"proxy\"]"
+        example = "[\"role:proxy\"]"
     )
     var feature: Set<String> = emptySet()
 )

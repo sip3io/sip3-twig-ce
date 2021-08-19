@@ -58,7 +58,7 @@ data class Event(
     @ApiModelProperty(
         position = 4,
         required = false,
-        notes = "Group of Event",
+        notes = "Event group",
         example = "some:group:id",
     )
     val group: String?,
