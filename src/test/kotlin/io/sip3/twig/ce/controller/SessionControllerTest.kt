@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2021 SIP3.IO, Inc.
+ * Copyright 2018-2021 SIP3.IO, Corp.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,6 +30,8 @@ import io.sip3.twig.ce.service.register.RegisterSessionService
 import org.bson.Document
 import org.hamcrest.Matchers
 import org.hamcrest.Matchers.`is`
+import org.hamcrest.core.IsNull
+import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -236,6 +238,7 @@ class SessionControllerTest {
             callId = listOf("callId")
         }
 
+        REGISTER_1.put("transaction_id", "1:2:3")
         given(registerSessionService.details(any())).willReturn(RESPONSE_1)
         given(registerSessionService.content(any())).willReturn(RESPONSE_2)
         given(participantService.collectParticipants(any())).willReturn(
@@ -257,6 +260,9 @@ class SessionControllerTest {
 
             .andExpect(jsonPath("events[0].timestamp", `is`(CREATED_AT)))
             .andExpect(jsonPath("events[0].type", `is`("SIP")))
+            .andExpect(jsonPath("events[0].group", `is`("1:2:3")))
+
+        assertNull(REGISTER_1.getString("transaction_id"))
 
         verify(registerSessionService, only()).content(any())
         verify(callSessionService, never()).content(any())
@@ -271,6 +277,8 @@ class SessionControllerTest {
             callId = listOf("callId")
         }
 
+        REGISTER_1.put("transaction_id", "1:2:3")
+        REGISTER_2.put("transaction_id", "1:2:3")
         given(callSessionService.details(any())).willReturn(RESPONSE_1)
         given(callSessionService.content(any())).willReturn(RESPONSE_2)
         given(mediaSessionService.details(any())).willReturn(
@@ -312,13 +320,18 @@ class SessionControllerTest {
 
             .andExpect(jsonPath("events[0].timestamp", `is`(CREATED_AT)))
             .andExpect(jsonPath("events[0].type", `is`("SIP")))
+            .andExpect(jsonPath("events[0].group", `is`("1:2:3")))
 
             .andExpect(jsonPath("events[1].timestamp", `is`(CREATED_AT)))
             .andExpect(jsonPath("events[1].type", `is`("RTPR")))
+            .andExpect(jsonPath("events[1].group", IsNull.nullValue()))
 
             .andExpect(jsonPath("events[2].timestamp", `is`(CREATED_AT + 1)))
             .andExpect(jsonPath("events[2].type", `is`("SIP")))
+            .andExpect(jsonPath("events[2].group", `is`("1:2:3")))
 
+        assertNull(REGISTER_1.getString("transaction_id"))
+        assertNull(REGISTER_2.getString("transaction_id"))
 
         verify(callSessionService, only()).content(any())
     }

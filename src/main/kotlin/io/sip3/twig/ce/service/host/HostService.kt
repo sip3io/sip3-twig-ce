@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2021 SIP3.IO, Inc.
+ * Copyright 2018-2021 SIP3.IO, Corp.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,6 +38,10 @@ open class HostService {
 
     open fun findByNameIgnoreCase(name: String): Host? {
         return hostRepository.findByNameIgnoreCase(name)
+    }
+
+    open fun findByAddr(address: String): Host? {
+        return hostRepository.findByAddrContains(address)
     }
 
     open fun create(host: Host): Host {

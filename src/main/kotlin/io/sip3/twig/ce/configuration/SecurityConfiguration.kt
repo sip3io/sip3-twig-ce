@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2021 SIP3.IO, Inc.
+ * Copyright 2018-2021 SIP3.IO, Corp.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -94,7 +94,7 @@ open class SecurityConfiguration : WebSecurityConfigurerAdapter() {
     class HttpServletRequest(request: javax.servlet.http.HttpServletRequest) : HttpServletRequestWrapper(request) {
 
         override fun getHeader(name: String): String? {
-            return super.getHeader(name) ?: super.getHeader(name.toLowerCase())
+            return super.getHeader(name) ?: super.getHeader(name.lowercase())
         }
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2021 SIP3.IO, Inc.
+ * Copyright 2018-2021 SIP3.IO, Corp.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -59,6 +59,7 @@ open class ParticipantService {
                     val sipMessage = parseSIPMessage(event)
                     if (sipMessage != null && sipMessage.hasSdp()) {
                         val mediaAddresses = collectMediaAddresses(sipMessage)
+                            .map { hostService.findByAddr(it)?.name ?: it }
 
                         if (sipMessage.method() == "INVITE" && isFirst) {
                             isFirst = false

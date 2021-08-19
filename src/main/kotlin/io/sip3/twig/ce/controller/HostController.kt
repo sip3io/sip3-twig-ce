@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2021 SIP3.IO, Inc.
+ * Copyright 2018-2021 SIP3.IO, Corp.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,6 +26,8 @@ import io.swagger.annotations.ApiOperation
 import io.swagger.annotations.ApiResponse
 import io.swagger.annotations.ApiResponses
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.http.HttpStatus
+import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.multipart.MultipartFile
 import javax.validation.Valid
@@ -76,7 +78,7 @@ class HostController {
     )
     @GetMapping("/{name}")
     fun getByName(@Valid @NotNull @PathVariable("name") name: String): Host {
-        return hostService.getByName(name.toLowerCase())
+        return hostService.getByName(name.lowercase())
     }
 
     @ApiOperation(
@@ -132,6 +134,7 @@ class HostController {
         ]
     )
     @DeleteMapping("/{name}")
+    @ResponseStatus(value = HttpStatus.NO_CONTENT)
     fun deleteByName(@Valid @PathVariable("name") @NotNull name: String) {
         hostService.deleteByName(name)
     }
@@ -149,11 +152,12 @@ class HostController {
         ]
     )
     @PostMapping("/import")
-    fun import(@RequestParam("file") @Valid @NotNull file: MultipartFile) {
+    @ResponseStatus(value = HttpStatus.NO_CONTENT)
+    fun import(@RequestPart("file", required = true) @Valid @NotNull file: MultipartFile) {
         val hosts: Set<Host> = mapper.readValue(file.inputStream)
 
         // Validate host names
-        val hasDuplicates = hosts.map { it.name.toLowerCase() }.toSet().size != hosts.size
+        val hasDuplicates = hosts.map { it.name.lowercase() }.toSet().size != hosts.size
         if (hasDuplicates) {
             throw IllegalArgumentException("name")
         }

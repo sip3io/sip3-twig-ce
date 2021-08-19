@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2021 SIP3.IO, Inc.
+ * Copyright 2018-2021 SIP3.IO, Corp.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -173,7 +173,7 @@ class HostControllerTest {
     @Test
     fun `Delete persisted host by name`() {
         this.mockMvc.perform(delete("/hosts/host2"))
-            .andExpect(status().isOk)
+            .andExpect(status().isNoContent)
 
         verify(hostService, only()).deleteByName(any())
     }
@@ -188,12 +188,12 @@ class HostControllerTest {
 
     @Test
     fun `Upload JSON file`() {
-        HostControllerTest::class.java.getResourceAsStream("/json/correctHostList.json").use { fileStream ->
+        HostControllerTest::class.java.getResourceAsStream("/json/hosts/correctHostList.json").use { fileStream ->
             val fileMock = MockMultipartFile("file", "hosts.json", null, fileStream)
             mockMvc.perform(
                 multipart("/hosts/import")
                     .file(fileMock)
-            ).andExpect(status().isOk)
+            ).andExpect(status().isNoContent)
         }
 
         verify(hostService, only()).saveAll(any())
@@ -201,7 +201,7 @@ class HostControllerTest {
 
     @Test
     fun `Upload JSON file with invalid host`() {
-        HostControllerTest::class.java.getResourceAsStream("/json/incorrectAddressHostList.json").use { fileStream ->
+        HostControllerTest::class.java.getResourceAsStream("/json/hosts/incorrectAddressHostList.json").use { fileStream ->
             val fileMock = MockMultipartFile("file", "hosts.json", null, fileStream)
 
             mockMvc.perform(
@@ -215,7 +215,7 @@ class HostControllerTest {
 
     @Test
     fun `Upload JSON file with duplicate host`() {
-        HostControllerTest::class.java.getResourceAsStream("/json/duplicatedHostList.json").use { fileStream ->
+        HostControllerTest::class.java.getResourceAsStream("/json/hosts/duplicatedHostList.json").use { fileStream ->
             val fileMock = MockMultipartFile("file", "hosts.json", null, fileStream)
             mockMvc.perform(
                 multipart("/hosts/import")

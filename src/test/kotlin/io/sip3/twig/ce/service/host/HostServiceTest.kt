@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2021 SIP3.IO, Inc.
+ * Copyright 2018-2021 SIP3.IO, Corp.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -71,7 +71,7 @@ class HostServiceTest {
     @Test
     fun `Get by name`() {
         given(hostRepository.getByNameIgnoreCase(any())).willReturn(HOST_1)
-        val host = hostService.getByName("host1")
+        val host = hostService.getByName(HOST_1.name)
         assertEquals(HOST_1, host)
     }
 
@@ -80,7 +80,7 @@ class HostServiceTest {
         given(hostRepository.getByNameIgnoreCase(any())).willThrow(EmptyResultDataAccessException(1))
 
         assertThrows<EmptyResultDataAccessException> {
-            hostService.getByName("host1")
+            hostService.getByName(HOST_1.name)
         }
     }
 
@@ -123,14 +123,14 @@ class HostServiceTest {
     @Test
     fun `Delete host by name`() {
         given(hostRepository.findByNameIgnoreCase(any())).willReturn(HOST_1)
-        hostService.deleteByName("host1")
+        hostService.deleteByName(HOST_1.name)
 
         verify(hostRepository, times(1)).delete(any())
     }
 
     @Test
     fun `Delete not existing host by name`() {
-        hostService.deleteByName("host1")
+        hostService.deleteByName(HOST_1.name)
 
         verify(hostRepository, never()).delete(any())
     }

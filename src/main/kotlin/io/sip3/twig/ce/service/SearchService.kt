@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2021 SIP3.IO, Inc.
+ * Copyright 2018-2021 SIP3.IO, Corp.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,11 +16,7 @@
 
 package io.sip3.twig.ce.service
 
-import com.mongodb.client.model.Filters.eq
-import com.mongodb.client.model.Filters.gt
-import com.mongodb.client.model.Filters.lt
-import com.mongodb.client.model.Filters.ne
-import com.mongodb.client.model.Filters.regex
+import com.mongodb.client.model.Filters.*
 import io.sip3.commons.domain.Attribute
 import io.sip3.twig.ce.domain.SearchRequest
 import io.sip3.twig.ce.domain.SearchResponse

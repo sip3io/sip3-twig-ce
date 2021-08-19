@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2021 SIP3.IO, Inc.
+ * Copyright 2018-2021 SIP3.IO, Corp.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -57,6 +57,14 @@ data class Event(
 
     @ApiModelProperty(
         position = 4,
+        required = false,
+        notes = "Event group",
+        example = "some:group:id",
+    )
+    val group: String?,
+
+    @ApiModelProperty(
+        position = 5,
         required = true,
         notes = "Event details"
     )
