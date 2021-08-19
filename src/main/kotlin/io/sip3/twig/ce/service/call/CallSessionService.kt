@@ -39,6 +39,21 @@ open class CallSessionService : SessionService() {
             add(gte("created_at", req.createdAt!! - terminationTimeout))
             add(lte("created_at", req.terminatedAt!! + terminationTimeout))
             add(`in`("call_id", req.callId!!))
+
+            if (req.srcAddr != null && req.dstAddr != null) {
+                add(
+                    or(
+                        and(
+                            `in`("src_addr", req.srcAddr!!),
+                            `in`("dst_addr", req.dstAddr!!)
+                        ),
+                        and(
+                            `in`("src_addr", req.dstAddr!!),
+                            `in`("dst_addr", req.srcAddr!!)
+                        )
+                    )
+                )
+            }
         }
 
         return mongoClient.find("sip_call_raw", Pair(req.createdAt!!, req.terminatedAt!!), and(filters))

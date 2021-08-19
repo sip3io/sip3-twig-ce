@@ -21,6 +21,18 @@ import gov.nist.javax.sip.message.SIPMessage
 import gov.nist.javax.sip.message.SIPRequest
 import org.restcomm.media.sdp.SessionDescription
 
+fun SIPMessage.callId(): String? {
+    return callId?.callId
+}
+
+fun SIPMessage.branchId(): String? {
+    return topmostVia?.branch
+}
+
+fun SIPMessage.cseqNumber(): Long? {
+    return cSeq?.seqNumber
+}
+
 fun SIPMessage.requestUri(): String? {
     return (this as? SIPRequest)?.requestLine
         ?.uri
@@ -43,8 +55,8 @@ fun SIPMessage.method(): String? {
     return (this as? SIPRequest)?.requestLine?.method
 }
 
-fun SIPMessage.callId(): String? {
-    return callId?.callId
+fun SIPMessage.transactionId(): String {
+    return "${callId()}:${branchId()}:${cseqNumber()}"
 }
 
 fun SIPMessage.hasSdp(): Boolean {
