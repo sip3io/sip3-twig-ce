@@ -183,7 +183,7 @@ open class MediaSessionService {
         if (mediaSession.duration == 0) mediaSession.duration = blocks.sumOf { it.duration }
 
         // Update codec list
-        legSession.codecs.addAll(reports.map { LegSession.Codec(it.getString("codec_name"), it.getInteger("payload_type")) })
+        legSession.codecs.addAll(reports.map { LegSession.Codec(it.getString("codec"), it.getInteger("payload_type")) })
     }
 
     open fun find(prefix: String, createdAt: Long, terminatedAt: Long, callId: List<String>): Iterator<Document> {

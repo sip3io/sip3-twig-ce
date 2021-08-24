@@ -64,15 +64,14 @@ open class ParticipantService {
                         if (sipMessage.method() == "INVITE" && isFirst) {
                             isFirst = false
                             names.addAll(mediaAddresses)
-                            names.addAll(eventHosts)
                         } else {
                             names.addAll(eventHosts)
                             names.addAll(mediaAddresses)
                         }
-                    } else {
-                        names.addAll(eventHosts)
                     }
                 }
+
+                names.addAll(eventHosts)
             }
 
         return names.intersect(namesFromEvents)

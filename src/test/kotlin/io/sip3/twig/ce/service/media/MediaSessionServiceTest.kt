@@ -37,7 +37,7 @@ class MediaSessionServiceTest {
             {
               "_id": "5f5979da8f5db2164b2b7721",
               "call_id": "NjBlMTZhOWQ1Y2JjMzk1NTY3MjFlZTc0MTU4OTA1NDA.",
-              "codec_name": "PCMU",
+              "codec": "PCMU",
               "dst_addr": "192.168.10.5",
               "dst_host": "PBX-2",
               "dst_port": 11958,
@@ -72,7 +72,7 @@ class MediaSessionServiceTest {
             {
               "_id": "5f5979da8f5db2164b2b7724",
               "call_id": "NjBlMTZhOWQ1Y2JjMzk1NTY3MjFlZTc0MTU4OTA1NDA.",
-              "codec_name": "PCMU",
+              "codec": "PCMU",
               "dst_addr": "192.168.10.109",
               "dst_port": 40042,
               "duration": 19657,
@@ -115,7 +115,7 @@ class MediaSessionServiceTest {
               "dst_port": 11958,
 
               "call_id": "NjBlMTZhOWQ1Y2JjMzk1NTY3MjFlZTc0MTU4OTA1NDA.",
-              "codec_names": [ "PCMU" ],
+              "codec": [ "PCMU" ],
               "duration": ${RTPR_OUT.getLong("terminated_at") - RTPR_IN.getLong("created_at")}
 
               "report_count": 4,
@@ -138,7 +138,7 @@ class MediaSessionServiceTest {
         {
             "_id": "5f5979b28f5db2164b2b765e",
             "call_id": "NjBlMTZhOWQ1Y2JjMzk1NTY3MjFlZTc0MTU4OTA1NDA.",
-            "codec_name": "PCMU",
+            "codec": "PCMU",
             "dst_addr": "192.168.10.5",
             "dst_host": "PBX-2",
             "dst_port": 11958,
@@ -171,7 +171,7 @@ class MediaSessionServiceTest {
         {
             "_id": "5f5979b28f5db2164b2b7661",
             "call_id": "NjBlMTZhOWQ1Y2JjMzk1NTY3MjFlZTc0MTU4OTA1NDA.",
-            "codec_name": "PCMU",
+            "codec": "PCMU",
             "dst_addr": "192.168.10.109",
             "dst_port": 40042,
             "duration": 5116,
@@ -203,7 +203,7 @@ class MediaSessionServiceTest {
         {
             "_id": "5f5979b78f5db2164b2b7690",
             "call_id": "NjBlMTZhOWQ1Y2JjMzk1NTY3MjFlZTc0MTU4OTA1NDA.",
-            "codec_name": "PCMU",
+            "codec": "PCMU",
             "dst_addr": "192.168.10.5",
             "dst_host": "PBX-2",
             "dst_port": 11958,
@@ -236,7 +236,7 @@ class MediaSessionServiceTest {
         {
             "_id": "5f5979b78f5db2164b2b7693",
             "call_id": "NjBlMTZhOWQ1Y2JjMzk1NTY3MjFlZTc0MTU4OTA1NDA.",
-            "codec_name": "PCMU",
+            "codec": "PCMU",
             "dst_addr": "192.168.10.109",
             "dst_port": 40042,
             "duration": 5120,
@@ -269,7 +269,7 @@ class MediaSessionServiceTest {
         {
             "_id": "5f5979da8f5db2164b2b7725",
             "call_id": "NjBlMTZhOWQ1Y2JjMzk1NTY3MjFlZTc0MTU4OTA1NDA.",
-            "codec_name": "PCMU",
+            "codec": "PCMU",
             "created_at": 1599699418686,
             "dst_addr": "192.168.10.5",
             "dst_host": "PBX-2",
@@ -303,7 +303,7 @@ class MediaSessionServiceTest {
         {
             "_id": "5f5979da8f5db2164b2b7728",
             "call_id": "NjBlMTZhOWQ1Y2JjMzk1NTY3MjFlZTc0MTU4OTA1NDA.",
-            "codec_name": "PCMU",
+            "codec": "PCMU",
             "created_at": 1599699418686,
             "dst_addr": "192.168.10.109",
             "dst_port": 40042,

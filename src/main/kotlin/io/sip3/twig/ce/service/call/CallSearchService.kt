@@ -60,7 +60,7 @@ open class CallSearchService : SearchService() {
         val (createdAt, terminatedAt, query) = request
 
         val matchedDocuments = when {
-            query.contains("media.") || (query.contains("rtp.") || query.contains("rtcp.")) -> {
+            (query.contains("rtp.") || query.contains("rtcp.")) -> {
                 // Filter documents in `rtpr_${prefix}_index` collection
                 findInMediaIndexBySearchRequest(createdAt, terminatedAt, query).map { document ->
                     // Map `rtpr_media_index` document to `sip_call_index` document
@@ -141,7 +141,7 @@ open class CallSearchService : SearchService() {
                 .asSequence()
                 .filterNot { it.isBlank() }
                 .filterNot { it.startsWith("sip.method") }
-                .filter { it.startsWith("ip.") || it.startsWith("sip.") }
+                .filter { it.startsWith("sip.") }
                 .map { filter(it) }
                 .forEach { add(it) }
         }

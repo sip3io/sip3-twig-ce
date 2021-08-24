@@ -59,7 +59,7 @@ object LegSessionUtil {
             document.getString("dst_host")?.let { dstHost = it }
 
             val payloadType = document.getInteger("payload_type")
-            val codecName = document.getString("codec_name") ?: "UNDEFINED($payloadType)"
+            val codecName = document.getString("codec") ?: "UNDEFINED($payloadType)"
             codecs.add(LegSession.Codec(codecName, payloadType))
 
             fillMediaSession(document, blockCount)

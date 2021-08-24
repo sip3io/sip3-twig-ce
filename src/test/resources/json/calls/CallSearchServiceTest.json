@@ -92,7 +92,7 @@
       "dst_port" : 38868,
       "dst_host" : "Intertax",
       "call_id" : "some-call-id-1",
-      "codec_names" : [
+      "codec" : [
         "PCMA"
       ],
       "duration" : 60000,
@@ -115,7 +115,7 @@
         "dst_host" : "Intertax",
         "call_id" : "some-call-id-1",
         "payload_type" : 8,
-        "codec_name" : "PCMA",
+        "codec" : "PCMA",
         "ssrc" : 833953450,
         "duration" : 47081,
         "packets" : {
@@ -146,7 +146,7 @@
         "dst_host" : "PBX-2",
         "call_id" : "some-call-id-1",
         "payload_type" : -1,
-        "codec_name" : "PCMA",
+        "codec" : "PCMA",
         "ssrc" : 833953450,
         "duration" : 52040,
         "packets" : {

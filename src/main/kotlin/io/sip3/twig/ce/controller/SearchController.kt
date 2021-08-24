@@ -94,7 +94,7 @@ open class SearchRequestValidator {
 
         const val SIP_METHOD_INVITE = "sip.method=INVITE"
 
-        val EXCLUSIVE_ATTRIBUTES = listOf("sip.", "rtp.", "rtcp." , "media.")
+        val EXCLUSIVE_ATTRIBUTES = listOf("sip.", "rtp.", "rtcp.")
     }
 
     open fun validate(request: SearchRequest) {
@@ -102,7 +102,7 @@ open class SearchRequestValidator {
             .replace(SIP_METHOD_INVITE, Strings.EMPTY)
 
         if (EXCLUSIVE_ATTRIBUTES.count { query.contains(it) } > 1) {
-            throw UnsupportedOperationException("Complex search by `sip.`, `rtp.`, `rtcp.`, `media.` filters is not supported.")
+            throw UnsupportedOperationException("Complex search by `sip.`, `rtp.`, `rtcp.`, filters is not supported.")
         }
     }
 }

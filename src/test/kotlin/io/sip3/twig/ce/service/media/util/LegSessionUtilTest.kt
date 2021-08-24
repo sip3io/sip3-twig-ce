@@ -42,7 +42,7 @@ class LegSessionUtilTest {
             "payload_type" : 8,
             "ssrc" : NumberLong(9961),
             "call_id" : "838f2897-35cd-475b-8111-b50fc1984dc9",
-            "codec_name" : "PCMA",
+            "codec" : "PCMA",
             "duration" : 76682,
             "packets" : {
                 "expected" : 3834,
@@ -77,7 +77,7 @@ class LegSessionUtilTest {
             "payload_type" : 8,
             "ssrc" : 1459443922,
             "call_id" : "838f2897-35cd-475b-8111-b50fc1984dc9",
-            "codec_name" : "PCMA",
+            "codec" : "PCMA",
             "duration" : 76634,
             "packets" : {
                 "expected" : 3834,
@@ -128,7 +128,7 @@ class LegSessionUtilTest {
         assertEquals(RTPR_INDEX_A.getString("dst_host"), legSession.dstHost)
 
         assertEquals(1, legSession.codecs.size)
-        assertEquals(RTPR_INDEX_A.getString("codec_name"), legSession.codecs.first().name)
+        assertEquals(RTPR_INDEX_A.getString("codec"), legSession.codecs.first().name)
         assertEquals(RTPR_INDEX_A.getInteger("payload_type"), legSession.codecs.first().payloadType)
 
         legSession.out.first().apply {
