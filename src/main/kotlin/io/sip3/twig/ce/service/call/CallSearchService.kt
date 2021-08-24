@@ -20,6 +20,7 @@ import com.mongodb.client.model.Filters.*
 import io.sip3.twig.ce.domain.SearchRequest
 import io.sip3.twig.ce.domain.SearchResponse
 import io.sip3.twig.ce.service.SearchService
+import io.sip3.twig.ce.util.IteratorUtil
 import io.sip3.twig.ce.util.map
 import io.sip3.twig.ce.util.nextOrNull
 import mu.KotlinLogging
@@ -60,7 +61,7 @@ open class CallSearchService : SearchService() {
 
         val matchedDocuments = when {
             query.contains("media.") || (query.contains("rtp.") || query.contains("rtcp.")) -> {
-                // Filter documents in `rtpr_media_index` collection
+                // Filter documents in `rtpr_${prefix}_index` collection
                 findInMediaIndexBySearchRequest(createdAt, terminatedAt, query).map { document ->
                     // Map `rtpr_media_index` document to `sip_call_index` document
                     document.getString("call_id")?.let { callId ->
@@ -104,31 +105,29 @@ open class CallSearchService : SearchService() {
     protected open fun findInMediaIndexBySearchRequest(createdAt: Long, terminatedAt: Long, query: String): Iterator<Document> {
         val filters = mutableListOf<Bson>().apply {
             // Time filters
-            add(gte("created_at", createdAt))
-            add(lte("created_at", terminatedAt))
+            add(gte("started_at", createdAt))
+            add(lte("started_at", terminatedAt))
 
-            // Media filters
+            // Main filters
             query.split(" ")
                 .filterNot { it.isBlank() }
-                .filterNot { it.startsWith("sip.") }
-                .let { expressions ->
-                    expressions.filter { it.startsWith("rtp.") }
-                        .map { expr ->
-                            or(filter(expr) { "forward_rtp.$it" }, filter(expr) { "reverse_rtp.$it" })
-                        }
-                        .forEach { add(it) }
-                    expressions.filter { it.startsWith("rtcp.") }
-                        .map { expr ->
-                            or(filter(expr) { "forward_rtcp.$it" }, filter(expr) { "reverse_rtcp.$it" })
-                        }
-                        .forEach { add(it) }
-                    expressions.filter { it.startsWith("media.") }
-                        .map { filter(it) }
-                        .forEach { add(it) }
-                }
+                .filterNot { it.startsWith("sip.") && !it.contains(Regex("sip.calle[er]"))}
+                .map { filter(it) }
+                .forEach { add(it) }
         }
 
-        return mongoClient.find("rtpr_media_index", Pair(createdAt, terminatedAt), and(filters))
+        val prefixes = mutableListOf<String>().apply {
+            if (query.contains("rtp.")) {
+                add("rtpr_rtp_index")
+            }
+            if (query.contains("rtcp.")) {
+                add("rtpr_rtcp_index")
+            }
+        }
+
+        return prefixes.map { mongoClient.find(it, Pair(createdAt, terminatedAt), and(filters)) }
+            .toTypedArray()
+            .let { IteratorUtil.merge(*it) }
     }
 
     protected open fun findInSipIndexBySearchRequest(createdAt: Long, terminatedAt: Long, query: String): Iterator<Document> {

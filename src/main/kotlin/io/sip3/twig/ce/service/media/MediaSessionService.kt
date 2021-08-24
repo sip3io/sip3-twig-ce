@@ -68,18 +68,11 @@ open class MediaSessionService {
         val reports = mutableListOf<Document>()
 
         // Create leg sessions from reports index
-        findMediaSessions(createdAt, terminatedAt, callId)
+        find("rtpr_${source}_index", createdAt, terminatedAt, callId)
             .asSequence()
-            .flatMap { document ->
-                mutableListOf<Document>().apply {
-                    document.get("forward_${source}", Document::class.java)?.let { add(it) }
-                    document.get("reverse_${source}", Document::class.java)?.let { add(it) }
-                }
-            }
-            .sortedBy { it.getLong("created_at") }
             .groupBy { generateLegId(it) }
             .forEach { (legId, documents) ->
-                sessions[legId] = createLegSession(documents, blockCount)
+                sessions[legId] = createLegSession(documents.first(), blockCount)
             }
 
         // Add blocks to media sessions
@@ -100,7 +93,7 @@ open class MediaSessionService {
                 // Update Media Session leg session party
                 legReports
                     .groupBy { generatePartyId(it) }
-                    .forEach { (_, reports) -> updateMediaSession(legSession, reports) }
+                    .forEach { (_, reports) -> updateMediaSession(legSession, reports.sortedBy { it.getLong("started_at") }) }
             }
 
             if (source == "rtcp") legSession.swapAddresses()
@@ -115,12 +108,12 @@ open class MediaSessionService {
         val mediaSession = if (firstReport.getString("src_addr") == legSession.srcAddr
             && firstReport.getString("dst_addr") == legSession.dstAddr
         ) {
-            legSession.out.firstOrNull()
+            legSession.out
         } else {
-            legSession.`in`.firstOrNull()
+            legSession.`in`
         }
 
-        if (mediaSession == null || mediaSession.duration == 0) {
+        if (mediaSession == null) {
             return
         }
 
@@ -134,10 +127,10 @@ open class MediaSessionService {
         var remainingDuration: Int
         var currentBlock = MediaStatistic()
 
-        if (mediaSession.createdAt == legSession.createdAt) {
+        if (reports.first().getLong("started_at") == legSession.createdAt) {
             remainingDuration = blockDuration
         } else {
-            val startDiff = (mediaSession.createdAt - legSession.createdAt).toInt()
+            val startDiff = (reports.first().getLong("started_at") - legSession.createdAt).toInt()
             repeat(startDiff / blockDuration) {
                 blocks.add(MediaStatistic())
             }
@@ -185,18 +178,12 @@ open class MediaSessionService {
         }
 
         mediaSession.blocks.addAll(blocks)
-    }
 
-    open fun findMediaSessions(createdAt: Long, terminatedAt: Long, callId: List<String>): Iterator<Document> {
-        val filters = mutableListOf<Bson>().apply {
-            add(Filters.gte("created_at", createdAt))
-            add(Filters.lte("created_at", terminatedAt + terminationTimeout))
-            add(Filters.`in`("call_id", callId))
-        }
+        // Calculate media session duration
+        if (mediaSession.duration == 0) mediaSession.duration = blocks.sumOf { it.duration }
 
-        return mongoClient.find("rtpr_media_index",
-            Pair(createdAt, terminatedAt + terminationTimeout),
-            Filters.and(filters))
+        // Update codec list
+        legSession.codecs.addAll(reports.map { LegSession.Codec(it.getString("codec_name"), it.getInteger("payload_type")) })
     }
 
     open fun find(prefix: String, createdAt: Long, terminatedAt: Long, callId: List<String>): Iterator<Document> {

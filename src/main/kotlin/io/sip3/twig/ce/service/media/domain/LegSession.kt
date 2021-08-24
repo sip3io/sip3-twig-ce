@@ -33,8 +33,8 @@ class LegSession {
 
     val codecs = mutableSetOf<Codec>()
 
-    val out = mutableListOf<MediaSession>()
-    val `in` = mutableListOf<MediaSession>()
+    var out: MediaSession? = null
+    var `in`: MediaSession? = null
 
     fun swapAddresses() {
         val tmpAddr = srcAddr
@@ -50,5 +50,14 @@ class LegSession {
         dstHost = tmpHost
     }
 
-    data class Codec(val name: String, val payloadType: Int)
+    data class Codec(val name: String, val payloadType: Int) {
+
+        override fun equals(other: Any?): Boolean {
+            return this.name  == (other as? Codec)?.name
+        }
+
+        override fun hashCode(): Int {
+            return name.hashCode()
+        }
+    }
 }
