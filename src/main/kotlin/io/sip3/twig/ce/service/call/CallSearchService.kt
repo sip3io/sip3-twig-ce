@@ -105,8 +105,8 @@ open class CallSearchService : SearchService() {
     protected open fun findInMediaIndexBySearchRequest(createdAt: Long, terminatedAt: Long, query: String): Iterator<Document> {
         val filters = mutableListOf<Bson>().apply {
             // Time filters
-            add(gte("started_at", createdAt))
-            add(lte("started_at", terminatedAt))
+            add(gte("created_at", createdAt))
+            add(lte("created_at", terminatedAt))
 
             // Main filters
             query.split(" ")

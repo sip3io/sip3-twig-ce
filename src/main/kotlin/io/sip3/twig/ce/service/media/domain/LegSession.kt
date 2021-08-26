@@ -16,6 +16,11 @@
 
 package io.sip3.twig.ce.service.media.domain
 
+import com.fasterxml.jackson.annotation.JsonIgnore
+import io.sip3.commons.domain.payload.RtpReportPayload
+import kotlin.math.max
+import kotlin.math.min
+
 class LegSession {
 
     var createdAt: Long = Long.MAX_VALUE
@@ -33,21 +38,18 @@ class LegSession {
 
     val codecs = mutableSetOf<Codec>()
 
-    var out: MediaSession? = null
-    var `in`: MediaSession? = null
+    val out = mutableListOf<MediaSession>()
+    val `in` = mutableListOf<MediaSession>()
 
-    fun swapAddresses() {
-        val tmpAddr = srcAddr
-        val tmpPort = srcPort
-        val tmpHost = srcHost
-
-        srcAddr = dstAddr
-        srcPort = dstPort
-        srcHost = dstHost
-
-        dstAddr = tmpAddr
-        dstPort = tmpPort
-        dstHost = tmpHost
+    fun updateTimestamps() {
+        createdAt = min(
+            out.minOfOrNull { it.createdAt } ?: Long.MAX_VALUE,
+            `in`.minOfOrNull { it.createdAt } ?: Long.MAX_VALUE
+        )
+        terminatedAt = max(
+            out.maxOfOrNull { it.terminatedAt } ?: Long.MIN_VALUE,
+            `in`.maxOfOrNull { it.terminatedAt } ?: Long.MIN_VALUE
+        )
     }
 
     data class Codec(val name: String, val payloadType: Int) {

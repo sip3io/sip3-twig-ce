@@ -58,9 +58,11 @@ object LegSessionUtil {
             dstPort = document.getInteger("dst_port")
             document.getString("dst_host")?.let { dstHost = it }
 
-            val payloadType = document.getInteger("payload_type")
-            val codecName = document.getString("codec") ?: "UNDEFINED($payloadType)"
-            codecs.add(LegSession.Codec(codecName, payloadType))
+            val payloadTypes = document.get("payload_type") as List<Int>
+            val codecNames = document.getList("codec", String::class.java)
+            payloadTypes.forEachIndexed { index, payloadType ->
+                codecs.add(LegSession.Codec(codecNames.first() ?: "UNDEFINED($payloadType)", payloadType))
+            }
 
             fillMediaSession(document, blockCount)
         }
@@ -71,17 +73,17 @@ object LegSessionUtil {
         val directions = document.getList("direction", String::class.java)
         val reportPackets = document.get("packets", Document::class.java)
 
-        val mos = document.getList("mos", Double::class.java)
-        val rFactor = document.getList("mos", Double::class.java)
+        val mos = document.get("mos") as List<Double>
+        val rFactor = document.get("mos") as List<Double>
         val jitters = document.get("jitter", Document::class.java)
 
         directions.forEachIndexed { index, direction ->
             val mediaSession = MediaSession(blockCount)
 
             mediaSession.packets.apply {
-                expected = reportPackets.getList("expected", Int::class.java)[index]
-                received = reportPackets.getList("received", Int::class.java)[index]
-                rejected = reportPackets.getList("rejected", Int::class.java)[index]
+                expected = (reportPackets.get("expected") as List<Int>)[index]
+                received = (reportPackets.get("received") as List<Int>)[index]
+                rejected = (reportPackets.get("rejected") as List<Int>)[index]
                 lost = expected - received
             }
 
@@ -89,15 +91,15 @@ object LegSessionUtil {
             mediaSession.rFactor = rFactor[index]
 
             mediaSession.jitter.apply {
-                min = jitters.getList("min", Double::class.java)[index]
-                max = jitters.getList("max", Double::class.java)[index]
-                avg = jitters.getList("avg", Double::class.java)[index]
+                min = (jitters.get("min") as List<Double>)[index]
+                max = (jitters.get("max") as List<Double>)[index]
+                avg = (jitters.get("avg") as List<Double>)[index]
             }
 
             if (direction == "out") {
-                out = mediaSession
+                out.add(mediaSession)
             } else {
-                `in` = mediaSession
+                `in`.add(mediaSession)
             }
         }
     }
