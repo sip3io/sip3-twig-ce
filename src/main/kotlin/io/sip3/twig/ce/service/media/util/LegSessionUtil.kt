@@ -74,7 +74,7 @@ object LegSessionUtil {
         val reportPackets = document.get("packets", Document::class.java)
 
         val mos = document.get("mos") as List<Double>
-        val rFactor = document.get("mos") as List<Double>
+        val rFactor = document.get("r_factor") as List<Double>
         val jitters = document.get("jitter", Document::class.java)
 
         directions.forEachIndexed { index, direction ->
