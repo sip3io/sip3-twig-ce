@@ -39,26 +39,27 @@ class LegSessionUtilTest {
             "dst_addr" : "192.168.10.5",
             "dst_port" : 10244,
             "dst_host" : "PBX-2",
-            "payload_type" : 8,
+            "payload_type" : [ 8 ],
             "ssrc" : NumberLong(9961),
             "call_id" : "838f2897-35cd-475b-8111-b50fc1984dc9",
-            "codec" : "PCMA",
+            "codec" : ["PCMA"],
             "duration" : 76682,
+            "direction" : ["in"]
             "packets" : {
-                "expected" : 3834,
-                "received" : 3834,
-                "lost" : 0,
-                "rejected" : 0
+                "expected" : [3834],
+                "received" : [3834],
+                "lost" : [0],
+                "rejected" : [0]
             },
             "jitter" : {
-                "last" : 0.151603862643242,
-                "avg" : 0.266511917114258,
-                "min" : 0.0156879425048828,
-                "max" : 1.36416816711426
+                "last" : [0.151603862643242],
+                "avg" : [0.266511917114258],
+                "min" : [0.0156879425048828],
+                "max" : [1.36416816711426]
             },
-            "r_factor" : 92.5499954223633,
-            "mos" : 4.39635181427002,
-            "fraction_lost" : 0.0
+            "r_factor" : [92.5499954223633],
+            "mos" : [4.39635181427002],
+            "fraction_lost" : [0.0]
         }
         """.trimIndent()
         )
@@ -111,7 +112,7 @@ class LegSessionUtilTest {
 
     @Test
     fun `Create Leg Session`() {
-        val legSession = createLegSession(listOf(RTPR_INDEX_A, RTPR_INDEX_B), 24)
+        val legSession = createLegSession(RTPR_INDEX_A, 24)
 
         assertEquals(RTPR_INDEX_A.getLong("created_at"), legSession.createdAt)
         assertEquals(RTPR_INDEX_A.getLong("created_at") + RTPR_INDEX_A.getInteger("duration"), legSession.terminatedAt)

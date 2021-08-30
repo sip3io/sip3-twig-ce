@@ -144,7 +144,7 @@ open class MediaSessionService {
 
                 reportDuration > remainingDuration -> {
                     val chunks = mutableListOf<Document>()
-                    splitReport(chunks, report, remainingDuration, blockDuration)
+                    splitReport(chunks, report, remainingDuration, blockDuration, blockCount)
 
                     val iterator = chunks.iterator()
 

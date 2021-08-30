@@ -42,6 +42,9 @@ open class CallSearchService : SearchService() {
             { d -> d.getString("dst_addr") },
             { d -> d.getString("call_id") }
         )
+
+        val USER_REGEX = Regex("sip.calle[er]")
+        val CALL_ID_REGEX = Regex("sip.call_id")
     }
 
     @Value("\${session.use-x-correlation-header}")
@@ -63,13 +66,13 @@ open class CallSearchService : SearchService() {
             (query.contains("rtp.") || query.contains("rtcp.")) -> {
                 // Filter documents in `rtpr_${prefix}_index` collection
                 findInMediaIndexBySearchRequest(createdAt, terminatedAt, query).map { document ->
-                    // Map `rtpr_media_index` document to `sip_call_index` document
+                    // Map `rtpr_${prefix}_index` document to `sip_call_index` document
                     document.getString("call_id")?.let { callId ->
-                        val startedAt = document.getLong("created_at")
-                        val byCallId = "sip.call_id=$callId"
-                        return@map findInSipIndexBySearchRequest(startedAt - aggregationTimeout,
-                            startedAt + aggregationTimeout,
-                            byCallId).nextOrNull()
+                        val rtprCreatedAt = document.getLong("created_at")
+                        val extendedQuery = "$query sip.call_id=$callId"
+                        return@map findInSipIndexBySearchRequest(rtprCreatedAt - aggregationTimeout,
+                            rtprCreatedAt + aggregationTimeout,
+                            extendedQuery).nextOrNull()
                     }
                 }
             }
@@ -111,7 +114,10 @@ open class CallSearchService : SearchService() {
             // Main filters
             query.split(" ")
                 .filterNot { it.isBlank() }
-                .filterNot { it.startsWith("sip.") && !it.contains(Regex("sip.calle[er]"))}
+                .filterNot { it.startsWith("sip.")
+                        && !it.contains(USER_REGEX)
+                        && !it.contains(CALL_ID_REGEX)
+                }
                 .map { filter(it) }
                 .forEach { add(it) }
         }

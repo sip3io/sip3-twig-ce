@@ -40,7 +40,10 @@ abstract class SearchService {
         return when {
             expression.contains("!=") -> {
                 val (field, value) = readAttribute(expression, "!=")
-                ne(transform?.invoke(field) ?: field, value)
+                AttributeService.VIRTUAL_ATTRIBUTES[expression.substringBefore("!=")]
+                    ?.map { eq(transform?.invoke(it) ?: it, value) }
+                    ?.let { or(it) }
+                    ?: eq(transform?.invoke(field) ?: field, value)
             }
             expression.contains(">") -> {
                 val (field, value) = readAttribute(expression, ">")
@@ -53,14 +56,20 @@ abstract class SearchService {
             expression.contains("=~") -> {
                 val (field, value) = readAttribute(expression, "=~")
                 if (value is String) {
-                    regex(transform?.invoke(field) ?: field, value)
+                    AttributeService.VIRTUAL_ATTRIBUTES[expression.substringBefore("=~")]
+                        ?.map { regex(transform?.invoke(it) ?: it, value) }
+                        ?.let { or(it) }
+                        ?: regex(transform?.invoke(field) ?: field, value)
                 } else {
                     throw ValidationException("Attribute doesn't support regex query: $expression")
                 }
             }
             expression.contains("=") -> {
                 val (field, value) = readAttribute(expression, "=")
-                eq(transform?.invoke(field) ?: field, value)
+                AttributeService.VIRTUAL_ATTRIBUTES[expression.substringBefore("=")]
+                    ?.map { eq(transform?.invoke(it) ?: it, value) }
+                    ?.let { or(it) }
+                    ?: eq(transform?.invoke(field) ?: field, value)
             }
             else -> {
                 throw ValidationException("Couldn't parse the expression: $expression")
