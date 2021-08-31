@@ -25,6 +25,7 @@ import io.pkts.frame.PcapGlobalHeader
 import io.pkts.packet.PacketFactory
 import io.sip3.twig.ce.domain.SessionRequest
 import io.sip3.twig.ce.mongo.MongoClient
+import io.sip3.twig.ce.service.host.HostService
 import io.sip3.twig.ce.util.*
 import mu.KotlinLogging
 import org.bson.Document
@@ -47,6 +48,9 @@ abstract class SessionService {
 
     @Autowired
     protected lateinit var mongoClient: MongoClient
+
+    @Autowired
+    protected lateinit var hostService: HostService
 
     @Value("\${session.show-retransmits}")
     protected var showRetransmits: Boolean = true
@@ -177,18 +181,7 @@ abstract class SessionService {
             add(`in`("call_id", req.callId!!))
 
             if (req.srcAddr != null && req.dstAddr != null) {
-                add(
-                    or(
-                        and(
-                            `in`("src_addr", req.srcAddr!!),
-                            `in`("dst_addr", req.dstAddr!!)
-                        ),
-                        and(
-                            `in`("src_addr", req.dstAddr!!),
-                            `in`("dst_addr", req.srcAddr!!)
-                        )
-                    )
-                )
+                add(legFilter(req.srcAddr!!, req.dstAddr!!))
             }
         }
 
@@ -207,5 +200,35 @@ abstract class SessionService {
                     }
             }
             .iterator()
+    }
+
+    open fun legFilter(srcAddr: List<String>, dstAddr: List<String>): Bson {
+        val (srcHosts, srcIps) = srcAddr.partition { hostService.findByNameIgnoreCase(it) != null }
+        val (dstHosts, dstIps) = dstAddr.partition { hostService.findByNameIgnoreCase(it) != null }
+
+
+        return or(
+            and(
+                hostOrAddrFilter("src", srcHosts, srcIps),
+                hostOrAddrFilter("dst", dstHosts, dstIps)
+            ),
+            and(
+                hostOrAddrFilter("src", dstHosts, dstIps),
+                hostOrAddrFilter("dst", srcHosts, srcIps)
+            )
+        )
+    }
+
+    open fun hostOrAddrFilter(prefix: String, hosts: List<String>, ips: List<String>): Bson {
+        val filters = mutableListOf<Bson>().apply {
+            if(hosts.isNotEmpty()) add(`in`("${prefix}_host", hosts))
+            if(ips.isNotEmpty()) add(`in`("${prefix}_addr", ips))
+        }
+
+        return if (filters.size == 1) {
+            filters.first()
+        } else {
+            or(filters)
+        }
     }
 }

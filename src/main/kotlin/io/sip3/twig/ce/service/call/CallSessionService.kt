@@ -41,18 +41,7 @@ open class CallSessionService : SessionService() {
             add(`in`("call_id", req.callId!!))
 
             if (req.srcAddr != null && req.dstAddr != null) {
-                add(
-                    or(
-                        and(
-                            `in`("src_addr", req.srcAddr!!),
-                            `in`("dst_addr", req.dstAddr!!)
-                        ),
-                        and(
-                            `in`("src_addr", req.dstAddr!!),
-                            `in`("dst_addr", req.srcAddr!!)
-                        )
-                    )
-                )
+                add(legFilter(req.srcAddr!!, req.dstAddr!!))
             }
         }
 

@@ -62,7 +62,7 @@ object LegSessionUtil {
             val payloadTypes = document.get("payload_type") as List<Int>
             val codecNames = document.getList("codec", String::class.java)
             payloadTypes.forEachIndexed { index, payloadType ->
-                codecs.add(LegSession.Codec(codecNames.first() ?: "UNDEFINED($payloadType)", payloadType))
+                codecs.add(LegSession.Codec(codecNames.getOrElse(index) { "UNDEFINED($payloadType)" }, payloadType))
             }
 
             fillMediaSession(document, blockCount)
