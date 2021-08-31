@@ -16,6 +16,7 @@
 
 package io.sip3.twig.ce.service.media.util
 
+import io.sip3.twig.ce.service.media.domain.MediaSession
 import io.sip3.twig.ce.service.media.util.LegSessionUtil.createLegSession
 import io.sip3.twig.ce.service.media.util.LegSessionUtil.generateLegId
 import io.sip3.twig.ce.service.media.util.LegSessionUtil.generatePartyId
@@ -24,6 +25,7 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotEquals
 import org.junit.jupiter.api.Test
 
+@Suppress("UNCHECKED_CAST")
 class LegSessionUtilTest {
 
     companion object {
@@ -44,22 +46,22 @@ class LegSessionUtilTest {
             "call_id" : "838f2897-35cd-475b-8111-b50fc1984dc9",
             "codec" : ["PCMA"],
             "duration" : 76682,
-            "direction" : ["in"]
+            "direction" : ["out","in"]
             "packets" : {
-                "expected" : [3834],
-                "received" : [3834],
-                "lost" : [0],
-                "rejected" : [0]
+                "expected" : [3834, 3834],
+                "received" : [3834, 3834],
+                "lost" : [0, 0],
+                "rejected" : [0, 0]
             },
             "jitter" : {
-                "last" : [0.151603862643242],
-                "avg" : [0.266511917114258],
-                "min" : [0.0156879425048828],
-                "max" : [1.36416816711426]
+                "last" : [0.831299126148224, 0.151603862643242],
+                "avg" : [0.671812176704407, 0.266511917114258],
+                "min" : [0.38690584897995, 0.0156879425048828],
+                "max" : [2.54890537261963, 1.36416816711426]
             },
-            "r_factor" : [92.5499954223633],
-            "mos" : [4.39635181427002],
-            "fraction_lost" : [0.0]
+            "r_factor" : [92.5499954223633, 92.5499954223633],
+            "mos" : [4.39635181427002, 4.39635181427002],
+            "fraction_lost" : [0.0, 0.0]
         }
         """.trimIndent()
         )
@@ -129,48 +131,29 @@ class LegSessionUtilTest {
         assertEquals(RTPR_INDEX_A.getString("dst_host"), legSession.dstHost)
 
         assertEquals(1, legSession.codecs.size)
-        assertEquals(RTPR_INDEX_A.getString("codec"), legSession.codecs.first().name)
-        assertEquals(RTPR_INDEX_A.getInteger("payload_type"), legSession.codecs.first().payloadType)
+        assertEquals(RTPR_INDEX_A.getList("codec", String::class.java)[0], legSession.codecs.first().name)
+        assertEquals((RTPR_INDEX_A.get("payload_type") as List<Int>)[0], legSession.codecs.first().payloadType)
 
-        legSession.out.first().apply {
-            assertEquals(RTPR_INDEX_A.getInteger("duration"), duration)
-            assertEquals(RTPR_INDEX_A.getLong("created_at"), createdAt)
-            assertEquals(RTPR_INDEX_A.getLong("created_at") + RTPR_INDEX_A.getInteger("duration"), terminatedAt)
-            assertEquals(0, RTPR_INDEX_A.getDouble("mos").compareTo(mos))
-            assertEquals(0, RTPR_INDEX_A.getDouble("r_factor").compareTo(rFactor))
+        assertMediaSession(legSession.out.first(), 0)
+        assertMediaSession(legSession.`in`.first(), 1)
+    }
+
+    private fun assertMediaSession(mediaSession: MediaSession, index: Int) {
+        mediaSession.apply {
+            assertEquals(0, (RTPR_INDEX_A.get("mos") as List<Double>)[index].compareTo(mos))
+            assertEquals(0, (RTPR_INDEX_A.get("r_factor") as List<Double>)[index].compareTo(rFactor))
 
             RTPR_INDEX_A.get("packets", Document::class.java).apply {
-                assertEquals(getInteger("expected"), packets.expected)
-                assertEquals(getInteger("received"), packets.received)
-                assertEquals(getInteger("lost"), packets.lost)
-                assertEquals(getInteger("rejected"), packets.rejected)
+                assertEquals((get("expected") as List<Int>)[index], packets.expected)
+                assertEquals((get("received") as List<Int>)[index], packets.received)
+                assertEquals((get("lost") as List<Int>)[index], packets.lost)
+                assertEquals((get("rejected") as List<Int>)[index], packets.rejected)
             }
 
             RTPR_INDEX_A.get("jitter", Document::class.java).apply {
-                assertEquals(0, getDouble("min").compareTo(jitter.min))
-                assertEquals(0, getDouble("max").compareTo(jitter.max))
-                assertEquals(0, getDouble("avg").compareTo(jitter.avg))
-            }
-        }
-
-        legSession.`in`.first().apply {
-            assertEquals(RTPR_INDEX_B.getInteger("duration"), duration)
-            assertEquals(RTPR_INDEX_B.getLong("created_at"), createdAt)
-            assertEquals(RTPR_INDEX_B.getLong("created_at") + RTPR_INDEX_B.getInteger("duration"), terminatedAt)
-            assertEquals(0, RTPR_INDEX_B.getDouble("mos").compareTo(mos))
-            assertEquals(0, RTPR_INDEX_B.getDouble("r_factor").compareTo(rFactor))
-
-            RTPR_INDEX_B.get("packets", Document::class.java).apply {
-                assertEquals(getInteger("expected"), packets.expected)
-                assertEquals(getInteger("received"), packets.received)
-                assertEquals(getInteger("lost"), packets.lost)
-                assertEquals(getInteger("rejected"), packets.rejected)
-            }
-
-            RTPR_INDEX_B.get("jitter", Document::class.java).apply {
-                assertEquals(0, getDouble("min").compareTo(jitter.min))
-                assertEquals(0, getDouble("max").compareTo(jitter.max))
-                assertEquals(0, getDouble("avg").compareTo(jitter.avg))
+                assertEquals(jitter.min, (get("min") as List<Double>)[index])
+                assertEquals(jitter.max, (get("max") as List<Double>)[index])
+                assertEquals(jitter.avg, (get("avg") as List<Double>)[index])
             }
         }
     }

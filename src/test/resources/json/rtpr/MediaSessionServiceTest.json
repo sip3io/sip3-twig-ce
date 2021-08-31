@@ -1,0 +1,259 @@
+{
+  "rtpr_rtp_index_20200910": [
+    {
+      "_id": "5f5979da8f5db2164b2b7721",
+      "call_id": "NjBlMTZhOWQ1Y2JjMzk1NTY3MjFlZTc0MTU4OTA1NDA.",
+      "direction": ["out", "in"],
+      "codec": [
+        "PCMU",
+        "PCMU"
+      ],
+      "dst_addr": "192.168.10.5",
+      "dst_host": "PBX-2",
+      "dst_port": 11958,
+      "duration": 19779,
+      "fraction_lost": [
+        0,
+        0
+      ],
+      "jitter": {
+        "last": [
+          0.12251465022563934,
+          1.3305953741073608
+        ],
+        "avg": [
+          0.2594599425792694,
+          0.7710570693016052
+        ],
+        "min": [
+          0.005375981330871582,
+          0.01731395721435547
+        ],
+        "max": [
+          1.3704850673675537,
+          1.870510220527649
+        ]
+      },
+      "mos": [
+        4.409228801727295,
+        4.408666610717773
+      ],
+      "packets": {
+        "expected": [
+          988,
+          983
+        ],
+        "received": [
+          988,
+          983
+        ],
+        "lost": [
+          0,
+          0
+        ],
+        "rejected": [
+          0,
+          0
+        ]
+      },
+      "payload_type": [
+        8,
+        8
+      ],
+      "r_factor": [
+        93.19705963134766,
+        93.16806030273438
+      ],
+      "src_addr": "192.168.10.109",
+      "src_port": 40042,
+      "ssrc": [
+        24767,
+        1675032981
+      ],
+      "created_at": 1599699368433,
+      "terminated_at": 1599699388212
+    }
+  ],
+  "rtpr_rtp_raw_20200910": [
+    {
+      "_id": "5f5979b28f5db2164b2b765e",
+      "call_id": "NjBlMTZhOWQ1Y2JjMzk1NTY3MjFlZTc0MTU4OTA1NDA.",
+      "reported_at": 1599699373433,
+      "codec": "PCMU",
+      "dst_addr": "192.168.10.5",
+      "dst_host": "PBX-2",
+      "dst_port": 11958,
+      "duration": 5120,
+      "fraction_lost": 0,
+      "jitter": {
+        "last": 0.20461209118366241,
+        "avg": 0.2345445305109024,
+        "min": 0.005375981330871582,
+        "max": 0.6464104652404785
+      },
+      "mos": 4.409190654754639,
+      "packets": {
+        "expected": 256,
+        "received": 256,
+        "lost": 0,
+        "rejected": 0
+      },
+      "payload_type": 8,
+      "r_factor": 93.19508361816406,
+      "src_addr": "192.168.10.109",
+      "src_port": 40042,
+      "ssrc": 24767,
+      "created_at": 1599699368433
+    },
+    {
+      "_id": "5f5979b28f5db2164b2b7661",
+      "call_id": "NjBlMTZhOWQ1Y2JjMzk1NTY3MjFlZTc0MTU4OTA1NDA.",
+      "reported_at": 1599699373452,
+      "codec": "PCMU",
+      "dst_addr": "192.168.10.109",
+      "dst_port": 40042,
+      "duration": 5116,
+      "fraction_lost": 0,
+      "jitter": {
+        "last": 0.8373932838439941,
+        "avg": 0.7710328698158264,
+        "min": 0.01731395721435547,
+        "max": 1.403550624847412
+      },
+      "mos": 4.408896446228027,
+      "packets": {
+        "expected": 256,
+        "received": 256,
+        "lost": 0,
+        "rejected": 0
+      },
+      "payload_type": 8,
+      "r_factor": 93.17990112304688,
+      "src_addr": "192.168.10.5",
+      "src_port": 11958,
+      "ssrc": 1675032981,
+      "created_at": 1599699368452,
+      "src_host": "PBX-2"
+    },
+    {
+      "_id": "5f5979b78f5db2164b2b7690",
+      "call_id": "NjBlMTZhOWQ1Y2JjMzk1NTY3MjFlZTc0MTU4OTA1NDA.",
+      "reported_at": 1599699378553,
+      "codec": "PCMU",
+      "dst_addr": "192.168.10.5",
+      "dst_host": "PBX-2",
+      "dst_port": 11958,
+      "duration": 5119,
+      "fraction_lost": 0,
+      "jitter": {
+        "last": 0.16368630528450012,
+        "avg": 0.25806379318237305,
+        "min": 0.08053219318389893,
+        "max": 0.9351742267608643
+      },
+      "mos": 4.409209728240967,
+      "packets": {
+        "expected": 256,
+        "received": 256,
+        "lost": 0,
+        "rejected": 0
+      },
+      "payload_type": 8,
+      "r_factor": 93.1960678100586,
+      "src_addr": "192.168.10.109",
+      "src_port": 40042,
+      "ssrc": 24767,
+      "created_at": 1599699373553
+    },
+    {
+      "_id": "5f5979b78f5db2164b2b7693",
+      "call_id": "NjBlMTZhOWQ1Y2JjMzk1NTY3MjFlZTc0MTU4OTA1NDA.",
+      "codec": "PCMU",
+      "reported_at": 1599699413568,
+      "dst_addr": "192.168.10.109",
+      "dst_port": 40042,
+      "duration": 5120,
+      "fraction_lost": 0,
+      "jitter": {
+        "last": 1.1254804134368896,
+        "avg": 0.7317721247673035,
+        "min": 0.45853063464164734,
+        "max": 1.4231394529342651
+      },
+      "mos": 4.408762454986572,
+      "packets": {
+        "expected": 256,
+        "received": 256,
+        "lost": 0,
+        "rejected": 0
+      },
+      "payload_type": 8,
+      "r_factor": 93.17298889160156,
+      "src_addr": "192.168.10.5",
+      "src_port": 11958,
+      "ssrc": 1675032981,
+      "created_at": 1599699373568,
+      "src_host": "PBX-2"
+    },
+    {
+      "_id": "5f5979da8f5db2164b2b7725",
+      "call_id": "NjBlMTZhOWQ1Y2JjMzk1NTY3MjFlZTc0MTU4OTA1NDA.",
+      "codec": "PCMU",
+      "reported_at": 1599699383686,
+      "dst_addr": "192.168.10.5",
+      "dst_host": "PBX-2",
+      "dst_port": 11958,
+      "duration": 9540,
+      "fraction_lost": 0,
+      "jitter": {
+        "last": 0.12251465022563934,
+        "avg": 0.28577154874801636,
+        "min": 0.05159604549407959,
+        "max": 1.3704850673675537
+      },
+      "mos": 4.409228801727295,
+      "packets": {
+        "expected": 477,
+        "received": 477,
+        "lost": 0,
+        "rejected": 0
+      },
+      "payload_type": 8,
+      "r_factor": 93.19705963134766,
+      "src_addr": "192.168.10.109",
+      "src_port": 40042,
+      "ssrc": 24767,
+      "created_at": 1599699378672
+    },
+    {
+      "_id": "5f5979da8f5db2164b2b7728",
+      "call_id": "NjBlMTZhOWQ1Y2JjMzk1NTY3MjFlZTc0MTU4OTA1NDA.",
+      "codec": "PCMU",
+      "reported_at": 1599699418686,
+      "dst_addr": "192.168.10.109",
+      "dst_port": 40042,
+      "duration": 9421,
+      "fraction_lost": 0,
+      "jitter": {
+        "last": 1.3305953741073608,
+        "avg": 0.8103660941123962,
+        "min": 0.4656289517879486,
+        "max": 1.870510220527649
+      },
+      "mos": 4.408666610717773,
+      "packets": {
+        "expected": 471,
+        "received": 471,
+        "lost": 0,
+        "rejected": 0
+      },
+      "payload_type": 8,
+      "r_factor": 93.16806030273438,
+      "src_addr": "192.168.10.5",
+      "src_port": 11958,
+      "ssrc": 1675032981,
+      "created_at": 1599699378688,
+      "src_host": "PBX-2"
+    }
+  ]
+}
