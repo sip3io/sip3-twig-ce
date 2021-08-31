@@ -38,62 +38,57 @@ abstract class SearchService {
 
     fun filter(expression: String, transform: ((String) -> String)? = null): Bson {
         return when {
-            expression.contains("!=") -> {
-                val (field, value) = readAttribute(expression, "!=")
-                AttributeService.VIRTUAL_ATTRIBUTES[expression.substringBefore("!=")]
-                    ?.map { eq(transform?.invoke(it) ?: it, value) }
-                    ?.let { or(it) }
-                    ?: eq(transform?.invoke(field) ?: field, value)
+            expression.contains("!=") -> filter(expression, "!=") { field, value ->
+                ne(transform?.invoke(field) ?: field, value)
             }
-            expression.contains(">") -> {
-                val (field, value) = readAttribute(expression, ">")
+
+            expression.contains(">") -> filter(expression, ">") { field, value ->
                 gt(transform?.invoke(field) ?: field, value)
             }
-            expression.contains("<") -> {
-                val (field, value) = readAttribute(expression, "<")
+
+            expression.contains("<") -> filter(expression, "<") { field, value ->
                 lt(transform?.invoke(field) ?: field, value)
             }
-            expression.contains("=~") -> {
-                val (field, value) = readAttribute(expression, "=~")
+
+            expression.contains("=~") -> filter(expression, "=~") { field, value ->
                 if (value is String) {
-                    AttributeService.VIRTUAL_ATTRIBUTES[expression.substringBefore("=~")]
-                        ?.map { regex(transform?.invoke(it) ?: it, value) }
-                        ?.let { or(it) }
-                        ?: regex(transform?.invoke(field) ?: field, value)
+                    regex(transform?.invoke(field) ?: field, value)
                 } else {
                     throw ValidationException("Attribute doesn't support regex query: $expression")
                 }
             }
-            expression.contains("=") -> {
-                val (field, value) = readAttribute(expression, "=")
-                AttributeService.VIRTUAL_ATTRIBUTES[expression.substringBefore("=")]
-                    ?.map { eq(transform?.invoke(it) ?: it, value) }
-                    ?.let { or(it) }
-                    ?: eq(transform?.invoke(field) ?: field, value)
+
+            expression.contains("=") -> filter(expression, "=") { field, value ->
+                eq(transform?.invoke(field) ?: field, value)
             }
+
             else -> {
                 throw ValidationException("Couldn't parse the expression: $expression")
             }
         }
     }
 
-    private fun readAttribute(expression: String, delimiter: String): Pair<String, Any> {
+    private fun filter(expression: String, delimiter: String, mapping: (String, Any) -> Bson): Bson {
         val attribute = expression.substringBefore(delimiter)
 
-        val name = attribute.substringAfter(".")
+        val field = attribute.substringAfter(".")
         val type = attributeService.list()
             .firstOrNull { it.name == attribute }
             ?.type
 
-        val value = expression.substringAfter(delimiter)
-
-        return when (type) {
-            Attribute.TYPE_STRING -> Pair(name, value)
-            Attribute.TYPE_NUMBER -> Pair(name, value.toDouble())
-            Attribute.TYPE_BOOLEAN -> Pair(name, value.toBoolean())
+        val rawValue = expression.substringAfter(delimiter)
+        val value = when (type) {
+            Attribute.TYPE_STRING -> rawValue
+            Attribute.TYPE_NUMBER -> rawValue.toDouble()
+            Attribute.TYPE_BOOLEAN -> rawValue.toBoolean()
             else -> {
                 throw ValidationException("Unknown attribute: $expression")
             }
         }
+
+        return AttributeService.VIRTUAL_ATTRIBUTES[attribute]
+            ?.map { mapping.invoke(it.substringAfter("."), value) }
+            ?.let { or(it) }
+            ?: mapping.invoke(field, value)
     }
 }
