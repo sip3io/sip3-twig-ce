@@ -16,10 +16,14 @@
 
 package io.sip3.twig.ce.service.attribute
 
+import com.mongodb.client.MongoClients
 import io.sip3.commons.domain.Attribute
+import io.sip3.twig.ce.MongoExtension
 import io.sip3.twig.ce.mongo.MongoClient
+import io.sip3.twig.ce.service.media.MediaSessionService
 import org.bson.Document
-import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.BDDMockito.given
@@ -28,43 +32,56 @@ import org.mockito.Mockito.times
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.mock.mockito.MockBean
+import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.junit.jupiter.SpringExtension
 
-@ExtendWith(SpringExtension::class)
-@SpringBootTest
+@ExtendWith(MongoExtension::class)
+@SpringBootTest(classes = [MongoClient::class, AttributeService::class])
+@ContextConfiguration(initializers = [MongoExtension.MongoDbInitializer::class])
 class AttributeServiceTest {
 
-    @MockBean
-    private lateinit var mongoClient: MongoClient
+    companion object {
+
+        @JvmStatic
+        @BeforeAll
+        fun beforeAll() {
+            MongoClients.create(MongoExtension.MONGO_URI).getDatabase("sip3-test").apply {
+                this.javaClass.getResource("/json/attributes/AttributeServiceTest.json")?.let { file ->
+                    val json = Document.parse(file.readText())
+                    json.keys.forEach { collectionName ->
+                        getCollection(collectionName).insertMany(
+                            json.getList(collectionName, Document::class.java)
+                        )
+                    }
+                }
+            }
+        }
+    }
 
     @Autowired
     private lateinit var attributeService: AttributeService
 
     @Test
     fun `Get list of all attributes`() {
-        val collections = listOf("attributes")
-
-        val attribute1 = Document().apply {
-            put("name", "number")
-            put("type", Attribute.TYPE_NUMBER)
-        }
-        val attribute2 = Document().apply {
-            put("name", "string")
-            put("type", Attribute.TYPE_STRING)
-            put("options", listOf("option1", "option2"))
-        }
-
-        given(mongoClient.listCollectionNames("attributes"))
-            .willReturn(collections)
-        given(mongoClient.find(collections))
-            .willReturn(listOf(attribute1, attribute2).listIterator())
-
         var attributes = attributeService.list()
-        assertEquals(2, attributes.size)
+        assertEquals(5, attributes.size)
 
         // Test `listAttributes` cache
         attributes = attributeService.list()
-        assertEquals(2, attributes.size)
-        verify(mongoClient, times(1)).find(collections)
+        assertEquals(5, attributes.size)
+
+        assertTrue(attributes.any { it.name == "sip.number" })
+        assertTrue(attributes.any { it.name == "sip.string" })
+        assertTrue(attributes.any { it.name == "sip.src_host" })
+        assertTrue(attributes.any { it.name == "sip.dst_host" })
+
+        // Validate virtual attribute
+        attributes.firstOrNull { it.name == "sip.host" }.let { attr ->
+            assertNotNull(attr)
+            assertEquals("sip.host", attr!!.name)
+            assertEquals(2, attr.options?.size)
+            assertTrue(attr.options!!.contains("src_host_1"))
+            assertTrue(attr.options!!.contains("dst_host_1"))
+        }
     }
 }
