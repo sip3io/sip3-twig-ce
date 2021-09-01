@@ -18,10 +18,10 @@ package io.sip3.twig.ce.service.media.util
 
 import io.sip3.twig.ce.service.media.domain.LegSession
 import io.sip3.twig.ce.service.media.domain.MediaSession
-import org.bson.Document
-import kotlin.math.max
-import kotlin.math.min
 
+import org.bson.Document
+
+@Suppress("UNCHECKED_CAST")
 object LegSessionUtil {
 
     fun generateLegId(report: Document): String {
@@ -40,77 +40,68 @@ object LegSessionUtil {
         return "${report.getString("src_addr")}:${report.getString("dst_addr")}"
     }
 
-    fun createLegSession(documents: List<Document>, blockCount: Int): LegSession {
-        // Split to `out` and `in` reports
-        val firstReport = documents.first()
-        val outPartyId = generatePartyId(firstReport)
-        val (out, `in`) = documents.partition { generatePartyId(it) == outPartyId }
-
+    fun createLegSession(document: Document, blockCount: Int): LegSession {
         // Define timestamps
-        val legCreatedAt = min(
-            out.first().getLong("created_at"),
-            `in`.firstOrNull()?.getLong("created_at") ?: Long.MAX_VALUE
-        )
-
-        val legTerminatedAt = max(out.maxOf { it.getLong("terminated_at") },
-            `in`.maxOfOrNull { it.getLong("terminated_at") } ?: 0)
-
+        val legCreatedAt = document.getLong("created_at")
+        val legTerminatedAt = document.getLong("terminated_at")
 
         return LegSession().apply {
             createdAt = legCreatedAt
             terminatedAt = legTerminatedAt
 
             duration = (legTerminatedAt - legCreatedAt).toInt()
-            callId = firstReport.getString("call_id")
+            callId = document.getString("call_id")
 
-            srcAddr = firstReport.getString("src_addr")
-            srcPort = firstReport.getInteger("src_port")
-            firstReport.getString("src_host")?.let { srcHost = it }
-            dstAddr = firstReport.getString("dst_addr")
-            dstPort = firstReport.getInteger("dst_port")
-            firstReport.getString("dst_host")?.let { dstHost = it }
+            srcAddr = document.getString("src_addr")
+            srcPort = document.getInteger("src_port")
+            document.getString("src_host")?.let { srcHost = it }
+            dstAddr = document.getString("dst_addr")
+            dstPort = document.getInteger("dst_port")
+            document.getString("dst_host")?.let { dstHost = it }
 
-            documents.forEach { document ->
-                val payloadType = document.getInteger("payload_type")
-                val codecName = document.getString("codec_name") ?: "UNDEFINED($payloadType)"
-                codecs.add(LegSession.Codec(codecName, payloadType))
+            val payloadTypes = document.get("payload_type") as List<Int>
+            val codecNames = document.getList("codec", String::class.java)
+            payloadTypes.forEachIndexed { index, payloadType ->
+                codecs.add(LegSession.Codec(codecNames.getOrElse(index) { "UNDEFINED($payloadType)" }, payloadType))
             }
 
-            this.out.add(createMediaSession(out, blockCount))
-
-            if (`in`.isNotEmpty()) {
-                this.`in`.add(createMediaSession(`in`, blockCount))
-            }
+            fillMediaSession(document, blockCount)
         }
     }
 
-    private fun createMediaSession(reports: List<Document>, blockCount: Int): MediaSession {
-        return MediaSession(blockCount).apply {
-            createdAt = reports.first().getLong("created_at")
-            terminatedAt = reports.maxOf { it.getLong("terminated_at") }
-            duration = (terminatedAt - createdAt).toInt()
+    private fun LegSession.fillMediaSession(document: Document, blockCount: Int) {
+        // Get lists of values
+        val directions = document.getList("direction", String::class.java)
+        val reportPackets = document.get("packets", Document::class.java)
 
-            val reportPackets = reports.map { it.get("packets") as Document }
-            packets.apply {
-                expected = reportPackets.sumOf { it.getInteger("expected") }
-                received = reportPackets.sumOf { it.getInteger("received") }
-                rejected = reportPackets.sumOf { it.getInteger("rejected") }
+        val mos = document.get("mos") as List<Double>
+        val rFactor = document.get("r_factor") as List<Double>
+        val jitters = document.get("jitter", Document::class.java)
+
+        directions.forEachIndexed { index, direction ->
+            val mediaSession = MediaSession(blockCount)
+
+            mediaSession.packets.apply {
+                expected = (reportPackets.get("expected") as List<Int>)[index]
+                received = (reportPackets.get("received") as List<Int>)[index]
+                rejected = (reportPackets.get("rejected") as List<Int>)[index]
                 lost = expected - received
             }
 
-            reports.filter { it.getDouble("r_factor") > 0.0 }
-                .takeIf { it.isNotEmpty() }
-                ?.let { validReports ->
-                    mos = validReports.sumOf { it.getDouble("mos") } / validReports.size
-                    rFactor = validReports.sumOf { it.getDouble("r_factor") } / validReports.size
+            mediaSession.mos = mos[index]
+            mediaSession.rFactor = rFactor[index]
 
-                    val reportJitter = validReports.map { it.get("jitter") as Document }
-                    jitter.apply {
-                        reportJitter.map { it.getDouble("min") }.filter { it != 0.0 }.minOrNull()?.let { min = it }
-                        max = reportJitter.map { it.getDouble("max") }.maxOrNull()!!
-                        avg = reportJitter.sumOf { it.getDouble("avg") } / validReports.size
-                    }
-                }
+            mediaSession.jitter.apply {
+                min = (jitters.get("min") as List<Double>)[index]
+                max = (jitters.get("max") as List<Double>)[index]
+                avg = (jitters.get("avg") as List<Double>)[index]
+            }
+
+            if (direction == "out") {
+                out.add(mediaSession)
+            } else {
+                `in`.add(mediaSession)
+            }
         }
     }
 }

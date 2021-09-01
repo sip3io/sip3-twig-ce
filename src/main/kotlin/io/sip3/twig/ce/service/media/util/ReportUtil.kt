@@ -21,7 +21,13 @@ import kotlin.math.roundToInt
 
 object ReportUtil {
 
-    fun splitReport(chunks: MutableList<Document>, report: Document, remainingDuration: Int, blockDuration: Int) {
+    fun splitReport(
+        chunks: MutableList<Document>,
+        report: Document,
+        remainingDuration: Int,
+        blockDuration: Int,
+        blockCount: Int
+    ) {
         val reportDuration = report.getInteger("duration")
 
         val firstFraction = remainingDuration.toDouble() / reportDuration
@@ -31,10 +37,13 @@ object ReportUtil {
         val remainingReport = reduceReport(report, secondFraction)
 
         chunks.add(firstReport)
-        if (remainingReport.getInteger("duration") <= blockDuration) {
-            chunks.add(remainingReport)
-        } else {
-            splitReport(chunks, remainingReport, blockDuration, blockDuration)
+        when {
+            // Remaining report fits to block
+            remainingReport.getInteger("duration") <= blockDuration -> chunks.add(remainingReport)
+            // Chunks size become greater than total available blocks
+            chunks.size >= blockCount -> chunks.add(remainingReport)
+            // Otherwise split report again
+            else -> splitReport(chunks, remainingReport, blockDuration, blockDuration, blockCount)
         }
     }
 

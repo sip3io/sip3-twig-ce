@@ -19,14 +19,18 @@ package io.sip3.twig.ce.service
 import io.pkts.Pcap
 import io.pkts.packet.Packet
 import io.pkts.packet.sip.impl.PreConditions.assertNotNull
+import io.sip3.twig.ce.domain.Host
 import io.sip3.twig.ce.domain.SessionRequest
 import io.sip3.twig.ce.mongo.MongoClient
+import io.sip3.twig.ce.service.host.HostService
 import org.bson.Document
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
+import org.mockito.Mockito.`when`
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.stereotype.Component
 import java.io.ByteArrayInputStream
 import java.util.*
@@ -147,6 +151,9 @@ class SessionServiceTest {
         val DOCUMENTS = listOf(REGISTER_1, REGISTER_1, REGISTER_1, REGISTER_2, REGISTER_3, REGISTER_4)
     }
 
+    @MockBean
+    private lateinit var hostService: HostService
+
     @Autowired
     private lateinit var service: TestSessionService
 
@@ -220,6 +227,13 @@ class SessionServiceTest {
 
             }
         }
+    }
+
+    @Test
+    fun `Validate 'content()' method with retransmits2`() {
+        `when`(hostService.findByNameIgnoreCase("host_1")).thenReturn(Host(null, "host_1", emptyList()))
+        `when`(hostService.findByNameIgnoreCase("host_2")).thenReturn(Host(null, "host_2", emptyList()))
+        println(service.legFilter(listOf("host_1"), listOf("host_2")))
     }
 
     @Test

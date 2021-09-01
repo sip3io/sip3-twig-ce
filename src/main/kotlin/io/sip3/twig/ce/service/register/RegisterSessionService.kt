@@ -35,6 +35,10 @@ open class RegisterSessionService : SessionService() {
             add(Filters.gte("created_at", req.createdAt!!))
             add(Filters.lte("created_at", req.terminatedAt!!))
             add(Filters.`in`("call_id", req.callId!!))
+
+            if (req.srcAddr != null && req.dstAddr != null) {
+                add(legFilter(req.srcAddr!!, req.dstAddr!!))
+            }
         }
 
         return mongoClient.find("sip_register_raw", Pair(req.createdAt!!, req.terminatedAt!!), Filters.and(filters))

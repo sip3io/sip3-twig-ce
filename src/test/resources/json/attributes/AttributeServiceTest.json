@@ -1,0 +1,30 @@
+{
+  "attributes_20211111": [
+    {
+      "name": "sip.number",
+      "type": "number"
+    },
+    {
+      "name": "sip.string",
+      "type": "string",
+      "options": [
+        "option1",
+        "option2"
+      ]
+    },
+    {
+      "name": "sip.src_host",
+      "type": "string",
+      "options": [
+        "src_host_1"
+      ]
+    },
+    {
+      "name": "sip.dst_host",
+      "type": "string",
+      "options": [
+        "dst_host_1"
+      ]
+    }
+  ]
+}

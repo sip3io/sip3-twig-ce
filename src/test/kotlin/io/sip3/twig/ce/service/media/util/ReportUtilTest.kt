@@ -51,7 +51,7 @@ class ReportUtilTest {
     @Test
     fun `Split report`() {
         val chunks = mutableListOf<Document>()
-        splitReport(chunks, RTPR_RAW, 820, 1000)
+        splitReport(chunks, RTPR_RAW, 820, 1000, 28)
         assertEquals(6, chunks.size)
         assertEquals(820, chunks.first().getInteger("duration"))
         assertEquals(300, chunks.last().getInteger("duration"))
@@ -63,12 +63,12 @@ class ReportUtilTest {
             assertEquals(RTPR_RAW.get("mos"), chunk.get("mos"))
         }
 
+        val chunkPackets = chunks.map { it.get("packets", Document::class.java) }
         RTPR_RAW.get("packets", Document::class.java).apply {
-            assertEquals(getInteger("expected"), chunks.sumOf { it.get("packets", Document::class.java).getInteger("expected") })
-            assertEquals(getInteger("received"), chunks.sumOf { it.get("packets", Document::class.java).getInteger("received") })
-            assertEquals(getInteger("lost"), chunks.sumOf { it.get("packets", Document::class.java).getInteger("lost") })
-            assertEquals(getInteger("rejected"), chunks.sumOf { it.get("packets", Document::class.java).getInteger("rejected") })
+            assertEquals(getInteger("expected"), chunkPackets.sumOf { it.getInteger("expected") })
+            assertEquals(getInteger("received"), chunkPackets.sumOf { it.getInteger("received") })
+            assertEquals(getInteger("lost"), chunkPackets.sumOf { it.getInteger("lost") })
+            assertEquals(getInteger("rejected"), chunkPackets.sumOf { it.getInteger("rejected") })
         }
-
     }
 }

@@ -176,8 +176,8 @@ class SearchControllerTest {
     }
 
     @Test
-    fun `Complex search by SIP and RTP`() {
-        val query = "sip.method=INVITE sip.callee=1001 rtp.mos<3"
+    fun `Complex search by RTP and RTCP`() {
+        val query = "sip.method=INVITE rtcp.r_factor>30 rtp.mos<3"
         val request = SearchRequest(CREATED_AT, TERMINATED_AT, query, 50)
 
         mockMvc.perform(

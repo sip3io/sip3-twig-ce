@@ -15,13 +15,13 @@
     },
     {
       "src_addr": "10.10.0.1",
-      "src_host":  "pbx",
-      "dst_addr":  "10.10.0.2",
-      "dst_host":  "sbc",
+      "src_host": "pbx",
+      "dst_addr": "10.10.0.2",
+      "dst_host": "sbc",
       "created_at": 1626775335020,
       "terminated_at": 1626775394400,
       "answered_at": 1626775345010,
-      "duration":  59380,
+      "duration": 59380,
       "state": "answered",
       "caller": "2000000",
       "callee": "2909090",
@@ -42,7 +42,6 @@
       "call_id": "some-call-id-3",
       "x_call_id": "some-call-id-1"
     },
-
     {
       "src_addr": "5.5.6.6",
       "src_host": "sip3-telecom",
@@ -56,7 +55,6 @@
       "callee": "2909091",
       "call_id": "some-call-id-4"
     },
-
     {
       "src_addr": "192.168.8.2",
       "dst_addr": "192.168.8.254",
@@ -82,90 +80,133 @@
       "x_call_id": "some-call-id-5"
     }
   ],
-  "rtpr_media_index_20210720": [
+  "rtpr_rtp_index_20210720": [
     {
-      "created_at" : 1626775335000,
-      "terminated_at" : 1626775395000,
-      "src_addr" : "217.117.177.123",
-      "src_port" : 10678,
-      "dst_addr" : "109.234.130.53",
-      "dst_port" : 38868,
-      "dst_host" : "Intertax",
-      "call_id" : "some-call-id-1",
-      "codec_names" : [
+      "created_at": 1626775335000,
+      "terminated_at": 1626775395000,
+      "src_addr": "217.117.177.123",
+      "src_port": 10678,
+      "dst_addr": "109.234.130.53",
+      "dst_port": 38868,
+      "dst_host": "Intertax",
+      "call_id": "some-call-id-1",
+      "codec": [
         "PCMA"
       ],
-      "duration" : 60000,
-      "report_count" : 18,
-      "bad_report_count" : 0,
-      "bad_report_fraction" : 0,
-      "one_way" : false,
-      "undefined_codec" : false,
-      "missed_peer" : false,
-      "mos" : 4.408912181854248,
-      "r_factor" : 93.18071746826172,
-      "forward_rtp" : {
-        "created_at" : 1626775335000,
-        "terminated_at" : 1626775395000,
-        "src_addr" : "192.168.10.5",
-        "src_port" : 10678,
-        "src_host" : "PBX-2",
-        "dst_addr" : "109.234.130.53",
-        "dst_port" : 38868,
-        "dst_host" : "Intertax",
-        "call_id" : "some-call-id-1",
-        "payload_type" : 8,
-        "codec_name" : "PCMA",
-        "ssrc" : 833953450,
-        "duration" : 47081,
-        "packets" : {
-          "expected" : 2354,
-          "received" : 2354,
-          "lost" : 0,
-          "rejected" : 0
-        },
-        "jitter" : {
-          "last" : 0.17255133390426636,
-          "avg" : 0.2719686031341553,
-          "min" : 0.06768798828125,
-          "max" : 0.564979076385498
-        },
-        "r_factor" : 93.19458770751953,
-        "mos" : 4.409181118011475,
-        "fraction_lost" : 0,
-        "missed_peer" : false
+      "duration": 47081,
+      "report_count": 18,
+      "bad_report_count": 0,
+      "bad_report_fraction": 0,
+      "one_way": false,
+      "direction": [
+        "out"
+      ],
+      "payload_type": [
+        8
+      ],
+      "ssrc": 833953450,
+      "packets": {
+        "expected": [
+          2354
+        ],
+        "received": [
+          2354
+        ],
+        "lost": [
+          0
+        ],
+        "rejected": [
+          0
+        ]
       },
-      "forward_rtcp" : {
-        "created_at" : 1626775335000,
-        "terminated_at" : 1626775395000,
-        "src_addr" : "109.234.130.53",
-        "src_port" : 38869,
-        "src_host" : "Intertax",
-        "dst_addr" : "192.168.10.5",
-        "dst_port" : 10679,
-        "dst_host" : "PBX-2",
-        "call_id" : "some-call-id-1",
-        "payload_type" : -1,
-        "codec_name" : "PCMA",
-        "ssrc" : 833953450,
-        "duration" : 52040,
-        "packets" : {
-          "expected" : 2602,
-          "received" : 2602,
-          "lost" : 0,
-          "rejected" : 0
-        },
-        "jitter" : {
-          "last" : 6,
-          "avg" : 6.199999809265137,
-          "min" : 5,
-          "max" : 7
-        },
-        "r_factor" : 93.20000457763672,
-        "mos" : 4.409286022186279,
-        "fraction_lost" : 0,
-        "missed_peer" : false
-      }
+      "jitter": {
+        "last": [
+          0.17255133390426636
+        ],
+        "avg": [
+          0.2719686031341553
+        ],
+        "min": [
+          0.06768798828125
+        ],
+        "max": [
+          0.564979076385498
+        ]
+      },
+      "r_factor": [
+        93.19458770751953
+      ],
+      "mos": [
+        4.409181118011475
+      ],
+      "fraction_lost": [
+        0
+      ]
+    }
+  ],
+  "rtpr_rtcp_index_20210720": [
+    {
+      "created_at": 1626775335000,
+      "terminated_at": 1626775395000,
+      "src_addr": "109.234.130.53",
+      "src_port": 38869,
+      "src_host": "Intertax",
+      "dst_addr": "192.168.10.5",
+      "dst_port": 10679,
+      "dst_host": "PBX-2",
+      "call_id": "some-call-id-1",
+      "payload_type": [
+        -1
+      ],
+      "codec": [
+        "PCMA"
+      ],
+      "ssrc": [
+        833953450
+      ],
+      "direction": [
+        "in"
+      ],
+      "duration": [
+        52040
+      ],
+      "packets": {
+        "expected": [
+          2602
+        ],
+        "received": [
+          2602
+        ],
+        "lost": [
+          0
+        ],
+        "rejected": [
+          0
+        ]
+      },
+      "jitter": {
+        "last": [
+          6
+        ],
+        "avg": [
+          6.199999809265137
+        ],
+        "min": [
+          5
+        ],
+        "max": [
+          7
+        ]
+      },
+      "r_factor": [
+        93.20000457763672
+      ],
+      "mos": [
+        4.409286022186279
+      ],
+      "fraction_lost": [
+        0
+      ]
     }
   ]
 }

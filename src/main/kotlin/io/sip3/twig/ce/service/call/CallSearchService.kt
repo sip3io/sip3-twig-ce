@@ -20,6 +20,7 @@ import com.mongodb.client.model.Filters.*
 import io.sip3.twig.ce.domain.SearchRequest
 import io.sip3.twig.ce.domain.SearchResponse
 import io.sip3.twig.ce.service.SearchService
+import io.sip3.twig.ce.util.IteratorUtil
 import io.sip3.twig.ce.util.map
 import io.sip3.twig.ce.util.nextOrNull
 import mu.KotlinLogging
@@ -41,6 +42,9 @@ open class CallSearchService : SearchService() {
             { d -> d.getString("dst_addr") },
             { d -> d.getString("call_id") }
         )
+
+        val MEDIA_PREFIX_REGEX = Regex("rtp.|rtcp.")
+        val COMMON_ATTR_REGEX = Regex("sip.caller|sip.callee|sip.user|sip.call_id")
     }
 
     @Value("\${session.use-x-correlation-header}")
@@ -58,23 +62,46 @@ open class CallSearchService : SearchService() {
     override fun search(request: SearchRequest): Iterator<SearchResponse> {
         val (createdAt, terminatedAt, query) = request
 
-        val matchedDocuments = when {
-            query.contains("media.") || (query.contains("rtp.") || query.contains("rtcp.")) -> {
-                // Filter documents in `rtpr_media_index` collection
-                findInMediaIndexBySearchRequest(createdAt, terminatedAt, query).map { document ->
-                    // Map `rtpr_media_index` document to `sip_call_index` document
-                    document.getString("call_id")?.let { callId ->
-                        val startedAt = document.getLong("created_at")
-                        val byCallId = "sip.call_id=$callId"
-                        return@map findInSipIndexBySearchRequest(startedAt - aggregationTimeout,
-                            startedAt + aggregationTimeout,
-                            byCallId).nextOrNull()
-                    }
+        val hasMediaFilters = query.contains(MEDIA_PREFIX_REGEX)
+        val startWithMediaIndex = hasMediaFilters && query.split(" ")
+            .filterNot { it.startsWith("sip.method=") }
+            .firstOrNull()?.contains(MEDIA_PREFIX_REGEX) ?: false
+
+        val matchedDocuments = if (startWithMediaIndex) {
+            // Filter documents in `rtpr_${prefix}_index` collection
+            findInRtprIndexBySearchRequest(createdAt, terminatedAt, query).map { document ->
+                // Map `rtpr_${prefix}_index` document to `sip_call_index` document
+                document.getString("call_id")?.let { callId ->
+                    val rtprCreatedAt = document.getLong("created_at")
+                    val extendedQuery = "$query sip.call_id=$callId"
+                    return@map findInSipIndexBySearchRequest(
+                        rtprCreatedAt - aggregationTimeout,
+                        rtprCreatedAt + aggregationTimeout,
+                        extendedQuery
+                    ).nextOrNull()
                 }
             }
-            else -> {
-                // Filter documents in `sip_call_index` collections
-                findInSipIndexBySearchRequest(createdAt, terminatedAt, query)
+        } else {
+            // Filter documents in `sip_call_index` collection
+            findInSipIndexBySearchRequest(createdAt, terminatedAt, query).map { document ->
+                // Map `sip_call_index` document to `rtpr_${prefix}_index` document
+                if (!hasMediaFilters) return@map document
+
+                document.getString("call_id")?.let { callId ->
+                    val sipCreatedAt = document.getLong("created_at")
+                    val extendedQuery = "$query sip.call_id=$callId"
+
+                    val rtprSearchResult = findInRtprIndexBySearchRequest(
+                        sipCreatedAt - aggregationTimeout,
+                        sipCreatedAt + aggregationTimeout,
+                        extendedQuery
+                    )
+                    return@map if (rtprSearchResult.hasNext()) {
+                        document
+                    } else {
+                        null
+                    }
+                }
             }
         }
 
@@ -101,34 +128,32 @@ open class CallSearchService : SearchService() {
         }
     }
 
-    protected open fun findInMediaIndexBySearchRequest(createdAt: Long, terminatedAt: Long, query: String): Iterator<Document> {
+    protected open fun findInRtprIndexBySearchRequest(createdAt: Long, terminatedAt: Long, query: String): Iterator<Document> {
         val filters = mutableListOf<Bson>().apply {
             // Time filters
             add(gte("created_at", createdAt))
             add(lte("created_at", terminatedAt))
 
-            // Media filters
+            // Main filters
             query.split(" ")
                 .filterNot { it.isBlank() }
-                .filterNot { it.startsWith("sip.") }
-                .let { expressions ->
-                    expressions.filter { it.startsWith("rtp.") }
-                        .map { expr ->
-                            or(filter(expr) { "forward_rtp.$it" }, filter(expr) { "reverse_rtp.$it" })
-                        }
-                        .forEach { add(it) }
-                    expressions.filter { it.startsWith("rtcp.") }
-                        .map { expr ->
-                            or(filter(expr) { "forward_rtcp.$it" }, filter(expr) { "reverse_rtcp.$it" })
-                        }
-                        .forEach { add(it) }
-                    expressions.filter { it.startsWith("media.") }
-                        .map { filter(it) }
-                        .forEach { add(it) }
-                }
+                .filterNot { it.startsWith("sip.") && !it.contains(COMMON_ATTR_REGEX) }
+                .map { filter(it) }
+                .forEach { add(it) }
         }
 
-        return mongoClient.find("rtpr_media_index", Pair(createdAt, terminatedAt), and(filters))
+        val prefixes = mutableListOf<String>().apply {
+            if (query.contains("rtp.")) {
+                add("rtpr_rtp_index")
+            }
+            if (query.contains("rtcp.")) {
+                add("rtpr_rtcp_index")
+            }
+        }
+
+        return prefixes.map { mongoClient.find(it, Pair(createdAt, terminatedAt), and(filters)) }
+            .toTypedArray()
+            .let { IteratorUtil.merge(*it) }
     }
 
     protected open fun findInSipIndexBySearchRequest(createdAt: Long, terminatedAt: Long, query: String): Iterator<Document> {
@@ -142,7 +167,7 @@ open class CallSearchService : SearchService() {
                 .asSequence()
                 .filterNot { it.isBlank() }
                 .filterNot { it.startsWith("sip.method") }
-                .filter { it.startsWith("ip.") || it.startsWith("sip.") }
+                .filter { it.startsWith("sip.") }
                 .map { filter(it) }
                 .forEach { add(it) }
         }

@@ -158,32 +158,6 @@ class CallSearchServiceTest {
     }
 
     @Test
-    fun `Search by MEDIA attribute`() {
-        // Init
-        given(attributeService.list()).willReturn(ATTRIBUTES)
-
-        val request = SearchRequest(CREATED_AT, CREATED_AT + 80000, "media.mos>3", 50)
-
-        // Execute
-        val iterator = service.search(request)
-
-        // Assert
-        assertTrue(iterator.hasNext())
-        iterator.next().apply {
-            assertEquals(CREATED_AT, createdAt)
-            assertEquals(CREATED_AT + 60000, terminatedAt)
-            assertEquals("INVITE", method)
-            assertEquals("answered", state)
-            assertEquals("101 - 2000000", caller)
-            assertEquals("2909090", callee)
-            assertTrue(callId.containsAll(listOf("some-call-id-1", "some-call-id-2", "some-call-id-3")))
-            assertEquals(60000, duration)
-            assertNull(errorCode)
-        }
-        assertFalse(iterator.hasNext())
-    }
-
-    @Test
     fun `Validate correlation`() {
         // Init
         given(attributeService.list()).willReturn(ATTRIBUTES)
