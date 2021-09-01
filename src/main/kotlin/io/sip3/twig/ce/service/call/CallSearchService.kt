@@ -43,8 +43,8 @@ open class CallSearchService : SearchService() {
             { d -> d.getString("call_id") }
         )
 
-        val USER_REGEX = Regex("sip.calle[er]")
-        val CALL_ID_REGEX = Regex("sip.call_id")
+        val MEDIA_PREFIX_REGEX = Regex("rtp.|rtcp.")
+        val COMMON_ATTR_REGEX = Regex("sip.caller|sip.callee|sip.user|sip.call_id")
     }
 
     @Value("\${session.use-x-correlation-header}")
@@ -62,23 +62,46 @@ open class CallSearchService : SearchService() {
     override fun search(request: SearchRequest): Iterator<SearchResponse> {
         val (createdAt, terminatedAt, query) = request
 
-        val matchedDocuments = when {
-            (query.contains("rtp.") || query.contains("rtcp.")) -> {
-                // Filter documents in `rtpr_${prefix}_index` collection
-                findInMediaIndexBySearchRequest(createdAt, terminatedAt, query).map { document ->
-                    // Map `rtpr_${prefix}_index` document to `sip_call_index` document
-                    document.getString("call_id")?.let { callId ->
-                        val rtprCreatedAt = document.getLong("created_at")
-                        val extendedQuery = "$query sip.call_id=$callId"
-                        return@map findInSipIndexBySearchRequest(rtprCreatedAt - aggregationTimeout,
-                            rtprCreatedAt + aggregationTimeout,
-                            extendedQuery).nextOrNull()
+        val hasMediaFilters = query.contains(MEDIA_PREFIX_REGEX)
+        val isSipFirst = !hasMediaFilters || query.split(" ")
+            .filterNot { it.startsWith("sip.method=") }
+            .firstOrNull()?.startsWith("sip.") ?: false
+
+        val matchedDocuments = if (isSipFirst) {
+            // Filter documents in `sip_call_index` collection
+            findInSipIndexBySearchRequest(createdAt, terminatedAt, query).map { document ->
+                // Map `sip_call_index` document to `rtpr_${prefix}_index` document
+                if (!hasMediaFilters) return@map document
+
+                document.getString("call_id")?.let { callId ->
+                    val sipCreatedAt = document.getLong("created_at")
+                    val extendedQuery = "$query sip.call_id=$callId"
+
+                    val rtprSearchResult = findInRtprIndexBySearchRequest(
+                        sipCreatedAt - aggregationTimeout,
+                        sipCreatedAt + aggregationTimeout,
+                        extendedQuery
+                    )
+                    return@map if (rtprSearchResult.hasNext()) {
+                        document
+                    } else {
+                        null
                     }
                 }
             }
-            else -> {
-                // Filter documents in `sip_call_index` collections
-                findInSipIndexBySearchRequest(createdAt, terminatedAt, query)
+        } else {
+            // Filter documents in `rtpr_${prefix}_index` collection
+            findInRtprIndexBySearchRequest(createdAt, terminatedAt, query).map { document ->
+                // Map `rtpr_${prefix}_index` document to `sip_call_index` document
+                document.getString("call_id")?.let { callId ->
+                    val rtprCreatedAt = document.getLong("created_at")
+                    val extendedQuery = "$query sip.call_id=$callId"
+                    return@map findInSipIndexBySearchRequest(
+                        rtprCreatedAt - aggregationTimeout,
+                        rtprCreatedAt + aggregationTimeout,
+                        extendedQuery
+                    ).nextOrNull()
+                }
             }
         }
 
@@ -105,7 +128,7 @@ open class CallSearchService : SearchService() {
         }
     }
 
-    protected open fun findInMediaIndexBySearchRequest(createdAt: Long, terminatedAt: Long, query: String): Iterator<Document> {
+    protected open fun findInRtprIndexBySearchRequest(createdAt: Long, terminatedAt: Long, query: String): Iterator<Document> {
         val filters = mutableListOf<Bson>().apply {
             // Time filters
             add(gte("created_at", createdAt))
@@ -114,10 +137,7 @@ open class CallSearchService : SearchService() {
             // Main filters
             query.split(" ")
                 .filterNot { it.isBlank() }
-                .filterNot { it.startsWith("sip.")
-                        && !it.contains(USER_REGEX)
-                        && !it.contains(CALL_ID_REGEX)
-                }
+                .filterNot { it.startsWith("sip.") && !it.contains(COMMON_ATTR_REGEX) }
                 .map { filter(it) }
                 .forEach { add(it) }
         }
