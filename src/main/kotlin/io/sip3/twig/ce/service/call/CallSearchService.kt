@@ -63,11 +63,25 @@ open class CallSearchService : SearchService() {
         val (createdAt, terminatedAt, query) = request
 
         val hasMediaFilters = query.contains(MEDIA_PREFIX_REGEX)
-        val isSipFirst = !hasMediaFilters || query.split(" ")
+        val startWithMediaIndex = hasMediaFilters && query.split(" ")
             .filterNot { it.startsWith("sip.method=") }
-            .firstOrNull()?.startsWith("sip.") ?: false
+            .firstOrNull()?.contains(MEDIA_PREFIX_REGEX) ?: false
 
-        val matchedDocuments = if (isSipFirst) {
+        val matchedDocuments = if (startWithMediaIndex) {
+            // Filter documents in `rtpr_${prefix}_index` collection
+            findInRtprIndexBySearchRequest(createdAt, terminatedAt, query).map { document ->
+                // Map `rtpr_${prefix}_index` document to `sip_call_index` document
+                document.getString("call_id")?.let { callId ->
+                    val rtprCreatedAt = document.getLong("created_at")
+                    val extendedQuery = "$query sip.call_id=$callId"
+                    return@map findInSipIndexBySearchRequest(
+                        rtprCreatedAt - aggregationTimeout,
+                        rtprCreatedAt + aggregationTimeout,
+                        extendedQuery
+                    ).nextOrNull()
+                }
+            }
+        } else {
             // Filter documents in `sip_call_index` collection
             findInSipIndexBySearchRequest(createdAt, terminatedAt, query).map { document ->
                 // Map `sip_call_index` document to `rtpr_${prefix}_index` document
@@ -87,20 +101,6 @@ open class CallSearchService : SearchService() {
                     } else {
                         null
                     }
-                }
-            }
-        } else {
-            // Filter documents in `rtpr_${prefix}_index` collection
-            findInRtprIndexBySearchRequest(createdAt, terminatedAt, query).map { document ->
-                // Map `rtpr_${prefix}_index` document to `sip_call_index` document
-                document.getString("call_id")?.let { callId ->
-                    val rtprCreatedAt = document.getLong("created_at")
-                    val extendedQuery = "$query sip.call_id=$callId"
-                    return@map findInSipIndexBySearchRequest(
-                        rtprCreatedAt - aggregationTimeout,
-                        rtprCreatedAt + aggregationTimeout,
-                        extendedQuery
-                    ).nextOrNull()
                 }
             }
         }
