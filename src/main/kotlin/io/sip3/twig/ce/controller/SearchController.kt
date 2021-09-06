@@ -83,6 +83,7 @@ class SearchController {
         return IteratorUtil.merge(*searches)
             .asSequence()
             .take(request.limit ?: defaultLimit)
+            .sortedBy(SearchResponse::createdAt)
             .toList()
     }
 }
