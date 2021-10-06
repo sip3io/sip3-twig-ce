@@ -28,27 +28,43 @@ import org.springframework.cache.annotation.Cacheable
 import org.springframework.stereotype.Component
 import java.time.format.DateTimeFormatter
 import java.util.concurrent.TimeUnit
+import javax.annotation.PostConstruct
 
 @Component
-open class MongoClient(
-    @Value("\${time-suffix}") suffix: String,
-    @Value("\${mongo.uri}") uri: String,
-    @Value("\${mongo.db}") private val db: String,
-    @Value("\${mongo.max-execution-time}") private val maxExecutionTime: Long,
-    @Value("\${mongo.batch-size}") private val batchSize: Int
-) {
+open class MongoClient {
 
     private val logger = KotlinLogging.logger {}
 
-    private val suffix: DateTimeFormatter = DateTimeFormatter.ofPattern(suffix)
-    private val client: MongoClient = MongoClients.create(uri)
+    @Value("\${time-suffix}")
+    protected lateinit var timeSuffix: String
+
+    @Value("\${mongo.uri}")
+    protected lateinit var uri: String
+
+    @Value("\${mongo.db}")
+    protected lateinit var db: String
+
+    @Value("\${mongo.max-execution-time}")
+    protected var maxExecutionTime: Long = 30000
+
+    @Value("\${mongo.batch-size}")
+    protected val batchSize: Int = 1
+
+    protected open lateinit var suffix: DateTimeFormatter
+    protected open lateinit var client: MongoClient
+
+    @PostConstruct
+    open fun init() {
+        suffix = DateTimeFormatter.ofPattern(timeSuffix)
+        client = MongoClients.create(uri)
+    }
 
     open fun find(prefix: String, timeRange: Pair<Long, Long>, filter: Bson, sort: Bson? = null, limit: Int? = null): Iterator<Document> {
         val collections = listCollectionNames(prefix, timeRange)
         return find(collections, filter, sort, limit)
     }
 
-    open fun find(collections: List<String>, filter: Bson? = null, sort: Bson? = null, limit: Int? = null): Iterator<Document> {
+    open fun find(collections: Collection<String>, filter: Bson? = null, sort: Bson? = null, limit: Int? = null): Iterator<Document> {
         val collectionNames = collections.iterator()
 
         return object : Iterator<Document> {
@@ -84,7 +100,7 @@ open class MongoClient(
         }
     }
 
-    open fun listCollectionNames(prefix: String, timeRange: Pair<Long, Long>): List<String> {
+    open fun listCollectionNames(prefix: String, timeRange: Pair<Long, Long>): Collection<String> {
         return listCollectionNames(prefix).asSequence()
             .filter { name -> "${prefix}_${suffix.format(timeRange.first)}" <= name }
             .filter { name -> "${prefix}_${suffix.format(timeRange.second)}" >= name }
@@ -92,10 +108,10 @@ open class MongoClient(
     }
 
     @Cacheable(value = ["listCollectionNames"], key = "#prefix")
-    open fun listCollectionNames(prefix: String): List<String> {
+    open fun listCollectionNames(prefix: String): Collection<String> {
         return client.getDatabase(db).listCollectionNames().asSequence()
             .filter { name -> name.startsWith(prefix) }
             .sorted()
-            .toList()
+            .toSet()
     }
 }

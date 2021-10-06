@@ -34,7 +34,7 @@ import org.springframework.dao.EmptyResultDataAccessException
 import org.springframework.test.context.junit.jupiter.SpringExtension
 
 @ExtendWith(SpringExtension::class)
-@SpringBootTest
+@SpringBootTest(classes = [HostService::class])
 class HostServiceTest {
 
     companion object {
