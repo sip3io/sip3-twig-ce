@@ -64,24 +64,31 @@ class AttributeServiceTest {
     @Test
     fun `Get list of all attributes`() {
         var attributes = attributeService.list()
-        assertEquals(5, attributes.size)
+        assertEquals(7, attributes.size)
 
         // Test `listAttributes` cache
         attributes = attributeService.list()
-        assertEquals(5, attributes.size)
+        assertEquals(7, attributes.size)
 
         assertTrue(attributes.any { it.name == "sip.number" })
         assertTrue(attributes.any { it.name == "sip.string" })
         assertTrue(attributes.any { it.name == "sip.src_host" })
         assertTrue(attributes.any { it.name == "sip.dst_host" })
+        assertTrue(attributes.any { it.name == "rtp.dst_host" })
 
-        // Validate virtual attribute
+        // Validate virtual attributes
         attributes.firstOrNull { it.name == "sip.host" }.let { attr ->
             assertNotNull(attr)
             assertEquals("sip.host", attr!!.name)
             assertEquals(2, attr.options?.size)
             assertTrue(attr.options!!.contains("src_host_1"))
             assertTrue(attr.options!!.contains("dst_host_1"))
+        }
+        attributes.firstOrNull { it.name == "rtp.host" }.let { attr ->
+            assertNotNull(attr)
+            assertEquals("rtp.host", attr!!.name)
+            assertEquals(1, attr.options?.size)
+            assertTrue(attr.options!!.contains("rtp_host_1"))
         }
     }
 }
