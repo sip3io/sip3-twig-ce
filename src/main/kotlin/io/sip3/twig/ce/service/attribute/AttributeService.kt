@@ -26,16 +26,16 @@ open class AttributeService(private val mongoClient: MongoClient) {
 
     companion object {
 
-        val VIRTUAL_ATTRIBUTES = mutableMapOf<String,List<String>>().apply {
-            put("sip.addr", listOf("sip.src_addr", "sip.dst_addr"))
-            put("rtp.addr", listOf("rtp.src_addr", "rtp.dst_addr"))
-            put("rtcp.addr", listOf("rtcp.src_addr", "rtcp.dst_addr"))
+        val VIRTUAL_ATTRIBUTES = mutableMapOf<String, VirtualAttribute>().apply {
+            put("sip.addr", VirtualAttribute(Attribute.TYPE_STRING, "sip.src_addr", "sip.dst_addr"))
+            put("rtp.addr", VirtualAttribute(Attribute.TYPE_STRING, "rtp.src_addr", "rtp.dst_addr"))
+            put("rtcp.addr", VirtualAttribute(Attribute.TYPE_STRING, "rtcp.src_addr", "rtcp.dst_addr"))
 
-            put("sip.host", listOf("sip.src_host", "sip.dst_host"))
-            put("rtp.host", listOf("rtp.src_host", "rtp.dst_host"))
-            put("rtcp.host", listOf("rtcp.src_host", "rtcp.dst_host"))
+            put("sip.host", VirtualAttribute(Attribute.TYPE_STRING, "sip.src_host", "sip.dst_host"))
+            put("rtp.host", VirtualAttribute(Attribute.TYPE_STRING, "rtp.src_host", "rtp.dst_host"))
+            put("rtcp.host", VirtualAttribute(Attribute.TYPE_STRING, "rtcp.src_host", "rtcp.dst_host"))
 
-            put("sip.user", listOf("sip.caller", "sip.callee"))
+            put("sip.user", VirtualAttribute(Attribute.TYPE_STRING, "sip.caller", "sip.callee"))
         }
 
         val ATTRIBUTE_COMPARATOR = compareBy<Attribute>(
@@ -141,14 +141,14 @@ open class AttributeService(private val mongoClient: MongoClient) {
         }
 
         // Add virtual attributes
-        VIRTUAL_ATTRIBUTES.forEach { (name, attrs) ->
-            attrs.mapNotNull { attributes[it] }
+        VIRTUAL_ATTRIBUTES.forEach { (name, virtualAttribute) ->
+            virtualAttribute.attributes.mapNotNull { attributes[it] }
                 .ifEmpty { null }
                 ?.flatMap { it.options ?: emptyList() }
                 ?.let { options ->
                     attributes[name] = Attribute().apply {
                         this.name = name
-                        this.type = attributes[attrs.first()]!!.type
+                        this.type = virtualAttribute.type
                         if (options.isNotEmpty()) this.options = options.toMutableSet()
                     }
                 }
@@ -156,4 +156,10 @@ open class AttributeService(private val mongoClient: MongoClient) {
 
         return attributes.values.sortedWith(ATTRIBUTE_COMPARATOR)
     }
+
+    class VirtualAttribute(
+
+        val type: String,
+        vararg val attributes: String
+    )
 }

@@ -86,7 +86,7 @@ abstract class SearchService {
             }
         }
 
-        return AttributeService.VIRTUAL_ATTRIBUTES[attribute]
+        return AttributeService.VIRTUAL_ATTRIBUTES[attribute]?.attributes
             ?.map { mapping.invoke(it.substringAfter("."), value) }
             ?.let { or(it) }
             ?: mapping.invoke(field, value)

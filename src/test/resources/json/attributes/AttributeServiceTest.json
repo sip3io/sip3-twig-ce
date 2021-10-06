@@ -13,6 +13,13 @@
       ]
     },
     {
+      "name": "rtp.dst_host",
+      "type": "string",
+      "options": [
+        "rtp_host_1"
+      ]
+    },
+    {
       "name": "sip.src_host",
       "type": "string",
       "options": [
