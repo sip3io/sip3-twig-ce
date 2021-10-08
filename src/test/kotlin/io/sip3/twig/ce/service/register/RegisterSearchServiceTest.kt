@@ -178,6 +178,24 @@ class RegisterSearchServiceTest {
     lateinit var service: RegisterSearchService
 
     @Test
+    fun `Search with unsupported attribute`() {
+        // Init
+        given(attributeService.list()).willReturn(ATTRIBUTES)
+        `when`(client.find(any(), any(), any(), any(), any()))
+            // Search by SearchRequest
+            .thenReturn(sequenceOf(LEG_1, LEG_2, LEG_3).iterator())
+
+        val request = SearchRequest(NOW, NOW + 80000, "rtp.addr=127.0.0.1", 50)
+
+        // Execute
+        val iterator = service.search(request)
+
+        // Assert
+        assertFalse(iterator.hasNext())
+        verify(client, times(0)).find(any(), any(), any(), any(), any())
+    }
+
+    @Test
     fun `Search with 1 result`() {
         // Init
         given(attributeService.list()).willReturn(ATTRIBUTES)

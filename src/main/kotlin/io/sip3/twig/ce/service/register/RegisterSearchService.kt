@@ -50,8 +50,10 @@ open class RegisterSearchService : SearchService() {
     private var durationTimeout: Long = 900000
 
     override fun search(request: SearchRequest): Iterator<SearchResponse> {
-        val processed = mutableSetOf<Document>()
+        // Return EmptyIterator for query with unsupported search attributes
+        if (request.query.contains(Regex("rtp\\.|rtcp\\."))) return Collections.emptyIterator()
 
+        val processed = mutableSetOf<Document>()
         return findInSipIndexBySearchRequest(request).asSequence()
             .filterNot { processed.contains(it) }
             .map { leg ->
@@ -92,7 +94,6 @@ open class RegisterSearchService : SearchService() {
                 query.split(" ")
                     .asSequence()
                     .filterNot { it.isBlank() }
-                    .filterNot { it.startsWith("rtp.") }
                     .filterNot { it.startsWith("sip.method") }
                     .map { filter(it) }
                     .toList()
