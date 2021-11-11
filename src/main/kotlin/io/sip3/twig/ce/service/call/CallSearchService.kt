@@ -151,6 +151,7 @@ open class CallSearchService : SearchService() {
             }
         }
 
+        logger.debug { "findInRtprIndexBySearchRequest() filters: $filters" }
         return prefixes.map { mongoClient.find(it, Pair(createdAt, terminatedAt), and(filters)) }
             .toTypedArray()
             .let { IteratorUtil.merge(*it) }
@@ -172,6 +173,7 @@ open class CallSearchService : SearchService() {
                 .forEach { add(it) }
         }
 
+        logger.debug { "findInSipIndexBySearchRequest() filters: $filters" }
         return mongoClient.find("sip_call_index", Pair(createdAt, terminatedAt), and(filters))
     }
 
@@ -255,6 +257,7 @@ open class CallSearchService : SearchService() {
                 add(eq("callee", callee))
             }
 
+            logger.debug { "findInSipIndexByCallerAndCallee() filters: $filters" }
             return mongoClient.find("sip_call_index", Pair(createdAt - aggregationTimeout, createdAt + aggregationTimeout), and(filters)).asSequence()
                 .toList()
         }
@@ -285,6 +288,7 @@ open class CallSearchService : SearchService() {
                 }
             }
 
+            logger.debug { "findInSipIndexByCallIdsAndXCallIds() filters: $filters" }
             val timeRange = Pair(createdAt - aggregationTimeout, (terminatedAt ?: createdAt) + aggregationTimeout)
             return mongoClient.find("sip_call_index", timeRange, and(filters)).asSequence().toList()
         }
