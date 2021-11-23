@@ -84,9 +84,9 @@ open class CallSearchService : SearchService() {
         } else {
             // Filter documents in `sip_call_index` collection
             findInSipIndexBySearchRequest(createdAt, terminatedAt, query).map { document ->
-                // Map `sip_call_index` document to `rtpr_${prefix}_index` document
                 if (!hasMediaFilters) return@map document
 
+                // Map `sip_call_index` document to `rtpr_${prefix}_index` document
                 document.getString("call_id")?.let { callId ->
                     val sipCreatedAt = document.getLong("created_at")
                     val extendedQuery = "$query sip.call_id=$callId"
