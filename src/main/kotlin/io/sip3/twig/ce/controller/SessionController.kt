@@ -149,11 +149,11 @@ class SessionController {
                 }
             }
         }
+        events.sortBy { it.timestamp }
 
         // Collect participants
         val participants = participantService.collectParticipants(events)
 
-        events.sortBy { it.timestamp }
         return mapOf(
             "participants" to participants,
             "events" to events

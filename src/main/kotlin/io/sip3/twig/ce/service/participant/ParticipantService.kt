@@ -44,9 +44,10 @@ open class ParticipantService {
 
     open fun collectParticipants(events: List<Event>): List<Participant> {
         var isFirst = true
+        val hasMedia = events.any { it.type == "RTPR" }
 
         val namesFromEvents = mutableSetOf<String>().apply {
-            events.forEach{ event ->
+            events.forEach { event ->
                 add(event.src)
                 add(event.dst)
             }
@@ -54,25 +55,25 @@ open class ParticipantService {
 
         val names = mutableSetOf<String>()
         events.forEach { event ->
-                val eventHosts = listOf(event.src, event.dst)
-                if (event.type == "SIP") {
-                    val sipMessage = parseSIPMessage(event)
-                    if (sipMessage != null && sipMessage.hasSdp()) {
-                        val mediaAddresses = collectMediaAddresses(sipMessage)
-                            .map { hostService.findByAddr(it)?.name ?: it }
+            val eventHosts = listOf(event.src, event.dst)
+            if (hasMedia && event.type == "SIP") {
+                val sipMessage = parseSIPMessage(event)
+                if (sipMessage != null && sipMessage.hasSdp()) {
+                    val mediaAddresses = collectMediaAddresses(sipMessage)
+                        .map { hostService.findByAddr(it)?.name ?: it }
 
-                        if (sipMessage.method() == "INVITE" && isFirst) {
-                            isFirst = false
-                            names.addAll(mediaAddresses)
-                        } else {
-                            names.addAll(eventHosts)
-                            names.addAll(mediaAddresses)
-                        }
+                    if (sipMessage.method() == "INVITE" && isFirst) {
+                        isFirst = false
+                        names.addAll(mediaAddresses)
+                    } else {
+                        names.addAll(eventHosts)
+                        names.addAll(mediaAddresses)
                     }
                 }
-
-                names.addAll(eventHosts)
             }
+
+            names.addAll(eventHosts)
+        }
 
         return names.intersect(namesFromEvents)
             .map { name ->
