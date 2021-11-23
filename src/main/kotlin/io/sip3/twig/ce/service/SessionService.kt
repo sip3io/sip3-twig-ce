@@ -40,7 +40,9 @@ abstract class SessionService {
 
     companion object {
 
-        val CREATED_AT = compareBy<Document>(
+        val CREATED_AT = compareBy<Document> { document -> document.getLong("created_at") }
+
+        val CREATED_AT_WITH_NANOS = compareBy<Document>(
             { document -> document.getLong("created_at") },
             { document -> document.getInteger("nanos") ?: 0 }
         )
@@ -55,6 +57,9 @@ abstract class SessionService {
     @Value("\${session.show-retransmits}")
     protected var showRetransmits: Boolean = true
 
+    @Value("\${session.ignore-nanos}")
+    protected var ignoreNanos: Boolean = true
+
     @Value("\${session.media.termination-timeout}")
     private var terminationTimeout: Long = 60000
 
@@ -67,7 +72,7 @@ abstract class SessionService {
             .filter { document ->
                 document.getString("raw_data").startsWith(req.method?.first()!!)
             }
-            .sortedWith(CREATED_AT)
+            .sortedWith(if (ignoreNanos) CREATED_AT else CREATED_AT_WITH_NANOS)
             .groupBy { document -> "${document.getString("src_addr")}:${document.getString("dst_addr")}" }
             .forEach { (_, documents) ->
                 val document = documents.first()
@@ -104,7 +109,7 @@ abstract class SessionService {
 
     open fun content(req: SessionRequest): List<Document> {
         val messages = findInRawBySessionRequest(req).asSequence()
-            .sortedWith(CREATED_AT)
+            .sortedWith(if (ignoreNanos) CREATED_AT else CREATED_AT_WITH_NANOS)
             .groupBy { document -> "${document.getString("src_addr")}:${document.getString("dst_addr")}:${document.getString("raw_data")}" }
             .flatMap { (_, documents) ->
                 if (showRetransmits) {
@@ -150,7 +155,7 @@ abstract class SessionService {
         PcapOutputStream.create(PcapGlobalHeader.createDefaultHeader(), os).use { pos ->
             IteratorUtil.merge(findInRawBySessionRequest(req), findRecInRawBySessionRequest(req))
                 .asSequence()
-                .sortedWith(CREATED_AT)
+                .sortedWith(if (ignoreNanos) CREATED_AT else CREATED_AT_WITH_NANOS)
                 .forEach { document ->
                     val raw = document.getString("raw_data").toByteArray(Charsets.ISO_8859_1)
 

@@ -45,6 +45,7 @@ session:
   default-limit: 50
   use-x-correlation-header: true
   show-retransmits: true
+  ignore-nanos: true
   call:
     max-legs: 10
     aggregation-timeout: 60000
