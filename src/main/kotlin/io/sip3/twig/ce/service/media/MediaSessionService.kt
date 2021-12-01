@@ -84,8 +84,16 @@ open class MediaSessionService {
                 find("rtpr_${source}_raw", legSession.createdAt, legSession.terminatedAt, listOf(legSession.callId))
                     .asSequence()
                     .forEach {
-                        reports.add(it)
+                        it.getList("reports", Document::class.java).forEach { report ->
+                            report.put("src_addr", it.getString("src_addr"))
+                            report.put("src_port", it.getInteger("src_port"))
+                            report.put("dst_addr", it.getString("dst_addr"))
+                            report.put("dst_port", it.getInteger("dst_port"))
+                            report.put("call_id", it.getString("call_id"))
+                            reports.add(report)
+                        }
                     }
+
                 legReports = reports.filter { generateLegId(it) == legId }
             }
 
