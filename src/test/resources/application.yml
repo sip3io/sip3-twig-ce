@@ -10,6 +10,13 @@ spring:
     exclude:
       - org.springframework.boot.autoconfigure.mongo.embedded.EmbeddedMongoAutoConfiguration
 
+---
+#! Backward compatibility for SpringFox 3.0.0. TODO: Remove after SpringFox fixed
+spring:
+  mvc:
+    pathmatch:
+      matching-strategy: ant-path-matcher
+
 #! Mongo
 mongo:
   uri: mongodb://127.0.0.1:27017

@@ -20,6 +20,13 @@ spring:
       uri: ${mongo.uri}
       database: ${mongo.db}
 
+---
+#! Backward compatibility for SpringFox 3.0.0. TODO: Remove after SpringFox fixed
+spring:
+  mvc:
+    pathmatch:
+      matching-strategy: ant-path-matcher
+
 #! Server
 server:
   port: 8080
