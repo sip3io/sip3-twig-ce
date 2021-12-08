@@ -214,31 +214,37 @@
           "payload_type": 8,
           "r_factor": 93.17298889160156,
           "ssrc": 1675032981
-        },
-        {
-          "created_at": 1599699378688,
-          "reported_at": 1599699418686,
-          "duration": 9421,
-          "fraction_lost": 0,
-          "codec": "PCMU",
-          "jitter": {
-            "last": 1.3305953741073608,
-            "avg": 0.8103660941123962,
-            "min": 0.4656289517879486,
-            "max": 1.870510220527649
-          },
-          "mos": 4.408666610717773,
-          "packets": {
-            "expected": 471,
-            "received": 471,
-            "lost": 0,
-            "rejected": 0
-          },
-          "payload_type": 8,
-          "r_factor": 93.16806030273438,
-          "ssrc": 1675032981
         }
       ]
+    },
+    {
+      "created_at": 1599699378688,
+      "reported_at": 1599699418686,
+      "src_addr": "192.168.10.5",
+      "src_port": 11958,
+      "src_host": "PBX-2",
+      "dst_addr": "192.168.10.109",
+      "dst_port": 40042,
+      "call_id": "NjBlMTZhOWQ1Y2JjMzk1NTY3MjFlZTc0MTU4OTA1NDA.",
+      "duration": 9421,
+      "fraction_lost": 0,
+      "codec": "PCMU",
+      "jitter": {
+        "last": 1.3305953741073608,
+        "avg": 0.8103660941123962,
+        "min": 0.4656289517879486,
+        "max": 1.870510220527649
+      },
+      "mos": 4.408666610717773,
+      "packets": {
+        "expected": 471,
+        "received": 471,
+        "lost": 0,
+        "rejected": 0
+      },
+      "payload_type": 8,
+      "r_factor": 93.16806030273438,
+      "ssrc": 1675032981
     }
   ]
 }

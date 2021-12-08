@@ -83,15 +83,15 @@ open class MediaSessionService {
             if (legReports.isEmpty()) {
                 find("rtpr_${source}_raw", legSession.createdAt, legSession.terminatedAt, listOf(legSession.callId))
                     .asSequence()
-                    .forEach {
-                        it.getList("reports", Document::class.java).forEach { report ->
-                            report.put("src_addr", it.getString("src_addr"))
-                            report.put("src_port", it.getInteger("src_port"))
-                            report.put("dst_addr", it.getString("dst_addr"))
-                            report.put("dst_port", it.getInteger("dst_port"))
-                            report.put("call_id", it.getString("call_id"))
+                    .forEach { document ->
+                        document.getList("reports", Document::class.java)?.forEach { report ->
+                            report.put("src_addr", document.getString("src_addr"))
+                            report.put("src_port", document.getInteger("src_port"))
+                            report.put("dst_addr", document.getString("dst_addr"))
+                            report.put("dst_port", document.getInteger("dst_port"))
+                            report.put("call_id", document.getString("call_id"))
                             reports.add(report)
-                        }
+                        } ?: reports.add(document)
                     }
 
                 legReports = reports.filter { generateLegId(it) == legId }
