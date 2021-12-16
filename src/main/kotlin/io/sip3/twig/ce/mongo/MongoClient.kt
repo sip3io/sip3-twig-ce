@@ -23,17 +23,24 @@ import io.sip3.commons.util.format
 import mu.KotlinLogging
 import org.bson.Document
 import org.bson.conversions.Bson
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.cache.annotation.Cacheable
+import org.springframework.context.annotation.Scope
+import org.springframework.context.annotation.ScopedProxyMode
 import org.springframework.stereotype.Component
 import java.time.format.DateTimeFormatter
 import java.util.concurrent.TimeUnit
 import javax.annotation.PostConstruct
 
 @Component
+@Scope(proxyMode = ScopedProxyMode.TARGET_CLASS)
 open class MongoClient {
 
     private val logger = KotlinLogging.logger {}
+
+    @Autowired
+    private lateinit var proxy: io.sip3.twig.ce.mongo.MongoClient
 
     @Value("\${time-suffix}")
     protected lateinit var timeSuffix: String
@@ -101,7 +108,7 @@ open class MongoClient {
     }
 
     open fun listCollectionNames(prefix: String, timeRange: Pair<Long, Long>): Collection<String> {
-        return listCollectionNames(prefix).asSequence()
+        return proxy.listCollectionNames(prefix).asSequence()
             .filter { name -> "${prefix}_${suffix.format(timeRange.first)}" <= name }
             .filter { name -> "${prefix}_${suffix.format(timeRange.second)}" >= name }
             .toList()
