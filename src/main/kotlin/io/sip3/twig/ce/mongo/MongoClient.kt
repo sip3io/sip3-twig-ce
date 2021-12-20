@@ -29,6 +29,7 @@ import org.springframework.cache.annotation.Cacheable
 import org.springframework.context.annotation.Scope
 import org.springframework.context.annotation.ScopedProxyMode
 import org.springframework.stereotype.Component
+import java.lang.UnsupportedOperationException
 import java.time.format.DateTimeFormatter
 import java.util.concurrent.TimeUnit
 import javax.annotation.PostConstruct
@@ -105,6 +106,10 @@ open class MongoClient {
                 return cursor!!.next()
             }
         }
+    }
+
+    open fun stash(prefix: String, timeRange: Pair<Long, Long>, filter: Bson) {
+        throw UnsupportedOperationException("Stash is not supported in CE version")
     }
 
     open fun listCollectionNames(prefix: String, timeRange: Pair<Long, Long>): Collection<String> {
