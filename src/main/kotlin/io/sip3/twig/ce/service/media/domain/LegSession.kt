@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2021 SIP3.IO, Corp.
+ * Copyright 2018-2022 SIP3.IO, Corp.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,8 +16,6 @@
 
 package io.sip3.twig.ce.service.media.domain
 
-import com.fasterxml.jackson.annotation.JsonIgnore
-import io.sip3.commons.domain.payload.RtpReportPayload
 import kotlin.math.max
 import kotlin.math.min
 

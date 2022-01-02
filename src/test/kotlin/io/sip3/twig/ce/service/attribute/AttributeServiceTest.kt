@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2021 SIP3.IO, Corp.
+ * Copyright 2018-2022 SIP3.IO, Corp.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,23 +17,16 @@
 package io.sip3.twig.ce.service.attribute
 
 import com.mongodb.client.MongoClients
-import io.sip3.commons.domain.Attribute
 import io.sip3.twig.ce.MongoExtension
 import io.sip3.twig.ce.mongo.MongoClient
-import io.sip3.twig.ce.service.media.MediaSessionService
 import org.bson.Document
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
-import org.mockito.BDDMockito.given
-import org.mockito.BDDMockito.verify
-import org.mockito.Mockito.times
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.test.context.ContextConfiguration
-import org.springframework.test.context.junit.jupiter.SpringExtension
 
 @ExtendWith(MongoExtension::class)
 @SpringBootTest(classes = [MongoClient::class, AttributeService::class])
