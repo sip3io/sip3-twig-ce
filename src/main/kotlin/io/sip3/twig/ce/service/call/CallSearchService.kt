@@ -39,6 +39,7 @@ open class CallSearchService : SearchService() {
 
         val CREATED_AT = compareBy<Document>(
             { d -> d.getLong("created_at") },
+            { d -> -1 * (d.getLong("terminated_at") ?: (d.getLong("created_at") + d.getLong("establish_time"))) },
             { d -> d.getString("dst_addr") },
             { d -> d.getString("call_id") }
         )
@@ -221,7 +222,7 @@ open class CallSearchService : SearchService() {
 
     inner class CorrelatedCall {
 
-        val legs = TreeSet<Document>(CREATED_AT)
+        val legs = TreeSet(CREATED_AT)
 
         private val callers = mutableSetOf<Pair<String, String>>()
 
@@ -265,6 +266,7 @@ open class CallSearchService : SearchService() {
         private fun findInSipIndexByCallIdsAndXCallIds(): List<Document> {
             val createdAt = legs.first().getLong("created_at")
             val terminatedAt = legs.first().getLong("terminated_at")
+                ?: legs.first().getLong("establish_time")?.let { createdAt + it }
 
             val callIds = legs.map { it.getString("call_id") }
             val xCallIds = legs.mapNotNull { it.getString("x_call_id") }
@@ -299,17 +301,20 @@ open class CallSearchService : SearchService() {
 
             val createdAt = leg.getLong("created_at")
             val terminatedAt = leg.getLong("terminated_at")
+                ?: leg.getLong("establish_time")?.let { createdAt + it }
 
             matchedLegs.filter { matchedLeg ->
                 // Time filters
-                val filterByTime = if (terminatedAt == null || matchedLeg.getLong("terminated_at") == null) {
-                    // Call is still `in progress`
-                    createdAt - terminationTimeout <= matchedLeg.getLong("created_at")
-                            && createdAt + terminationTimeout >= matchedLeg.getLong("created_at")
-                } else {
-                    terminatedAt >= matchedLeg.getLong("created_at")
-                            && createdAt <= matchedLeg.getLong("terminated_at")
-                }
+                val filterByTime =
+                    if (terminatedAt == null || (matchedLeg.getLong("terminated_at") == null && matchedLeg.getLong("establish_time") == null)) {
+                        // TODO: Normally this scenario is not possible. Let's verify this and safely remove it in the next release
+                        createdAt - terminationTimeout <= matchedLeg.getLong("created_at")
+                                && createdAt + terminationTimeout >= matchedLeg.getLong("created_at")
+                    } else {
+                        (terminatedAt >= matchedLeg.getLong("created_at")
+                                && createdAt <= (matchedLeg.getLong("terminated_at")
+                            ?: (matchedLeg.getLong("created_at") + matchedLeg.getLong("establish_time"))))
+                    }
 
                 // Host filters
                 val filterBySrcHost = leg.getString("src_host")?.let { it == matchedLeg.getString("dst_host") }
