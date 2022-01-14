@@ -19,6 +19,7 @@ package io.sip3.twig.ce.mongo
 import com.mongodb.client.MongoClient
 import com.mongodb.client.MongoClients
 import com.mongodb.client.MongoCursor
+import com.mongodb.client.model.WriteModel
 import io.sip3.commons.util.format
 import mu.KotlinLogging
 import org.bson.Document
@@ -29,7 +30,6 @@ import org.springframework.cache.annotation.Cacheable
 import org.springframework.context.annotation.Scope
 import org.springframework.context.annotation.ScopedProxyMode
 import org.springframework.stereotype.Component
-import java.lang.UnsupportedOperationException
 import java.time.format.DateTimeFormatter
 import java.util.concurrent.TimeUnit
 import javax.annotation.PostConstruct
@@ -108,8 +108,8 @@ open class MongoClient {
         }
     }
 
-    open fun stash(prefix: String, timeRange: Pair<Long, Long>, filter: Bson) {
-        throw UnsupportedOperationException("Stash is not supported in CE version")
+    open fun bulkWrite(collection: String, operations: List<WriteModel<Document>>) {
+        client.getDatabase(db).getCollection(collection).bulkWrite(operations)
     }
 
     open fun listCollectionNames(prefix: String, timeRange: Pair<Long, Long>): Collection<String> {
