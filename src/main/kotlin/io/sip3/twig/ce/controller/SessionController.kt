@@ -28,10 +28,8 @@ import io.swagger.annotations.ApiResponse
 import io.swagger.annotations.ApiResponses
 import mu.KotlinLogging
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.http.HttpStatus
+import org.springframework.web.bind.annotation.*
 import java.util.*
 import javax.servlet.http.HttpServletResponse
 
@@ -199,6 +197,24 @@ class SessionController {
         getSessionService(req).pcap(req).use { content ->
             response.outputStream.use { response -> content.writeTo(response) }
         }
+    }
+
+    @ApiOperation(
+        position = 5,
+        value = "Stash session",
+    )
+    @ApiResponses(
+        value = [
+            ApiResponse(code = 204, message = "Session stashed"),
+            ApiResponse(code = 400, message = "Bad request"),
+            ApiResponse(code = 500, message = "InternalServerError"),
+            ApiResponse(code = 504, message = "ConnectionTimeoutError")
+        ]
+    )
+    @PostMapping("/stash")
+    @ResponseStatus(value = HttpStatus.NO_CONTENT)
+    fun stash(@RequestBody req: SessionRequest) {
+        getSessionService(req).stash(req)
     }
 
     private fun getSessionService(req: SessionRequest): SessionService {

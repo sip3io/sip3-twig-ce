@@ -68,6 +68,38 @@ fun <T, R> Iterator<T>.map(transform: (T) -> R): Iterator<R> {
     }
 }
 
+fun <T, R> Iterator<T>.distinctBy(selector: (T) -> R): Iterator<T> {
+    val i = this
+    val observed = HashSet<R>()
+
+    return object : Iterator<T> {
+
+        var vi = i.nextOrNull()?.also {
+            observed.add(selector.invoke(it))
+        }
+
+        override fun hasNext(): Boolean {
+            return vi != null
+        }
+
+        override fun next(): T {
+            if (!hasNext()) throw NoSuchElementException()
+
+            val v = vi!!
+            vi = null
+            while (i.hasNext()) {
+                val next = i.next()
+                if (observed.add(selector.invoke(next))) {
+                    vi = next
+                    break
+                }
+            }
+
+            return v
+        }
+    }
+}
+
 fun <T> Iterator<T>.nextOrNull(): T? {
     return if (hasNext()) next() else null
 }

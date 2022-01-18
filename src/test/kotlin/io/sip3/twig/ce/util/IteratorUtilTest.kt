@@ -57,6 +57,18 @@ class IteratorUtilTest {
     }
 
     @Test
+    fun `Iterators with distinctBy`() {
+        val i1 = listOf(1, 3, 5)
+        val i2 = listOf(2, 4, 1, 3, 5, 6, 6, 6)
+
+        var expected = listOf(2, 4, 1, 3, 5, 6)
+        assertTrue(expected.iterator().equalsContent(i2.iterator().distinctBy { it }))
+        expected = listOf(1, 3, 5, 2, 4, 6)
+        assertTrue(expected.iterator().equalsContent(i1.iterator().merge(i2.iterator()).distinctBy { it }))
+
+    }
+
+    @Test
     fun `Map Iterator(Int) to Iterator(String)`() {
         val i1 = listOf(1, 2, 3)
 
