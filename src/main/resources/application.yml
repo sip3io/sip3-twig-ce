@@ -66,4 +66,4 @@ session:
     termination-timeout: 60000
 
 cache:
-  refresh-delay: 55000
+  refresh-rate: 55000
