@@ -113,17 +113,20 @@ open class MongoClient {
     }
 
     open fun listCollectionNames(prefix: String, timeRange: Pair<Long, Long>): Collection<String> {
-        return proxy.listCollectionNames(prefix).asSequence()
-            .filter { name -> "${prefix}_${suffix.format(timeRange.first)}" <= name }
-            .filter { name -> "${prefix}_${suffix.format(timeRange.second)}" >= name }
-            .toList()
+        val range = "${prefix}_${suffix.format(timeRange.first)}".."${prefix}_${suffix.format(timeRange.second)}"
+        return proxy.listCollectionNames(prefix)
+            .filter { name -> name in range }
     }
 
-    @Cacheable(value = ["listCollectionNames"], key = "#prefix")
+    @Cacheable(value = ["listCollectionNamesByPrefix"], key = "#prefix")
     open fun listCollectionNames(prefix: String): Collection<String> {
-        return client.getDatabase(db).listCollectionNames().asSequence()
+        return proxy.listCollectionNames()
             .filter { name -> name.startsWith(prefix) }
-            .sorted()
-            .toSet()
+            .toSortedSet()
+    }
+
+    @Cacheable(value = ["listCollectionNames"])
+    open fun listCollectionNames(): Collection<String> {
+        return client.getDatabase(db).listCollectionNames().toList()
     }
 }

@@ -8,7 +8,7 @@ spring:
 ---
 spring:
   cache:
-    cache-names: listAttributes, listCollectionNames
+    cache-names: listAttributes, listCollectionNames, listCollectionNamesByPrefix
     caffeine:
       spec: expireAfterWrite=1m
 
@@ -64,3 +64,6 @@ session:
   media:
     block-count: 28
     termination-timeout: 60000
+
+cache:
+  refresh-rate: 55000
