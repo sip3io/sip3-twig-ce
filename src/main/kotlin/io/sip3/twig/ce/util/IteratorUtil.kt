@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2021 SIP3.IO, Corp.
+ * Copyright 2018-2022 SIP3.IO, Corp.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -64,6 +64,38 @@ fun <T, R> Iterator<T>.map(transform: (T) -> R): Iterator<R> {
         override fun next(): R {
             if (!hasNext()) throw NoSuchElementException()
             return transform.invoke(i.next())
+        }
+    }
+}
+
+fun <T, R> Iterator<T>.distinctBy(selector: (T) -> R): Iterator<T> {
+    val i = this
+    val observed = HashSet<R>()
+
+    return object : Iterator<T> {
+
+        var vi = i.nextOrNull()?.also {
+            observed.add(selector.invoke(it))
+        }
+
+        override fun hasNext(): Boolean {
+            return vi != null
+        }
+
+        override fun next(): T {
+            if (!hasNext()) throw NoSuchElementException()
+
+            val v = vi!!
+            vi = null
+            while (i.hasNext()) {
+                val next = i.next()
+                if (observed.add(selector.invoke(next))) {
+                    vi = next
+                    break
+                }
+            }
+
+            return v
         }
     }
 }

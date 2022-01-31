@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2021 SIP3.IO, Corp.
+ * Copyright 2018-2022 SIP3.IO, Corp.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,6 +33,7 @@ import org.bson.conversions.Bson
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import java.io.ByteArrayOutputStream
+import java.lang.UnsupportedOperationException
 
 abstract class SessionService {
 
@@ -173,6 +174,10 @@ abstract class SessionService {
         }
 
         return os
+    }
+
+    open fun stash(req: SessionRequest) {
+        throw UnsupportedOperationException("Stash is not supported in CE version")
     }
 
     open fun findRecInRawBySessionRequest(req: SessionRequest): Iterator<Document> {

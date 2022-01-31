@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2021 SIP3.IO, Corp.
+ * Copyright 2018-2022 SIP3.IO, Corp.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ package io.sip3.twig.ce.mongo
 import com.mongodb.client.MongoClient
 import com.mongodb.client.MongoClients
 import com.mongodb.client.MongoCursor
+import com.mongodb.client.model.WriteModel
 import io.sip3.commons.util.format
 import mu.KotlinLogging
 import org.bson.Document
@@ -105,6 +106,10 @@ open class MongoClient {
                 return cursor!!.next()
             }
         }
+    }
+
+    open fun bulkWrite(collection: String, operations: List<WriteModel<Document>>) {
+        client.getDatabase(db).getCollection(collection).bulkWrite(operations)
     }
 
     open fun listCollectionNames(prefix: String, timeRange: Pair<Long, Long>): Collection<String> {
