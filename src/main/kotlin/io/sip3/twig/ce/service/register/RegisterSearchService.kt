@@ -161,13 +161,8 @@ open class RegisterSearchService : SearchService() {
 
             matchedLegs.filter { matchedLeg ->
                 // Time filters
-                val filterByTime = if (terminatedAt == null) {
-                    createdAt - aggregationTimeout <= matchedLeg.getLong("created_at")
-                            && createdAt + aggregationTimeout >= matchedLeg.getLong("created_at")
-                } else {
-                    terminatedAt >= matchedLeg.getLong("created_at")
-                            && createdAt <= matchedLeg.getLong("terminated_at")
-                }
+                val filterByTime = terminatedAt >= matchedLeg.getLong("created_at")
+                        && createdAt <= matchedLeg.getLong("terminated_at")
 
                 // Host filters
                 val filterBySrcHost = leg.getString("src_host")?.let { it == matchedLeg.getString("dst_host") }

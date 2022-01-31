@@ -300,21 +300,13 @@ open class CallSearchService : SearchService() {
             if (legs.size >= maxLegs || !legs.add(leg)) return
 
             val createdAt = leg.getLong("created_at")
-            val terminatedAt = leg.getLong("terminated_at")
-                ?: leg.getInteger("establish_time")?.let { createdAt + it }
+            val terminatedAt = leg.getLong("terminated_at") ?: (createdAt + leg.getInteger("establish_time")!!)
 
             matchedLegs.filter { matchedLeg ->
-                // Time filters
-                val filterByTime =
-                    if (terminatedAt == null || (matchedLeg.getLong("terminated_at") == null && matchedLeg.getInteger("establish_time") == null)) {
-                        // TODO: Normally this scenario is not possible. Let's verify this and safely remove it in the next release
-                        createdAt - terminationTimeout <= matchedLeg.getLong("created_at")
-                                && createdAt + terminationTimeout >= matchedLeg.getLong("created_at")
-                    } else {
-                        (terminatedAt >= matchedLeg.getLong("created_at")
-                                && createdAt <= (matchedLeg.getLong("terminated_at")
-                            ?: (matchedLeg.getLong("created_at") + matchedLeg.getInteger("establish_time"))))
-                    }
+                // Time filter
+                val filterByTime = terminatedAt >= matchedLeg.getLong("created_at")
+                        && createdAt <= (matchedLeg.getLong("terminated_at")
+                    ?: (matchedLeg.getLong("created_at") + matchedLeg.getInteger("establish_time")))
 
                 // Host filters
                 val filterBySrcHost = leg.getString("src_host")?.let { it == matchedLeg.getString("dst_host") }
