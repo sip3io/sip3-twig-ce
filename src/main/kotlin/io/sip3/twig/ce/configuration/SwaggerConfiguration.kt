@@ -21,14 +21,13 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.info.BuildProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.core.io.Resource
+import org.springframework.stereotype.Component
 import org.springframework.web.bind.annotation.RestController
 import springfox.documentation.builders.ApiInfoBuilder
 import springfox.documentation.builders.PathSelectors
 import springfox.documentation.builders.RequestHandlerSelectors
-import springfox.documentation.service.AuthorizationScope
-import springfox.documentation.service.BasicAuth
-import springfox.documentation.service.SecurityReference
-import springfox.documentation.service.SecurityScheme
+import springfox.documentation.service.*
 import springfox.documentation.spi.DocumentationType
 import springfox.documentation.spi.service.contexts.SecurityContext
 import springfox.documentation.spring.web.plugins.Docket
@@ -42,12 +41,16 @@ open class SwaggerConfiguration {
     @Autowired
     var buildProperties: BuildProperties? = null
 
+    @Autowired
+    lateinit var springFoxCustomization: SpringFoxCustomization
+
     @Bean
     open fun docket(): Docket {
         return Docket(DocumentationType.SWAGGER_2)
             .apiInfo(
                 ApiInfoBuilder()
                     .title("Twig API")
+                    .description(springFoxCustomization.description())
                     .version(buildProperties?.version)
                     .build()
             )
@@ -69,10 +72,40 @@ open class SwaggerConfiguration {
                     })
                 }
             }
+            .addTags()
             .select()
             .apis(RequestHandlerSelectors.withClassAnnotation(RestController::class.java))
             .paths(PathSelectors.any())
             .build()
             .useDefaultResponseMessages(false)
+    }
+
+    private fun Docket.addTags(): Docket {
+        val tags = mutableSetOf(
+            Tag("Attributes API", "", 100),
+            Tag("Hosts API", "",  200),
+            Tag("Search API", "",  300),
+            Tag("Session API", "",  400)
+        )
+
+        tags.addAll(springFoxCustomization.additionalTags())
+        this.tags(tags.first(), *tags.drop(1).toTypedArray())
+
+        return this
+    }
+}
+
+@Component
+open class SpringFoxCustomization {
+
+    @Value("classpath:/description/twig-api.md")
+    private lateinit var description: Resource
+
+    open fun additionalTags(): MutableSet<Tag> {
+        return mutableSetOf()
+    }
+
+    open fun description(): String {
+        return description.file.readText()
     }
 }
