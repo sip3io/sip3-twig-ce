@@ -16,6 +16,7 @@
     </parent>
 
     <properties>
+        <kotlin.version>1.6.0</kotlin.version>
         <io-pkts.version>3.0.1</io-pkts.version>
         <jackson-kotlin.version>2.12.1</jackson-kotlin.version>
     </properties>
