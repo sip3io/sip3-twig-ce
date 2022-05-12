@@ -46,6 +46,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
 import java.io.ByteArrayOutputStream
 import java.nio.charset.Charset
+import java.util.*
 
 @ExtendWith(SpringExtension::class)
 @WebMvcTest(SessionController::class)
@@ -301,6 +302,7 @@ class SessionControllerTest {
                 )
             )
         )
+        given(mediaSessionService.dtmf(any())).willReturn(Collections.emptyIterator())
 
         given(participantService.collectParticipants(any())).willReturn(
             listOf(
