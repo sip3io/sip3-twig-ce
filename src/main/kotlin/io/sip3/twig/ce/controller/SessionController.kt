@@ -146,6 +146,19 @@ class SessionController {
                     )
                 }
             }
+
+            mediaSessionService.dtmf(req).forEach { dtmf ->
+                events.add(
+                    Event(
+                        dtmf.getLong("created_at"),
+                        dtmf.getString("src_host") ?: dtmf.getString("src_addr"),
+                        dtmf.getString("dst_host") ?: dtmf.getString("dst_addr"),
+                        "DTMF",
+                        null,
+                        dtmf
+                    )
+                )
+            }
         }
         events.sortBy { it.timestamp }
 

@@ -57,6 +57,14 @@ open class MediaSessionService {
             .map { mapOf("rtp" to rtp[it], "rtcp" to rtcp[it]) }
     }
 
+    open fun dtmf(req: SessionRequest): Iterator<Document> {
+        requireNotNull(req.createdAt) { "created_at" }
+        requireNotNull(req.terminatedAt) { "terminated_at" }
+        requireNotNull(req.callId) { "call_id" }
+
+        return find("dtmf_index", req.createdAt!!, req.terminatedAt!!, req.callId!!)
+    }
+
     open fun findLegSessions(
         source: String,
         createdAt: Long,

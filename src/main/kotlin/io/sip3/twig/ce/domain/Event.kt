@@ -51,7 +51,7 @@ data class Event(
         required = true,
         notes = "Type of Event",
         example = "SIP",
-        allowableValues = "SIP, RTPR"
+        allowableValues = "SIP, RTPR, DTMF"
     )
     val type: String,
 
