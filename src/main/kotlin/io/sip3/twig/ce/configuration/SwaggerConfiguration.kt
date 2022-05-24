@@ -32,7 +32,7 @@ import springfox.documentation.spi.DocumentationType
 import springfox.documentation.spi.service.contexts.SecurityContext
 import springfox.documentation.spring.web.plugins.Docket
 
-@Configuration
+@EnableSwagger2
 open class SwaggerConfiguration {
 
     @Value("\${security.enabled}")
