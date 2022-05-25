@@ -21,7 +21,6 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.info.BuildProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.core.io.Resource
 import org.springframework.stereotype.Component
 import org.springframework.web.bind.annotation.RestController
 import springfox.documentation.builders.ApiInfoBuilder
@@ -31,6 +30,7 @@ import springfox.documentation.service.*
 import springfox.documentation.spi.DocumentationType
 import springfox.documentation.spi.service.contexts.SecurityContext
 import springfox.documentation.spring.web.plugins.Docket
+import javax.annotation.PostConstruct
 
 @Configuration
 open class SwaggerConfiguration {
@@ -50,7 +50,7 @@ open class SwaggerConfiguration {
             .apiInfo(
                 ApiInfoBuilder()
                     .title("Twig API")
-                    .description(springFoxCustomization.description())
+                    .description(springFoxCustomization.description)
                     .version(buildProperties?.version)
                     .build()
             )
@@ -98,14 +98,14 @@ open class SwaggerConfiguration {
 @Component
 open class SpringFoxCustomization {
 
-    @Value("classpath:/description/twig-api.md")
-    private lateinit var description: Resource
+    lateinit var description: String
+
+    @PostConstruct
+    open fun init() {
+        description = this.javaClass.classLoader.getResource("description/twig-api.md")?.readText() ?: ""
+    }
 
     open fun additionalTags(): MutableSet<Tag> {
         return mutableSetOf()
-    }
-
-    open fun description(): String {
-        return description.file.readText()
     }
 }
