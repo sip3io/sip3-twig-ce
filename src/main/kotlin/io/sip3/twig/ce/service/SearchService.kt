@@ -24,6 +24,7 @@ import io.sip3.twig.ce.mongo.MongoClient
 import io.sip3.twig.ce.service.attribute.AttributeService
 import org.bson.conversions.Bson
 import org.springframework.beans.factory.annotation.Autowired
+import java.util.DoubleSummaryStatistics
 import javax.validation.ValidationException
 
 abstract class SearchService {
@@ -79,7 +80,7 @@ abstract class SearchService {
         val rawValue = expression.substringAfter(delimiter)
         val value = when (type) {
             Attribute.TYPE_STRING -> rawValue
-            Attribute.TYPE_NUMBER -> rawValue.toDouble()
+            Attribute.TYPE_NUMBER -> readNumber(rawValue)
             Attribute.TYPE_BOOLEAN -> rawValue.toBoolean()
             else -> {
                 throw ValidationException("Unknown attribute: $expression")
@@ -90,5 +91,13 @@ abstract class SearchService {
             ?.map { mapping.invoke(it.substringAfter("."), value) }
             ?.let { or(it) }
             ?: mapping.invoke(field, value)
+    }
+
+    private fun readNumber(rawValue: String): Double {
+        return when {
+            rawValue.endsWith("s") -> rawValue.replace("s", "").toDouble() * 1000
+            rawValue.endsWith("m") -> rawValue.replace("m", "").toDouble() * 60 * 1000
+            else -> rawValue.toDouble()
+        }
     }
 }
