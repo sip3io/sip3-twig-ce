@@ -20,7 +20,7 @@ import io.swagger.annotations.ApiModel
 import io.swagger.annotations.ApiModelProperty
 
 @ApiModel(value = "Search Response")
-class SearchResponse {
+open class SearchResponse {
 
     @ApiModelProperty(
         position = 0,

@@ -24,7 +24,6 @@ import io.sip3.twig.ce.mongo.MongoClient
 import io.sip3.twig.ce.service.attribute.AttributeService
 import org.bson.conversions.Bson
 import org.springframework.beans.factory.annotation.Autowired
-import java.util.DoubleSummaryStatistics
 import javax.validation.ValidationException
 
 abstract class SearchService {
