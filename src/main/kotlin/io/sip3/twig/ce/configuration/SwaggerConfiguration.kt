@@ -22,6 +22,7 @@ import io.swagger.v3.oas.models.info.Info
 import io.swagger.v3.oas.models.security.SecurityRequirement
 import io.swagger.v3.oas.models.security.SecurityScheme
 import io.swagger.v3.oas.models.tags.Tag
+import org.springdoc.core.customizers.OpenApiCustomiser
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.info.BuildProperties
@@ -50,7 +51,7 @@ open class SwaggerConfiguration {
                     .description(swaggerCustomization.description)
                     .version(buildProperties?.version)
             )
-            .addTags()
+//            .addTags()
             .apply {
                 if (securityEnabled) {
                     components(
@@ -65,21 +66,16 @@ open class SwaggerConfiguration {
             }
     }
 
-    private fun OpenAPI.addTags(): OpenAPI {
-        val tags = mutableSetOf(
-            100 to Tag().name("Attributes API"),
-            200 to Tag().name("Hosts API"),
-            300 to Tag().name("Search API"),
-            400 to Tag().name("Session API")
-        )
-        tags.addAll(swaggerCustomization.additionalTags())
-
-        tags.sortedBy { it.first }
-            .map { it.second }
-            .let {
-                this.tags(it)
-            }
-        return this
+    @Bean
+    open fun customiser(): OpenApiCustomiser {
+        return OpenApiCustomiser { openApi ->
+            // Reorder tags
+            openApi.tags
+                .sortedBy { swaggerCustomization.tagOrder(it) ?: Int.MAX_VALUE }
+                .let {
+                    openApi.tags(it)
+                }
+        }
     }
 }
 
@@ -93,7 +89,13 @@ open class SwaggerCustomization {
         description = this.javaClass.classLoader.getResource("description/twig-api.md")?.readText() ?: ""
     }
 
-    open fun additionalTags(): MutableSet<Pair<Int,Tag>> {
-        return mutableSetOf()
+    open fun tagOrder(tag: Tag): Int? {
+        return when (tag.name) {
+            "Attributes API" -> 100
+            "Hosts API" -> 200
+            "Search API" -> 300
+            "Session API" -> 400
+            else -> null
+        }
     }
 }
