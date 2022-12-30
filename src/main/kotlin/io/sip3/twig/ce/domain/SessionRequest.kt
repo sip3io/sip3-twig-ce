@@ -16,21 +16,101 @@
 
 package io.sip3.twig.ce.domain
 
+import io.swagger.v3.oas.annotations.media.Schema
+
+@Schema(title = "Session Request")
 data class SessionRequest(
 
+
+    @field:Schema(
+        title = "From time",
+        example = "1581494059704"
+    )
     var createdAt: Long? = null,
+
+    @field:Schema(
+        title = "To time",
+        example = "1581494059704"
+    )
     var terminatedAt: Long? = null,
+
+    @field:Schema(
+        title = "Source addresses",
+        example = "[\"192.168.9.119\",\"192.168.10.5\"]"
+    )
     var srcAddr: List<String>? = null,
+
+    @field:Schema(
+        title = "Destination addresses",
+        example = "[\"192.168.10.5\",\"192.168.9.119\"]"
+
+    )
     var dstAddr: List<String>? = null,
+
+    @field:Schema(
+        title = "Source hosts",
+        example = "[\"PBX-1\",\"PBX-2\"]"
+    )
     var srcHost: List<String>? = null,
+
+    @field:Schema(
+        title = "Destination hosts",
+        example = "[\"PBX-2\",\"PBX-1\"]"
+    )
     var dstHost: List<String>? = null,
+
+    @field:Schema(
+        title = "Caller",
+        example = "1038883962974"
+    )
     var caller: String? = null,
+
+    @field:Schema(
+        title = "Callee",
+        example = "1038883962974"
+    )
     var callee: String? = null,
+
+    @field:Schema(
+        title = "Call-ID",
+        example = "[\"freesw-call40ikfm\", \"astr-call40rSk0ikfm\"]"
+    )
     var callId: List<String>? = null,
+
+    @field:Schema(
+        title = "Method",
+        example = "[\"INVITE\"]"
+    )
     var method: List<String>? = null,
+
+    @field:Schema(
+        title = "State",
+        example = "[\"answered\",\"failed\"]"
+    )
     var state: List<String>? = null,
+
+    @field:Schema(
+        title = "Error code",
+        example = "[401, 403, 407]"
+    )
     var errorCode: List<Int>? = null,
+
+    @field:Schema(
+        title = "Error type",
+        example = "server",
+        allowableValues = ["client", "server"]
+    )
     var errorType: String? = null,
+
+    @field:Schema(
+        title = "Search query",
+        example = "sip.setup_time>1s"
+    )
     var query: String? = null,
+
+    @field:Schema(
+        title = "Limit",
+        example = "50"
+    )
     var limit: Int? = null
 )

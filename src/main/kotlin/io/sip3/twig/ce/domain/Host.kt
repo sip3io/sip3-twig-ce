@@ -17,13 +17,12 @@
 package io.sip3.twig.ce.domain
 
 import com.fasterxml.jackson.annotation.JsonIgnore
-import io.swagger.annotations.ApiModel
-import io.swagger.annotations.ApiModelProperty
+import io.swagger.v3.oas.annotations.media.Schema
 import org.springframework.data.annotation.Id
 import org.springframework.data.mongodb.core.mapping.Document
 import javax.validation.constraints.NotNull
 
-@ApiModel(value = "Host")
+@Schema(name = "Host", description = "Host")
 @Document(collection = "hosts")
 data class Host(
 
@@ -31,36 +30,37 @@ data class Host(
     @Id
     val id: String?,
 
-    @ApiModelProperty(
-        position = 0,
+    @field:Schema(
         required = true,
-        notes = "Host name",
+        title = "Host name",
+        description = "Host name",
+        type = "string",
         example = "sip.sbc.example.com"
     )
     @NotNull
     var name: String,
 
-    @ApiModelProperty(
-        position = 1,
+    @field:Schema(
         required = true,
-        notes = "IP addresses",
+        title = "IP addresses",
+        description = "IP addresses",
         example = "[\"192.168.10.10\", \"192.168.10.11:5061\", \"192.168.10.0/24\"]"
     )
     var addr: List<String>,
 
-    @ApiModelProperty(
-        position = 2,
+    @field:Schema(
         required = false,
-        notes = "List of IP Address mapping",
+        title = "List of IP Address mapping",
+        description = "List of IP Address mapping",
         example = "[{\"source\": \"217.117.177.177\", \"target\": \"192.168.10.10\"}]"
     )
     var mapping: List<AddressMapping> = emptyList(),
 
-    @ApiModelProperty(
-        position = 3,
+    @field:Schema(
         required = false,
-        notes = "Set of host features",
+        title = "Set of host features",
+        description = "Set of host features",
         example = "[\"role:proxy\"]"
     )
-    var feature: Set<String> = emptySet()
+    var feature: Set<String> = emptySet(),
 )

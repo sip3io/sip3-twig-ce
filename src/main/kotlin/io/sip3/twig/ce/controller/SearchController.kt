@@ -20,13 +20,14 @@ import io.sip3.twig.ce.domain.SearchRequest
 import io.sip3.twig.ce.domain.SearchResponse
 import io.sip3.twig.ce.service.ServiceLocator
 import io.sip3.twig.ce.util.IteratorUtil
-import io.swagger.annotations.Api
-import io.swagger.annotations.ApiOperation
-import io.swagger.annotations.ApiResponse
-import io.swagger.annotations.ApiResponses
+import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.responses.ApiResponse
+import io.swagger.v3.oas.annotations.responses.ApiResponses
+import io.swagger.v3.oas.annotations.tags.Tag
 import org.apache.logging.log4j.util.Strings
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.http.MediaType
 import org.springframework.stereotype.Component
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -34,9 +35,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import javax.validation.Valid
 
-@Api(
-    tags = ["Search API"]
-)
+@Tag(name = "Search API", description = "Search Controller")
 @RestController
 @RequestMapping("/search")
 class SearchController {
@@ -55,20 +54,17 @@ class SearchController {
     @Autowired
     private lateinit var searchRequestValidator: SearchRequestValidator
 
-    @ApiOperation(
-        position = 0,
-        value = "Search sessions",
-        produces = "application/json"
-    )
+    @Operation(summary = "Search sessions")
     @ApiResponses(
-        value = [
-            ApiResponse(code = 200, message = "Returns search results"),
-            ApiResponse(code = 400, message = "Bad request"),
-            ApiResponse(code = 500, message = "InternalServerError"),
-            ApiResponse(code = 504, message = "ConnectionTimeoutError")
-        ]
+        ApiResponse(responseCode = "200", description = "Returns search results"),
+        ApiResponse(responseCode = "400", description = "Bad request"),
+        ApiResponse(responseCode = "500", description = "InternalServerError"),
+        ApiResponse(responseCode = "504", description = "ConnectionTimeoutError")
     )
-    @PostMapping
+    @PostMapping(
+        consumes = [MediaType.APPLICATION_JSON_VALUE],
+        produces = [MediaType.APPLICATION_JSON_VALUE]
+    )
     fun search(@Valid @RequestBody request: SearchRequest): List<SearchResponse> {
         searchRequestValidator.validate(request)
 

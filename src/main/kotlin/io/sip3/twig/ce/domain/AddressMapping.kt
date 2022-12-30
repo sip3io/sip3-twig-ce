@@ -16,24 +16,21 @@
 
 package io.sip3.twig.ce.domain
 
-import io.swagger.annotations.ApiModel
-import io.swagger.annotations.ApiModelProperty
+import io.swagger.v3.oas.annotations.media.Schema
 
-@ApiModel(value = "Address Mapping")
+@Schema(description = "Address Mapping")
 data class AddressMapping(
 
-    @ApiModelProperty(
-        position = 0,
+    @field:Schema(
         required = true,
-        notes = "Source",
+        title = "Source",
         example = "217.117.177.177"
     )
     val source: String,
 
-    @ApiModelProperty(
-        position = 0,
+    @field:Schema(
         required = true,
-        notes = "Target",
+        title = "Target",
         example = "192.168.10.10"
     )
     val target: String

@@ -16,57 +16,50 @@
 
 package io.sip3.twig.ce.domain
 
-import io.swagger.annotations.ApiModel
-import io.swagger.annotations.ApiModelProperty
+import io.swagger.v3.oas.annotations.media.Schema
 
-@ApiModel(value = "Event")
+@Schema(title = "Event")
 data class Event(
 
-    @ApiModelProperty(
-        position = 0,
+    @Schema(
         required = true,
-        notes = "Event timestamp",
+        title = "Event timestamp",
         example = "1581383715357"
     )
     val timestamp: Long,
 
-    @ApiModelProperty(
-        position = 1,
+    @Schema(
         required = true,
-        notes = "Source of event",
+        title = "Source of event",
         example = "192.168.10.5"
     )
     val src: String,
 
-    @ApiModelProperty(
-        position = 2,
+    @Schema(
         required = true,
-        notes = "Destination for event",
+        title = "Destination for event",
         example = "PBX"
     )
     val dst: String,
 
-    @ApiModelProperty(
-        position = 3,
+    @Schema(
         required = true,
-        notes = "Type of Event",
+        title = "Type of Event",
         example = "SIP",
-        allowableValues = "SIP, RTPR, DTMF"
+        allowableValues = ["SIP", "RTPR", "DTMF"]
     )
     val type: String,
 
-    @ApiModelProperty(
-        position = 4,
+    @Schema(
         required = false,
-        notes = "Event group",
+        title = "Event group",
         example = "some:group:id",
     )
     val group: String?,
 
-    @ApiModelProperty(
-        position = 5,
+    @Schema(
         required = true,
-        notes = "Event details"
+        title = "Event details"
     )
     val details: Any
 )
