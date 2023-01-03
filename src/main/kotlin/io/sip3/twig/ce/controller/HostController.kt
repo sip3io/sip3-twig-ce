@@ -21,20 +21,19 @@ import com.fasterxml.jackson.module.kotlin.readValue
 import io.sip3.twig.ce.domain.Host
 import io.sip3.twig.ce.service.host.HostService
 import io.sip3.twig.ce.util.IpAddressUtil.isValid
-import io.swagger.annotations.Api
-import io.swagger.annotations.ApiOperation
-import io.swagger.annotations.ApiResponse
-import io.swagger.annotations.ApiResponses
+import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.responses.ApiResponse
+import io.swagger.v3.oas.annotations.responses.ApiResponses
+import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
+import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.multipart.MultipartFile
 import javax.validation.Valid
 import javax.validation.constraints.NotNull
 
-@Api(
-    tags = ["Hosts API"]
-)
+@Tag(name = "Hosts API", description = "Host Controller")
 @RestController
 @RequestMapping("/hosts")
 class HostController {
@@ -45,112 +44,95 @@ class HostController {
     @Autowired
     private lateinit var mapper: ObjectMapper
 
-    @ApiOperation(
-        position = 1,
-        value = "List hosts",
-        produces = "application/json"
-    )
+    @Operation(summary = "List hosts")
     @ApiResponses(
-        value = [
-            ApiResponse(code = 200, message = "Returns hosts"),
-            ApiResponse(code = 500, message = "InternalServerError"),
-            ApiResponse(code = 504, message = "ConnectionTimeoutError")
-        ]
+        ApiResponse(responseCode = "200", description = "Returns hosts"),
+        ApiResponse(responseCode = "500", description = "InternalServerError"),
+        ApiResponse(responseCode = "504", description = "ConnectionTimeoutError")
     )
-    @GetMapping
+    @GetMapping(
+        produces = [MediaType.APPLICATION_JSON_VALUE]
+    )
     fun list(): Set<Host> {
         return hostService.list()
     }
 
-    @ApiOperation(
-        position = 2,
-        value = "Get host by name",
-        produces = "application/json"
-    )
+    @Operation(summary = "Get host by name")
     @ApiResponses(
-        value = [
-            ApiResponse(code = 200, message = "Returns host"),
-            ApiResponse(code = 404, message = "Host not found"),
-            ApiResponse(code = 500, message = "InternalServerError"),
-            ApiResponse(code = 504, message = "ConnectionTimeoutError")
-        ]
+        ApiResponse(responseCode = "200", description = "Returns host"),
+        ApiResponse(responseCode = "404", description = "Host not found"),
+        ApiResponse(responseCode = "500", description = "InternalServerError"),
+        ApiResponse(responseCode = "504", description = "ConnectionTimeoutError")
     )
-    @GetMapping("/{name}")
+    @GetMapping(
+        value = ["/{name}"],
+        produces = [MediaType.APPLICATION_JSON_VALUE]
+    )
     fun getByName(@Valid @NotNull @PathVariable("name") name: String): Host {
         return hostService.getByName(name.lowercase())
     }
 
-    @ApiOperation(
-        position = 3,
-        value = "Create host",
-        produces = "application/json"
-    )
+    @Operation(summary = "Create host")
     @ApiResponses(
-        value = [
-            ApiResponse(code = 200, message = "Returns host"),
-            ApiResponse(code = 400, message = "Bad request"),
-            ApiResponse(code = 409, message = "Duplicate host"),
-            ApiResponse(code = 500, message = "InternalServerError"),
-            ApiResponse(code = 504, message = "ConnectionTimeoutError")
-        ]
+        ApiResponse(responseCode = "200", description = "Returns host"),
+        ApiResponse(responseCode = "400", description = "Bad request"),
+        ApiResponse(responseCode = "409", description = "Duplicate host"),
+        ApiResponse(responseCode = "500", description = "InternalServerError"),
+        ApiResponse(responseCode = "504", description = "ConnectionTimeoutError")
     )
-    @PostMapping
+    @PostMapping(
+        consumes = [MediaType.APPLICATION_JSON_VALUE],
+        produces = [MediaType.APPLICATION_JSON_VALUE]
+    )
     fun create(@Valid @RequestBody host: Host): Host {
         validate(host)
         return hostService.create(host)
     }
 
-    @ApiOperation(
-        position = 4,
-        value = "Update host",
-        produces = "application/json"
-    )
+    @Operation(summary = "Update host")
     @ApiResponses(
-        value = [
-            ApiResponse(code = 200, message = "Returns host"),
-            ApiResponse(code = 400, message = "Bad request"),
-            ApiResponse(code = 404, message = "Host not found"),
-            ApiResponse(code = 500, message = "InternalServerError"),
-            ApiResponse(code = 504, message = "ConnectionTimeoutError")
-        ]
+        ApiResponse(responseCode = "200", description = "Returns host"),
+        ApiResponse(responseCode = "400", description = "Bad request"),
+        ApiResponse(responseCode = "404", description = "Host not found"),
+        ApiResponse(responseCode = "500", description = "InternalServerError"),
+        ApiResponse(responseCode = "504", description = "ConnectionTimeoutError")
     )
-    @PutMapping
+    @PutMapping(
+        consumes = [MediaType.APPLICATION_JSON_VALUE],
+        produces = [MediaType.APPLICATION_JSON_VALUE]
+    )
     fun update(@Valid @RequestBody host: Host): Host {
         validate(host)
         return hostService.update(host)
     }
 
-    @ApiOperation(
-        position = 5,
-        value = "Delete host by name"
-    )
+    @Operation(summary = "Delete host by name")
     @ApiResponses(
-        value = [
-            ApiResponse(code = 204, message = "Host deleted successfully"),
-            ApiResponse(code = 400, message = "Bad request"),
-            ApiResponse(code = 500, message = "InternalServerError"),
-            ApiResponse(code = 504, message = "ConnectionTimeoutError")
-        ]
+        ApiResponse(responseCode = "204", description =  "Host deleted successfully"),
+        ApiResponse(responseCode = "400", description =  "Bad request"),
+        ApiResponse(responseCode = "500", description =  "InternalServerError"),
+        ApiResponse(responseCode = "504", description =  "ConnectionTimeoutError")
     )
-    @DeleteMapping("/{name}")
+    @DeleteMapping(
+        value = ["/{name}"],
+        produces = [MediaType.APPLICATION_JSON_VALUE]
+    )
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
     fun deleteByName(@Valid @PathVariable("name") @NotNull name: String) {
         hostService.deleteByName(name)
     }
 
-    @ApiOperation(
-        position = 6,
-        value = "Import hosts from JSON file"
-    )
+    @Operation(summary = "Import hosts from JSON file")
     @ApiResponses(
-        value = [
-            ApiResponse(code = 204, message = "Hosts added and updated successfully"),
-            ApiResponse(code = 400, message = "Bad request"),
-            ApiResponse(code = 500, message = "InternalServerError"),
-            ApiResponse(code = 504, message = "ConnectionTimeoutError")
-        ]
+        ApiResponse(responseCode = "204", description = "Hosts added and updated successfully"),
+        ApiResponse(responseCode = "400", description = "Bad request"),
+        ApiResponse(responseCode = "500", description = "InternalServerError"),
+        ApiResponse(responseCode = "504", description = "ConnectionTimeoutError")
     )
-    @PostMapping("/import")
+    @PostMapping(
+        value = ["/import"],
+        consumes = [MediaType.MULTIPART_FORM_DATA_VALUE]
+    )
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
     fun import(@RequestPart("file", required = true) @Valid @NotNull file: MultipartFile) {
         val hosts: Set<Host> = mapper.readValue(file.inputStream)

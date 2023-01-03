@@ -18,18 +18,17 @@ package io.sip3.twig.ce.controller
 
 import io.sip3.commons.domain.Attribute
 import io.sip3.twig.ce.service.attribute.AttributeService
-import io.swagger.annotations.Api
-import io.swagger.annotations.ApiOperation
-import io.swagger.annotations.ApiResponse
-import io.swagger.annotations.ApiResponses
+import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.responses.ApiResponse
+import io.swagger.v3.oas.annotations.responses.ApiResponses
+import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
-@Api(
-    tags = ["Attributes API"]
-)
+@Tag(name = "Attributes API", description = "Attribute Controller")
 @RestController
 @RequestMapping("/attributes")
 class AttributeController {
@@ -37,19 +36,15 @@ class AttributeController {
     @Autowired
     private lateinit var attributeService: AttributeService
 
-    @ApiOperation(
-        position = 1,
-        value = "List attributes",
-        produces = "application/json"
-    )
+    @Operation(summary = "List attributes")
     @ApiResponses(
-        value = [
-            ApiResponse(code = 200, message = "Returns attributes"),
-            ApiResponse(code = 500, message = "InternalServerError"),
-            ApiResponse(code = 504, message = "ConnectionTimeoutError")
-        ]
+        ApiResponse(responseCode = "200", description = "Returns attributes"),
+        ApiResponse(responseCode = "500", description = "InternalServerError"),
+        ApiResponse(responseCode = "504", description = "ConnectionTimeoutError")
     )
-    @GetMapping
+    @GetMapping(
+        produces = [MediaType.APPLICATION_JSON_VALUE]
+    )
     fun list(): Collection<Attribute> {
         return attributeService.list()
     }

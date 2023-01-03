@@ -16,20 +16,19 @@
 
 package io.sip3.twig.ce.configuration
 
+import io.swagger.v3.oas.models.Components
+import io.swagger.v3.oas.models.OpenAPI
+import io.swagger.v3.oas.models.info.Info
+import io.swagger.v3.oas.models.security.SecurityRequirement
+import io.swagger.v3.oas.models.security.SecurityScheme
+import io.swagger.v3.oas.models.tags.Tag
+import org.springdoc.core.customizers.OpenApiCustomiser
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.info.BuildProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.stereotype.Component
-import org.springframework.web.bind.annotation.RestController
-import springfox.documentation.builders.ApiInfoBuilder
-import springfox.documentation.builders.PathSelectors
-import springfox.documentation.builders.RequestHandlerSelectors
-import springfox.documentation.service.*
-import springfox.documentation.spi.DocumentationType
-import springfox.documentation.spi.service.contexts.SecurityContext
-import springfox.documentation.spring.web.plugins.Docket
 import javax.annotation.PostConstruct
 
 @Configuration
@@ -42,61 +41,46 @@ open class SwaggerConfiguration {
     var buildProperties: BuildProperties? = null
 
     @Autowired
-    lateinit var springFoxCustomization: SpringFoxCustomization
+    lateinit var swaggerCustomization: SwaggerCustomization
 
     @Bean
-    open fun docket(): Docket {
-        return Docket(DocumentationType.SWAGGER_2)
-            .apiInfo(
-                ApiInfoBuilder()
-                    .title("Twig API")
-                    .description(springFoxCustomization.description)
+    open fun openApi(): OpenAPI {
+        return OpenAPI()
+            .info(
+                Info().title("Twig API")
+                    .description(swaggerCustomization.description)
                     .version(buildProperties?.version)
-                    .build()
             )
+//            .addTags()
             .apply {
                 if (securityEnabled) {
-                    securityContexts(mutableListOf<SecurityContext>().apply {
-                        val context = SecurityContext.builder()
-                            .securityReferences(mutableListOf<SecurityReference>().apply {
-                                val reference = SecurityReference("Authorization", arrayOfNulls<AuthorizationScope>(0))
-                                add(reference)
-                            })
-                            .operationSelector { true }
-                            .build()
-                        add(context)
-                    })
-                    securitySchemes(mutableListOf<SecurityScheme>().apply {
-                        val scheme = BasicAuth("Authorization")
-                        add(scheme)
-                    })
+                    components(
+                        Components()
+                            .addSecuritySchemes(
+                                "Authorization",
+                                SecurityScheme().type(SecurityScheme.Type.HTTP).scheme("basic")
+                            )
+                    )
+                    addSecurityItem(SecurityRequirement().addList("Authorization"))
                 }
             }
-            .addTags()
-            .select()
-            .apis(RequestHandlerSelectors.withClassAnnotation(RestController::class.java))
-            .paths(PathSelectors.any())
-            .build()
-            .useDefaultResponseMessages(false)
     }
 
-    private fun Docket.addTags(): Docket {
-        val tags = mutableSetOf(
-            Tag("Attributes API", "", 100),
-            Tag("Hosts API", "",  200),
-            Tag("Search API", "",  300),
-            Tag("Session API", "",  400)
-        )
-
-        tags.addAll(springFoxCustomization.additionalTags())
-        this.tags(tags.first(), *tags.drop(1).toTypedArray())
-
-        return this
+    @Bean
+    open fun customiser(): OpenApiCustomiser {
+        return OpenApiCustomiser { openApi ->
+            // Reorder tags
+            openApi.tags
+                .sortedBy { swaggerCustomization.tagOrder(it) ?: Int.MAX_VALUE }
+                .let {
+                    openApi.tags(it)
+                }
+        }
     }
 }
 
 @Component
-open class SpringFoxCustomization {
+open class SwaggerCustomization {
 
     lateinit var description: String
 
@@ -105,7 +89,13 @@ open class SpringFoxCustomization {
         description = this.javaClass.classLoader.getResource("description/twig-api.md")?.readText() ?: ""
     }
 
-    open fun additionalTags(): MutableSet<Tag> {
-        return mutableSetOf()
+    open fun tagOrder(tag: Tag): Int? {
+        return when (tag.name) {
+            "Attributes API" -> 100
+            "Hosts API" -> 200
+            "Search API" -> 300
+            "Session API" -> 400
+            else -> null
+        }
     }
 }

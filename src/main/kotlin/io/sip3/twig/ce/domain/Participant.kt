@@ -16,33 +16,29 @@
 
 package io.sip3.twig.ce.domain
 
-import io.swagger.annotations.ApiModel
-import io.swagger.annotations.ApiModelProperty
+import io.swagger.v3.oas.annotations.media.Schema
 
-@ApiModel(value = "Participant")
+@Schema(title = "Participant")
 data class Participant(
 
-    @ApiModelProperty(
-        position = 0,
+    @field:Schema(
         required = true,
-        notes = "Name",
+        title = "Name",
         example = "192.168.10.5"
     )
     val name: String,
 
-    @ApiModelProperty(
-        position = 1,
+    @field:Schema(
         required = true,
-        notes = "Type of Participant",
+        title = "Type of Participant",
         example = "HOST",
-        allowableValues = "HOST"
+        allowableValues = ["HOST"]
     )
     val type: String,
 
-    @ApiModelProperty(
-        position = 2,
+    @field:Schema(
         required = false,
-        notes = "Participant details"
+        title = "Participant details"
     )
     val details: Any?
 )

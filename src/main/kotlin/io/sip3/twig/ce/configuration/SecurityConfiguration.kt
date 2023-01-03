@@ -47,7 +47,7 @@ open class SecurityConfiguration : WebSecurityConfigurerAdapter() {
             // Permit all Swagger endpoints
             .antMatchers("/swagger-resources/**").permitAll()
             .antMatchers("/swagger-ui/**").permitAll()
-            .antMatchers("/v2/api-docs").permitAll()
+            .antMatchers("/v3/api-docs/**").permitAll()
             // Secure the rest of the endpoints accordingly to the settings
             .anyRequest().apply {
                 if (securityEnabled) {
@@ -65,7 +65,7 @@ open class SecurityConfiguration : WebSecurityConfigurerAdapter() {
                         // Basic authorization handling
                         .and()
                         .httpBasic()
-                        // Springfox sends `Authorization` header in lowercase
+                        // Swagger sends `Authorization` header in lowercase
                         // So, we have to hack a `HttpServletRequest` object :(
                         .and()
                         .addFilterBefore({ req, res, chain ->

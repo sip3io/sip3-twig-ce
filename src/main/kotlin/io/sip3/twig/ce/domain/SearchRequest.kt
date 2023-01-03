@@ -16,44 +16,39 @@
 
 package io.sip3.twig.ce.domain
 
-import io.swagger.annotations.ApiModel
-import io.swagger.annotations.ApiModelProperty
+import io.swagger.v3.oas.annotations.media.Schema
 import javax.validation.constraints.NotNull
 
-@ApiModel(value = "Search Request")
+@Schema(title = "Search Request")
 data class SearchRequest(
 
-    @ApiModelProperty(
-        position = 0,
+    @field:Schema(
         required = true,
-        notes = "From time",
+        title = "From time",
         example = "1581494059704"
     )
     @NotNull
     val createdAt: Long,
 
-    @ApiModelProperty(
-        position = 1,
+    @field:Schema(
         required = true,
-        notes = "To time",
+        title = "To time",
         example = "1581494069704"
     )
     @NotNull
     val terminatedAt: Long,
 
-    @ApiModelProperty(
-        position = 2,
+    @field:Schema(
         required = true,
-        notes = "Search query",
-        example = "sip.method=INVITE ip.dst_addr=23.08.20.15 sip.state=answered"
+        title = "Search query",
+        example = "sip.method=INVITE sip.dst_addr=23.08.20.15 sip.state=answered"
     )
     @NotNull
     var query: String,
 
-    @ApiModelProperty(
-        position = 3,
+    @field:Schema(
         required = false,
-        notes = "Search limit",
+        title = "Search limit",
         example = "50"
     )
     @NotNull

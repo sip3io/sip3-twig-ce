@@ -16,80 +16,70 @@
 
 package io.sip3.twig.ce.domain
 
-import io.swagger.annotations.ApiModel
-import io.swagger.annotations.ApiModelProperty
+import io.swagger.v3.oas.annotations.media.Schema
 
-@ApiModel(value = "Search Response")
+@Schema(title = "Search Response")
 open class SearchResponse {
 
-    @ApiModelProperty(
-        position = 0,
+    @Schema(
         required = true,
-        notes = "Created at",
+        title = "Created at",
         example = "1581494059704"
     )
     var createdAt: Long = 0
 
-    @ApiModelProperty(
-        position = 1,
+    @Schema(
         required = false,
-        notes = "Terminated at",
+        title = "Terminated at",
         example = "1581494069704"
     )
     var terminatedAt: Long? = null
 
-    @ApiModelProperty(
-        position = 2,
+    @Schema(
         required = true,
-        notes = "Method",
+        title = "Method",
         example = "INVITE"
     )
     lateinit var method: String
 
-    @ApiModelProperty(
-        position = 3,
+    @Schema(
         required = true,
-        notes = "State",
+        title = "State",
         example = "Answered"
     )
     lateinit var state: String
 
-    @ApiModelProperty(
-        position = 4,
+    @Schema(
         required = true,
-        notes = "Caller",
+        title = "Caller",
         example = "Alice"
     )
     lateinit var caller: String
 
-    @ApiModelProperty(
-        position = 5,
+    @Schema(
         required = true,
-        notes = "Callee",
+        title = "Callee",
         example = "Bob"
     )
     lateinit var callee: String
 
-    @ApiModelProperty(
-        position = 6,
+    @Schema(
         required = true,
-        notes = "Call IDs",
-        example = "[73d68dd8548211eab1d1047d7bbbc100, 73d68dd854821147d7bbbc100eab1d10]"
+        title = "Call IDs",
+        example = "[\"73d68dd8548211eab1d1047d7bbbc100\", \"73d68dd854821147d7bbbc100eab1d10\"]"
     )
     lateinit var callId: Set<String>
 
-    @ApiModelProperty(
-        position = 7,
+    @Schema(
         required = false,
-        notes = "Call duration",
+        title = "Call duration",
         example = "60000"
     )
     var duration: Int? = null
 
-    @ApiModelProperty(
-        position = 8,
+    @Schema(
         required = false,
-        notes = "Error code",
+        title = "Error code",
         example = "404"
     )
     var errorCode: String? = null
