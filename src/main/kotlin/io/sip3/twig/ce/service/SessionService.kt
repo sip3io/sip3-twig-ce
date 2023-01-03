@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2022 SIP3.IO, Corp.
+ * Copyright 2018-2023 SIP3.IO, Corp.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,7 +33,6 @@ import org.bson.conversions.Bson
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import java.io.ByteArrayOutputStream
-import java.lang.UnsupportedOperationException
 
 abstract class SessionService {
 
