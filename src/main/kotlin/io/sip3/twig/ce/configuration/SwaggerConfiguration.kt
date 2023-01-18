@@ -34,7 +34,7 @@ import javax.annotation.PostConstruct
 @Configuration
 open class SwaggerConfiguration {
 
-    @Value("\${security.enabled}")
+    @Value("\${security.enabled:false}")
     private var securityEnabled = false
 
     @Autowired

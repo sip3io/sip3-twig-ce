@@ -48,16 +48,16 @@ open class CallSearchService : SearchService() {
         val COMMON_ATTR_REGEX = Regex("sip.caller|sip.callee|sip.user|sip.call_id")
     }
 
-    @Value("\${session.use-x-correlation-header}")
+    @Value("\${session.use_x_correlation_header:true}")
     protected var useXCorrelationHeader: Boolean = true
 
-    @Value("\${session.call.max-legs}")
+    @Value("\${session.call.max_legs:10}")
     protected var maxLegs: Int = 10
 
-    @Value("\${session.call.aggregation-timeout}")
+    @Value("\${session.call.aggregation_timeout:60000}")
     protected var aggregationTimeout: Long = 60000
 
-    @Value("\${session.call.termination-timeout}")
+    @Value("\${session.call.termination_timeout:10000}")
     protected var terminationTimeout: Long = 10000
 
     override fun search(request: SearchRequest): Iterator<SearchResponse> {

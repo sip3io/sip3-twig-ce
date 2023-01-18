@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component
 import java.util.concurrent.TimeUnit
 
 @Component
-@ConditionalOnProperty(prefix = "cache", name = ["refresh-delay"])
+@ConditionalOnProperty(prefix = "cache", name = ["refresh_delay"])
 @EnableScheduling
 class CacheService {
 
@@ -23,7 +23,7 @@ class CacheService {
     @Autowired
     private lateinit var attributeService: AttributeService
 
-    @Scheduled(fixedRateString = "\${cache.refresh-rate}", timeUnit = TimeUnit.MILLISECONDS)
+    @Scheduled(fixedRateString = "\${cache.refresh_rate}", timeUnit = TimeUnit.MILLISECONDS)
     fun refreshCache() {
         try {
             mongoClient.listCollectionNames()

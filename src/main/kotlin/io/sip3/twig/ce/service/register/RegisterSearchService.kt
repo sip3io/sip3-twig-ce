@@ -40,13 +40,13 @@ open class RegisterSearchService : SearchService() {
         )
     }
 
-    @Value("\${session.register.max-legs}")
+    @Value("\${session.register.max_legs:10}")
     private var maxLegs: Int = 10
 
-    @Value("\${session.register.aggregation-timeout}")
+    @Value("\${session.register.aggregation_timeout:10000}")
     private var aggregationTimeout: Long = 10000
 
-    @Value("\${session.register.duration-timeout}")
+    @Value("\${session.register.duration_timeout:900000}")
     private var durationTimeout: Long = 900000
 
     override fun search(request: SearchRequest): Iterator<SearchResponse> {

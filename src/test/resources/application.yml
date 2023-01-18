@@ -4,41 +4,34 @@ security:
 
 spring:
   jackson:
-    property-naming-strategy: SNAKE_CASE
+    property_naming_strategy: SNAKE_CASE
 
   autoconfigure:
     exclude:
       - org.springframework.boot.autoconfigure.mongo.embedded.EmbeddedMongoAutoConfiguration
 
----
-#! Backward compatibility for SpringFox 3.0.0. TODO: Remove after SpringFox fixed
-spring:
-  mvc:
-    pathmatch:
-      matching-strategy: ant-path-matcher
-
 #! Mongo
 mongo:
   uri: mongodb://127.0.0.1:27017
   db: sip3
-  max-execution-time: 10000
-  batch-size: 128
+  max_execution_time: 10000
+  batch_size: 128
 
 #! Application
-time-suffix: yyyyMMdd
+time_suffix: yyyyMMdd
 session:
-  default-limit: 50
-  use-x-correlation-header: true
-  show-retransmits: true
-  ignore-nanos: false
+  default_limit: 50
+  use_x_correlation_header: true
+  show_retransmits: true
+  ignore_nanos: false
   call:
-    max-legs: 10
-    aggregation-timeout: 60000
-    termination-timeout: 10000
+    max_legs: 10
+    aggregation_timeout: 60000
+    termination_timeout: 10000
   register:
-    max-legs: 10
-    aggregation-timeout: 10000
-    duration-timeout: 900000
+    max_legs: 10
+    aggregation_timeout: 10000
+    duration_timeout: 900000
   media:
-    block-count: 28
-    termination-timeout: 60000
+    block_count: 28
+    termination_timeout: 60000
