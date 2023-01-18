@@ -54,13 +54,13 @@ abstract class SessionService {
     @Autowired
     protected lateinit var hostService: HostService
 
-    @Value("\${session.show_retransmits:true}")
+    @Value("\${session.show-retransmits:\${session.show_retransmits:true}}")
     protected var showRetransmits: Boolean = true
 
-    @Value("\${session.ignore_nanos:true}")
+    @Value("\${session.ignore-nanos:\${session.ignore_nanos:true}}")
     protected var ignoreNanos: Boolean = true
 
-    @Value("\${session.media.termination-timeout:60000}")
+    @Value("\${session.media.termination-timeout:\${session.media.termination_timeout:60000}}")
     private var terminationTimeout: Long = 60000
 
     abstract fun findInRawBySessionRequest(req: SessionRequest): Iterator<Document>

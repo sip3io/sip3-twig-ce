@@ -27,7 +27,7 @@ import org.springframework.stereotype.Component
 @Component
 open class CallSessionService : SessionService() {
 
-    @Value("\${session.call.termination_timeout:10000}")
+    @Value("\${session.call.termination-timeout:\${session.call.termination_timeout:10000}}")
     protected val terminationTimeout: Long = 10000
 
     override fun findInRawBySessionRequest(req: SessionRequest): Iterator<Document> {

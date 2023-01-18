@@ -37,7 +37,7 @@ mongo:
   uri: mongodb://127.0.0.1:27017
   db: sip3
   max_execution_time: 10000
-  batch_size: 128
+  batch-size: 128
 
 #! Application
 time_suffix: yyyyMMdd
