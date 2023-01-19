@@ -45,7 +45,7 @@ class SearchController {
         val SIP_METHOD_REGEX = Regex("sip.method=(\\w*)")
     }
 
-    @Value("\${session.default-limit}")
+    @Value("\${session.default-limit:\${session.default_limit:50}}")
     private var defaultLimit: Int = 50
 
     @Autowired

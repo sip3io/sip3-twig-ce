@@ -43,7 +43,7 @@ open class MongoClient {
     @Autowired
     private lateinit var proxy: io.sip3.twig.ce.mongo.MongoClient
 
-    @Value("\${time-suffix}")
+    @Value("\${time-suffix:\${time_suffix:yyyyMMdd}}")
     protected lateinit var timeSuffix: String
 
     @Value("\${mongo.uri}")
@@ -52,10 +52,10 @@ open class MongoClient {
     @Value("\${mongo.db}")
     protected lateinit var db: String
 
-    @Value("\${mongo.max-execution-time}")
+    @Value("\${mongo.max-execution-time:\${mongo.max_execution_time:30000}}")
     protected var maxExecutionTime: Long = 30000
 
-    @Value("\${mongo.batch-size}")
+    @Value("\${mongo.batch-size:\${mongo.batch_size:1}}")
     protected val batchSize: Int = 1
 
     protected open lateinit var suffix: DateTimeFormatter

@@ -38,7 +38,7 @@ open class SecurityConfiguration : WebSecurityConfigurerAdapter() {
     @Autowired
     lateinit var context: WebApplicationContext
 
-    @Value("\${security.enabled}")
+    @Value("\${security.enabled:false}")
     private var securityEnabled = false
 
     override fun configure(http: HttpSecurity) {
