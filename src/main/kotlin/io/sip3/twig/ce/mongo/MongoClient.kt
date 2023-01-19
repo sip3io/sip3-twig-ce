@@ -43,7 +43,7 @@ open class MongoClient {
     @Autowired
     private lateinit var proxy: io.sip3.twig.ce.mongo.MongoClient
 
-    @Value("\${time-suffix:\${time_suffix:yyyyMM}}")
+    @Value("\${time-suffix:\${time_suffix:yyyyMMdd}}")
     protected lateinit var timeSuffix: String
 
     @Value("\${mongo.uri}")
