@@ -268,8 +268,8 @@ open class CallSearchService : SearchService() {
             val terminatedAt = legs.first().getLong("terminated_at")
                 ?: legs.first().getInteger("establish_time")?.let { createdAt + it }
 
-            val callIds = legs.map { it.getString("call_id") }
-            val xCallIds = legs.mapNotNull { it.getString("x_call_id") }
+            val callIds = legs.map { it.getString("call_id") }.toSet()
+            val xCallIds = legs.mapNotNull { it.getString("x_call_id") }.toSet()
 
             val filters = mutableListOf<Bson>().apply {
                 // Time filters
