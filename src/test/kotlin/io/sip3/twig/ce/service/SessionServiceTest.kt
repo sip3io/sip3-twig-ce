@@ -16,6 +16,8 @@
 
 package io.sip3.twig.ce.service
 
+import gov.nist.javax.sip.message.MessageFactoryImpl
+import gov.nist.javax.sip.parser.StringMsgParser
 import io.pkts.Pcap
 import io.pkts.packet.Packet
 import io.pkts.packet.sip.impl.PreConditions.assertNotNull
@@ -37,6 +39,12 @@ import java.util.*
 
 @SpringBootTest(classes = [TestSessionService::class, MongoClient::class])
 class SessionServiceTest {
+
+    init {
+        StringMsgParser.setComputeContentLengthFromMessage(true)
+        MessageFactoryImpl().setDefaultContentEncodingCharset(Charsets.ISO_8859_1.name())
+    }
+
 
     companion object {
 
@@ -66,7 +74,8 @@ class SessionServiceTest {
                         User-Agent: 3CXPhone 6.0.26523.0
                         Authorization: Digest username="1010",realm="asterisk",nonce="1589932693/afdc97bf8bb891c6c3c8072baeb2d3d6",uri="sip:192.168.10.5:5060",response="1337bca977875e158b7e1b96094521ee",cnonce="557bd23e12dc3db950db3c7e77aa91ad",nc=00000002,qop=auth,algorithm=md5,opaque="5b7b35877f215628"
                         Content-Length: 0
-                    """.trimIndent().trimIndent()
+
+                    """.trimIndent()
             )
         }
 
@@ -91,6 +100,8 @@ class SessionServiceTest {
                         Expires: 120
                         Server: FPBX-14.0.13.23(13.29.2)
                         Content-Length:  0
+                        
+                        
                     """.trimIndent()
             )
         }
@@ -119,6 +130,7 @@ class SessionServiceTest {
                         User-Agent: 3CXPhone 6.0.26523.0
                         Authorization: Digest username="2020",realm="asterisk",nonce="1589932693/afdc97bf8bb891c6c3c8072baeb2d3d6",uri="sip:192.168.10.5:5060",response="1337bca977875e158b7e1b96094521ee",cnonce="557bd23e12dc3db950db3c7e77aa91ad",nc=00000002,qop=auth,algorithm=md5,opaque="5b7b35877f215628"
                         Content-Length: 0
+                        
                     """.trimIndent().trimIndent()
             )
         }
@@ -143,7 +155,8 @@ class SessionServiceTest {
                         Contact: <sip:1010@192.168.10.234:33456;rinstance=13bf343a521442b5>;expires=119
                         Expires: 120
                         Server: FPBX-14.0.13.23(13.29.2)
-                        Content-Length:  0
+                        Content-Length: 0
+                        
                     """.trimIndent()
             )
         }
@@ -206,7 +219,7 @@ class SessionServiceTest {
             createdAt = NOW,
             terminatedAt = NOW + 900000,
             method = listOf("REGISTER"),
-            callId = listOf("call-id-1", "call-id-2")
+            callId = listOf("call-id-1")
         )
 
         // Execute

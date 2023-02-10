@@ -136,12 +136,13 @@ abstract class SessionService {
                     try {
                         StringMsgParser().parseSIPMessage(rawData.toByteArray(Charsets.ISO_8859_1), true, false, null)?.let { message ->
                             put("transaction_id", message.transactionId())
+                            putAll(extendedParamsFrom(message))
                         }
                     } catch (e: Exception) {
                         logger.error("StringMsgParser 'parseSIPMessage()' failed.", e)
                     }
-                    // raw_data
-                    put("raw_data", rawData)
+
+                    putIfAbsent("raw_data", rawData)
                 }
             }
             .toList()
@@ -230,8 +231,8 @@ abstract class SessionService {
 
     open fun hostOrAddrFilter(prefix: String, hosts: List<String>, ips: List<String>): Bson {
         val filters = mutableListOf<Bson>().apply {
-            if(hosts.isNotEmpty()) add(`in`("${prefix}_host", hosts))
-            if(ips.isNotEmpty()) add(`in`("${prefix}_addr", ips))
+            if (hosts.isNotEmpty()) add(`in`("${prefix}_host", hosts))
+            if (ips.isNotEmpty()) add(`in`("${prefix}_addr", ips))
         }
 
         return if (filters.size == 1) {
@@ -239,5 +240,9 @@ abstract class SessionService {
         } else {
             or(filters)
         }
+    }
+
+    open fun extendedParamsFrom(message: SIPMessage): Map<String, Any> {
+        return emptyMap()
     }
 }
