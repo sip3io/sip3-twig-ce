@@ -19,14 +19,10 @@ package io.sip3.twig.ce.service.component
 import io.sip3.twig.ce.domain.Component
 import io.sip3.twig.ce.repository.ComponentRepository
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 
 @Service
 open class ComponentService {
-
-    @Value("\${management.components.expiration-timeout:\${management.components.expiration_timeout:240000}}")
-    protected var expirationTimeout: Long = 240000
 
     @Autowired
     protected lateinit var componentRepository: ComponentRepository
