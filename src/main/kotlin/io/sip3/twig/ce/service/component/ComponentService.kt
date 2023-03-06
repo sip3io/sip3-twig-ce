@@ -64,7 +64,7 @@ open class ComponentService {
         throw UnsupportedOperationException("Media Recording Reset is not supported in CE version")
     }
 
-    open fun mediaRecordingResetByName(deploymentId: String) {
+    open fun mediaRecordingResetByName(name: String) {
         throw UnsupportedOperationException("Media Recording Reset is not supported in CE version")
     }
 
@@ -72,7 +72,7 @@ open class ComponentService {
         throw UnsupportedOperationException("Shutdown is not supported in CE version")
     }
 
-    open fun shutdownByName(deploymentId: String) {
+    open fun shutdownByName(name: String) {
         throw UnsupportedOperationException("Shutdown is not supported in CE version")
     }
 }
