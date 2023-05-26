@@ -19,19 +19,22 @@ package io.sip3.twig.ce.configuration
 import mu.KotlinLogging
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
+import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.HttpStatus
 import org.springframework.security.authentication.AuthenticationProvider
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter
+import org.springframework.security.web.SecurityFilterChain
 import org.springframework.security.web.authentication.Http403ForbiddenEntryPoint
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter
 import org.springframework.web.context.WebApplicationContext
 import javax.servlet.http.HttpServletRequestWrapper
 
 @Configuration
-open class SecurityConfiguration : WebSecurityConfigurerAdapter() {
+@ConditionalOnProperty(prefix = "security.oauth2", name = ["client_id"], matchIfMissing = true)
+open class SecurityConfiguration {
 
     private val logger = KotlinLogging.logger {}
 
@@ -41,14 +44,23 @@ open class SecurityConfiguration : WebSecurityConfigurerAdapter() {
     @Value("\${security.enabled:false}")
     private var securityEnabled = false
 
-    override fun configure(http: HttpSecurity) {
+    @Bean
+    open fun filterChain(http: HttpSecurity): SecurityFilterChain {
+        if (securityEnabled) {
+            val auth: AuthenticationManagerBuilder = http.getSharedObject(AuthenticationManagerBuilder::class.java)
+            context.getBeansOfType(AuthenticationProvider::class.java).forEach { (name, provider) ->
+                auth.authenticationProvider(provider)
+                logger.info { "Authentication provider '$name' added." }
+            }
+        }
+
         http.csrf().disable()
             .authorizeRequests()
-            // Permit all Swagger endpoints
-            .antMatchers("/swagger-resources/**").permitAll()
-            .antMatchers("/swagger-ui/**").permitAll()
-            .antMatchers("/v3/api-docs/**").permitAll()
-            // Secure the rest of the endpoints accordingly to the settings
+                // Permit all Swagger endpoints
+                .antMatchers("/swagger-resources/**").permitAll()
+                .antMatchers("/swagger-ui/**").permitAll()
+                .antMatchers("/v3/api-docs/**").permitAll()
+                // Secure the rest of the endpoints accordingly to the settings
             .anyRequest().apply {
                 if (securityEnabled) {
                     authenticated()
@@ -65,7 +77,7 @@ open class SecurityConfiguration : WebSecurityConfigurerAdapter() {
                         // Basic authorization handling
                         .and()
                         .httpBasic()
-                        // Swagger sends `Authorization` header in lowercase
+                        // Springfox sends `Authorization` header in lowercase
                         // So, we have to hack a `HttpServletRequest` object :(
                         .and()
                         .addFilterBefore({ req, res, chain ->
@@ -80,15 +92,8 @@ open class SecurityConfiguration : WebSecurityConfigurerAdapter() {
                     permitAll()
                 }
             }
-    }
 
-    override fun configure(auth: AuthenticationManagerBuilder?) {
-        if (securityEnabled) {
-            context.getBeansOfType(AuthenticationProvider::class.java).forEach { (name, provider) ->
-                auth!!.authenticationProvider(provider)
-                logger.info { "Authentication provider '$name' added." }
-            }
-        }
+        return http.build()
     }
 
     class HttpServletRequest(request: javax.servlet.http.HttpServletRequest) : HttpServletRequestWrapper(request) {
