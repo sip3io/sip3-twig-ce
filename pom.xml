@@ -17,7 +17,7 @@
 
     <properties>
         <io-pkts.version>3.0.1</io-pkts.version>
-        <jackson-kotlin.version>2.12.1</jackson-kotlin.version>
+        <jackson.version>2.13.5</jackson.version>
     </properties>
 
     <dependencyManagement>
@@ -104,7 +104,17 @@
         <dependency>
             <groupId>com.fasterxml.jackson.module</groupId>
             <artifactId>jackson-module-kotlin</artifactId>
-            <version>${jackson-kotlin.version}</version>
+            <version>${jackson.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-annotations</artifactId>
+            <version>${jackson.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>${jackson.version}</version>
         </dependency>
 
         <!-- https://github.com/aboutsip/pkts -->
