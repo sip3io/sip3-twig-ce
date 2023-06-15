@@ -60,7 +60,9 @@ open class SecurityConfiguration {
                 .antMatchers("/swagger-resources/**").permitAll()
                 .antMatchers("/swagger-ui/**").permitAll()
                 .antMatchers("/v3/api-docs/**").permitAll()
-                // Secure the rest of the endpoints accordingly to the settings
+                // Permit hoof configuration endpoint
+                .antMatchers("/management/configuration/hoof").permitAll()
+            // Secure the rest of the endpoints accordingly to the settings
             .anyRequest().apply {
                 if (securityEnabled) {
                     authenticated()
