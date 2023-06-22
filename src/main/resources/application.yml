@@ -30,7 +30,7 @@ server:
 security:
   enabled: false
 #  grafana:
-#    url: http://127.0.0.1/grafana/api/user
+#    url: http://127.0.0.1:3000/grafana/api/user
 
 #! Mongo
 mongo:
