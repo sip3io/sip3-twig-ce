@@ -52,5 +52,13 @@ data class SearchRequest(
         example = "50"
     )
     @NotNull
-    val limit: Int?
+     val limit: Int?,
+
+    @field:Schema(
+        required = false,
+        title = "Fields",
+        example = "50"
+    )
+    @NotNull
+    val fields: Set<String> = emptySet()
 )

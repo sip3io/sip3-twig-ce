@@ -125,6 +125,17 @@ open class CallSearchService : SearchService() {
 
                 firstLeg.getInteger("duration")?.let { duration = it }
                 firstLeg.getString("error_code")?.let { errorCode = it }
+
+                if (request.fields.isNotEmpty()) {
+                    // Add fields from SIP index
+                    val responseFields = mutableMapOf<String, Any?>()
+                    request.fields
+                        .filter { it.startsWith("sip") }
+                        .forEach { field ->
+                            responseFields[field] = firstLeg.get(field.substringAfter("."))
+                        }
+                    fields = responseFields
+                }
             }
         }
     }
