@@ -61,21 +61,20 @@ data class Component(
     @field:Schema(
         required = true,
         title = "Component URI",
-        type = "string",
-        example = "udp://127.0.0.1:34567"
+        example = "[\"udp://127.0.0.1:34567\"]"
     )
     @NotNull
-    var uri: String,
+    var uri: Set<String>,
 
     @field:Schema(
         required = true,
-        title = "Connected to component",
-        type = "string",
-        example = "sip3-salto-01"
+        title = "Connected to",
+        description = "List of SIP3 components or URI",
+        example = "[\"sip3-salto-01\"]"
     )
     @NotNull
     @JsonProperty("connected_to")
-    var connectedTo: String,
+    var connectedTo: Set<String>,
 
     @field:Schema(
         required = true,
