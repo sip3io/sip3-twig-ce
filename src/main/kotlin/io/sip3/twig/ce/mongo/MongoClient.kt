@@ -21,6 +21,7 @@ import com.mongodb.client.MongoClients
 import com.mongodb.client.MongoCursor
 import com.mongodb.client.model.WriteModel
 import io.sip3.commons.util.format
+import jakarta.annotation.PostConstruct
 import mu.KotlinLogging
 import org.bson.Document
 import org.bson.conversions.Bson
@@ -32,7 +33,6 @@ import org.springframework.context.annotation.ScopedProxyMode
 import org.springframework.stereotype.Component
 import java.time.format.DateTimeFormatter
 import java.util.concurrent.TimeUnit
-import javax.annotation.PostConstruct
 
 @Component
 @Scope(proxyMode = ScopedProxyMode.TARGET_CLASS)
