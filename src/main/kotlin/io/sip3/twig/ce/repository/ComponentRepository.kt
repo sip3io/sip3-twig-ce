@@ -17,9 +17,10 @@
 package io.sip3.twig.ce.repository
 
 import io.sip3.twig.ce.domain.Component
+import org.springframework.data.repository.CrudRepository
 import org.springframework.data.repository.PagingAndSortingRepository
 
-interface ComponentRepository : PagingAndSortingRepository<Component, String> {
+interface ComponentRepository : PagingAndSortingRepository<Component, String>, CrudRepository<Component, String> {
 
     fun getByDeploymentId(getByDeploymentId: String): Component
 

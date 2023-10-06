@@ -17,6 +17,8 @@
 package io.sip3.twig.ce.controller
 
 import com.mongodb.MongoExecutionTimeoutException
+import jakarta.servlet.http.HttpServletRequest
+import jakarta.validation.ValidationException
 import mu.KotlinLogging
 import org.springframework.dao.DuplicateKeyException
 import org.springframework.dao.EmptyResultDataAccessException
@@ -26,8 +28,6 @@ import org.springframework.http.converter.HttpMessageNotReadableException
 import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
-import javax.servlet.http.HttpServletRequest
-import javax.validation.ValidationException
 
 @ControllerAdvice
 class ExceptionController {

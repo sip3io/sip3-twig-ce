@@ -22,14 +22,14 @@ import io.swagger.v3.oas.models.info.Info
 import io.swagger.v3.oas.models.security.SecurityRequirement
 import io.swagger.v3.oas.models.security.SecurityScheme
 import io.swagger.v3.oas.models.tags.Tag
-import org.springdoc.core.customizers.OpenApiCustomiser
+import jakarta.annotation.PostConstruct
+import org.springdoc.core.customizers.OpenApiCustomizer
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.info.BuildProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.stereotype.Component
-import javax.annotation.PostConstruct
 
 @Configuration
 open class SwaggerConfiguration {
@@ -45,30 +45,23 @@ open class SwaggerConfiguration {
 
     @Bean
     open fun openApi(): OpenAPI {
-        return OpenAPI()
+        val openApi = OpenAPI()
             .info(
                 Info().title("Twig API")
                     .description(swaggerCustomization.description)
                     .version(buildProperties?.version)
             )
-//            .addTags()
-            .apply {
-                if (securityEnabled) {
-                    components(
-                        Components()
-                            .addSecuritySchemes(
-                                "Authorization",
-                                SecurityScheme().type(SecurityScheme.Type.HTTP).scheme("basic")
-                            )
-                    )
-                    addSecurityItem(SecurityRequirement().addList("Authorization"))
-                }
-            }
+
+        if(securityEnabled) {
+            swaggerCustomization.applySecurityConfiguration(openApi)
+        }
+
+        return openApi
     }
 
     @Bean
-    open fun customiser(): OpenApiCustomiser {
-        return OpenApiCustomiser { openApi ->
+    open fun customizer(): OpenApiCustomizer {
+        return OpenApiCustomizer { openApi ->
             // Reorder tags
             openApi.tags
                 .sortedBy { swaggerCustomization.tagOrder(it) ?: Int.MAX_VALUE }
@@ -87,6 +80,17 @@ open class SwaggerCustomization {
     @PostConstruct
     open fun init() {
         description = this.javaClass.classLoader.getResource("description/twig-api.md")?.readText() ?: ""
+    }
+
+    open fun applySecurityConfiguration(openApi: OpenAPI) {
+        openApi.components(
+                Components()
+                    .addSecuritySchemes(
+                        "Authorization",
+                        SecurityScheme().type(SecurityScheme.Type.HTTP).scheme("basic")
+                    )
+            )
+        openApi.addSecurityItem(SecurityRequirement().addList("Authorization"))
     }
 
     open fun tagOrder(tag: Tag): Int? {
