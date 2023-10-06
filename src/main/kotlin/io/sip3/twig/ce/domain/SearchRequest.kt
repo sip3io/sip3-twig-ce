@@ -57,7 +57,7 @@ data class SearchRequest(
     @field:Schema(
         required = false,
         title = "Fields",
-        example = "50"
+        example = "[\"sip.retransmits\"]"
     )
     @NotNull
     val fields: Set<String> = emptySet()
