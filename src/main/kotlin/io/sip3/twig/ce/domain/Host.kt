@@ -18,9 +18,9 @@ package io.sip3.twig.ce.domain
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import io.swagger.v3.oas.annotations.media.Schema
+import jakarta.validation.constraints.NotNull
 import org.springframework.data.annotation.Id
 import org.springframework.data.mongodb.core.mapping.Document
-import javax.validation.constraints.NotNull
 
 @Schema(name = "Host", description = "Host")
 @Document(collection = "hosts")

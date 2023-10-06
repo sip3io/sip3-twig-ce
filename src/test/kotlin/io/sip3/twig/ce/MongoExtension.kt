@@ -33,22 +33,22 @@ class MongoExtension : BeforeAllCallback {
         }
 
         val MONGO_URI
-            get() = "mongodb://${MONGODB_CONTAINER.containerIpAddress}:${MONGODB_CONTAINER.firstMappedPort}"
+            get() = "mongodb://${MONGODB_CONTAINER.host}:${MONGODB_CONTAINER.firstMappedPort}"
     }
 
     override fun beforeAll(context: ExtensionContext?) {
         // Do nothing
     }
 
-    class MongoDbInitializer : ApplicationContextInitializer<ConfigurableApplicationContext?> {
-        override fun initialize(configurableApplicationContext: ConfigurableApplicationContext?) {
+    class MongoDbInitializer : ApplicationContextInitializer<ConfigurableApplicationContext> {
+        override fun initialize(configurableApplicationContext: ConfigurableApplicationContext) {
             TestPropertyValues.of(
                 "time-suffix=yyyyMMdd",
                 "mongo.uri=${MONGO_URI}",
                 "mongo.db=sip3-test",
                 "mongo.max-execution-time=1000",
                 "mongo.batch-size=128"
-            ).applyTo(configurableApplicationContext?.environment)
+            ).applyTo(configurableApplicationContext.environment)
         }
     }
 }

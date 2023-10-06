@@ -22,9 +22,9 @@ import io.sip3.twig.ce.domain.SearchRequest
 import io.sip3.twig.ce.domain.SearchResponse
 import io.sip3.twig.ce.mongo.MongoClient
 import io.sip3.twig.ce.service.attribute.AttributeService
+import jakarta.validation.ValidationException
 import org.bson.conversions.Bson
 import org.springframework.beans.factory.annotation.Autowired
-import javax.validation.ValidationException
 
 abstract class SearchService {
 
