@@ -16,7 +16,6 @@
 
 package io.sip3.twig.ce.configuration
 
-import jakarta.servlet.http.HttpServletRequestWrapper
 import mu.KotlinLogging
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
@@ -29,7 +28,6 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.web.SecurityFilterChain
 import org.springframework.security.web.authentication.Http403ForbiddenEntryPoint
-import org.springframework.security.web.authentication.www.BasicAuthenticationFilter
 import org.springframework.web.context.WebApplicationContext
 
 @Configuration
@@ -78,14 +76,6 @@ open class SecurityConfiguration {
                                 }
                                 // Basic authorization handling
                                 .httpBasic { }
-
-                                // Springfox sends `Authorization` header in lowercase
-                                // So, we have to hack a `HttpServletRequest` object :(
-                                .addFilterBefore({ req, res, chain ->
-                                    val r = (req as? jakarta.servlet.http.HttpServletRequest)
-                                        ?.let { HttpServletRequest(req) } ?: req
-                                    chain.doFilter(r, res)
-                                }, BasicAuthenticationFilter::class.java)
                                 // Exception handling
                                 .exceptionHandling { exceptionHandlingCustomizer ->
                                     exceptionHandlingCustomizer.authenticationEntryPoint(Http403ForbiddenEntryPoint())
@@ -97,12 +87,5 @@ open class SecurityConfiguration {
                         }
                     }
             }.build()
-    }
-
-    class HttpServletRequest(request: jakarta.servlet.http.HttpServletRequest) : HttpServletRequestWrapper(request) {
-
-        override fun getHeader(name: String): String? {
-            return super.getHeader(name) ?: super.getHeader(name.lowercase())
-        }
     }
 }
