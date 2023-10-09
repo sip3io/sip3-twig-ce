@@ -16,6 +16,7 @@
 
 package io.sip3.twig.ce.configuration
 
+import jakarta.servlet.http.HttpServletRequestWrapper
 import mu.KotlinLogging
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
@@ -30,7 +31,6 @@ import org.springframework.security.web.SecurityFilterChain
 import org.springframework.security.web.authentication.Http403ForbiddenEntryPoint
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter
 import org.springframework.web.context.WebApplicationContext
-import javax.servlet.http.HttpServletRequestWrapper
 
 @Configuration
 @ConditionalOnProperty(prefix = "security.oauth2", name = ["client_id"], matchIfMissing = true)
@@ -54,51 +54,52 @@ open class SecurityConfiguration {
             }
         }
 
-        http.csrf().disable()
-            .authorizeRequests()
-                // Permit all Swagger endpoints
-                .antMatchers("/swagger-resources/**").permitAll()
-                .antMatchers("/swagger-ui/**").permitAll()
-                .antMatchers("/v3/api-docs/**").permitAll()
-                // Permit hoof configuration endpoint
-                .antMatchers("/management/configuration/hoof").permitAll()
-            // Secure the rest of the endpoints accordingly to the settings
-            .anyRequest().apply {
-                if (securityEnabled) {
-                    authenticated()
-                        // Login form handling
-                        .and()
-                        .formLogin()
-                        .successHandler { _, _, authentication ->
-                            logger.info { "Login attempt. User: ${authentication.principal}, State: SUCCESSFUL" }
-                        }
-                        .failureHandler { _, response, exception ->
-                            logger.info { "Login attempt. User: ${exception.message}, State: FAILED" }
-                            response.sendError(HttpStatus.FORBIDDEN.value())
-                        }
-                        // Basic authorization handling
-                        .and()
-                        .httpBasic()
-                        // Springfox sends `Authorization` header in lowercase
-                        // So, we have to hack a `HttpServletRequest` object :(
-                        .and()
-                        .addFilterBefore({ req, res, chain ->
-                            val r = (req as? javax.servlet.http.HttpServletRequest)
-                                ?.let { HttpServletRequest(req) } ?: req
-                            chain.doFilter(r, res)
-                        }, BasicAuthenticationFilter::class.java)
-                        // Exception handling
-                        .exceptionHandling()
-                        .authenticationEntryPoint(Http403ForbiddenEntryPoint())
-                } else {
-                    permitAll()
-                }
-            }
+        return http.csrf { it.disable() }
+            .authorizeHttpRequests { authz ->
+                authz
+                    // Permit all Swagger endpoints
+                    .requestMatchers("/swagger-resources/**").permitAll()
+                    .requestMatchers("/swagger-ui/**").permitAll()
+                    .requestMatchers("/v3/api-docs/**").permitAll()
+                    // Permit hoof configuration endpoint
+                    .requestMatchers("/management/configuration/hoof").permitAll()
+                    // Secure the rest of the endpoints accordingly to the settings
+                    .anyRequest().apply {
+                        if (securityEnabled) {
+                            // Login form handling
+                            http.formLogin { formLogin ->
+                                    formLogin.successHandler { _, _, authentication ->
+                                        logger.info { "Login attempt. User: ${authentication.principal}, State: SUCCESSFUL" }
+                                    }
+                                    formLogin.failureHandler { _, response, exception ->
+                                        logger.info { "Login attempt. User: ${exception.message}, State: FAILED" }
+                                        response.sendError(HttpStatus.FORBIDDEN.value())
+                                    }
+                                }
+                                // Basic authorization handling
+                                .httpBasic { }
 
-        return http.build()
+                                // Springfox sends `Authorization` header in lowercase
+                                // So, we have to hack a `HttpServletRequest` object :(
+                                .addFilterBefore({ req, res, chain ->
+                                    val r = (req as? jakarta.servlet.http.HttpServletRequest)
+                                        ?.let { HttpServletRequest(req) } ?: req
+                                    chain.doFilter(r, res)
+                                }, BasicAuthenticationFilter::class.java)
+                                // Exception handling
+                                .exceptionHandling { exceptionHandlingCustomizer ->
+                                    exceptionHandlingCustomizer.authenticationEntryPoint(Http403ForbiddenEntryPoint())
+                                }
+
+                            authenticated()
+                        } else {
+                            permitAll()
+                        }
+                    }
+            }.build()
     }
 
-    class HttpServletRequest(request: javax.servlet.http.HttpServletRequest) : HttpServletRequestWrapper(request) {
+    class HttpServletRequest(request: jakarta.servlet.http.HttpServletRequest) : HttpServletRequestWrapper(request) {
 
         override fun getHeader(name: String): String? {
             return super.getHeader(name) ?: super.getHeader(name.lowercase())

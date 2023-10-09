@@ -17,9 +17,10 @@
 package io.sip3.twig.ce.repository
 
 import io.sip3.twig.ce.domain.Host
+import org.springframework.data.repository.CrudRepository
 import org.springframework.data.repository.PagingAndSortingRepository
 
-interface HostRepository : PagingAndSortingRepository<Host, String> {
+interface HostRepository : PagingAndSortingRepository<Host, String>, CrudRepository<Host, String> {
 
     fun getByNameIgnoreCase(name: String): Host
 

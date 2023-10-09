@@ -17,7 +17,7 @@
 
     <properties>
         <io-pkts.version>3.0.1</io-pkts.version>
-        <jackson.version>2.13.5</jackson.version>
+        <jackson.version>2.15.2</jackson.version>
     </properties>
 
     <dependencyManagement>
@@ -132,7 +132,7 @@
         <!-- Swagger -->
         <dependency>
             <groupId>org.springdoc</groupId>
-            <artifactId>springdoc-openapi-ui</artifactId>
+            <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
         </dependency>
 
         <!-- Test -->
