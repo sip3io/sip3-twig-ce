@@ -83,4 +83,11 @@ open class SearchResponse {
         example = "404"
     )
     var errorCode: String? = null
+
+    @Schema(
+        required = false,
+        title = "Fields",
+        example = "{\"field_name\": \"field_value\"}"
+    )
+    var fields: Map<String, Any?>? = null
 }
