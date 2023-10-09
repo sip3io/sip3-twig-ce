@@ -28,7 +28,7 @@ class MongoExtension : BeforeAllCallback {
     companion object {
 
         @JvmField
-        val MONGODB_CONTAINER = MongoDBContainer("mongo:4.4").apply {
+        val MONGODB_CONTAINER = MongoDBContainer("mongo:6.0").apply {
             start()
         }
 
