@@ -19,6 +19,8 @@ package io.sip3.twig.ce.service.call
 import com.mongodb.client.model.Filters.*
 import io.sip3.twig.ce.domain.SessionRequest
 import io.sip3.twig.ce.service.SessionService
+import io.sip3.twig.ce.util.map
+import io.sip3.twig.ce.util.merge
 import org.bson.Document
 import org.bson.conversions.Bson
 import org.springframework.beans.factory.annotation.Value
@@ -45,6 +47,12 @@ open class CallSessionService : SessionService() {
             }
         }
 
-        return mongoClient.find("sip_call_raw", Pair(req.createdAt!!, req.terminatedAt!!), and(filters))
+        return mongoClient.find("sip_call_raw", Pair(req.createdAt!!, req.terminatedAt!!), and(filters)).merge(
+            mongoClient.find("unknown_raw", Pair(req.createdAt!!, req.terminatedAt!!), and(filters)).map { document ->
+                document.apply {
+                    put("parsed", false)
+                }
+            }
+        )
     }
 }
