@@ -133,16 +133,19 @@ abstract class SessionService {
 
                     // raw_data
                     val rawData = document.getString("raw_data")
-                    try {
-                        StringMsgParser().parseSIPMessage(rawData.toByteArray(Charsets.ISO_8859_1), true, false, null)?.let { message ->
-                            put("transaction_id", message.transactionId())
-                            putAll(extendedParamsFrom(message))
+                    val parsed = document.getBoolean("parsed") != false
+                    if (parsed) {
+                        try {
+                            StringMsgParser().parseSIPMessage(rawData.toByteArray(Charsets.ISO_8859_1), true, false, null)?.let { message ->
+                                put("transaction_id", message.transactionId())
+                                putAll(extendedParamsFrom(message))
+                            }
+                        } catch (e: Exception) {
+                            logger.error("StringMsgParser 'parseSIPMessage()' failed.", e)
                         }
-                    } catch (e: Exception) {
-                        logger.error("StringMsgParser 'parseSIPMessage()' failed.", e)
                     }
 
-                    put("parsed", document.getBoolean("parsed") == true)
+                    put("parsed", parsed)
                     putIfAbsent("raw_data", rawData)
                 }
             }

@@ -56,7 +56,7 @@ class CallSessionServiceTest {
         // Assert
         assertNotNull(result)
         assertFalse(result.hasNext())
-        verify(client, only()).find(any(), any(), any(), any(), any())
+        verify(client, times(2)).find(any(), any(), any(), any(), any())
 
         // Assert required parameters
         assertThrows<IllegalArgumentException> {
