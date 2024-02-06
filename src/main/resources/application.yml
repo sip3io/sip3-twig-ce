@@ -23,6 +23,7 @@ spring:
 #! Server
 server:
   port: 8080
+  forward_headers_strategy: framework
   servlet:
     context_path: /api
 
