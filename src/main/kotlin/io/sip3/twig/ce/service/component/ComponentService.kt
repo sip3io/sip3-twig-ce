@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2023 SIP3.IO, Corp.
+ * Copyright 2018-2024 SIP3.IO, Corp.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,6 @@ package io.sip3.twig.ce.service.component
 import io.sip3.twig.ce.domain.Component
 import io.sip3.twig.ce.repository.ComponentRepository
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Service
 
 @Service
