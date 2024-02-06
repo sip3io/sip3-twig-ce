@@ -75,7 +75,7 @@ abstract class SessionService {
             .sortedWith(if (ignoreNanos) CREATED_AT else CREATED_AT_WITH_NANOS)
             .groupBy { document -> "${document.getString("src_addr")}:${document.getString("dst_addr")}" }
             .forEach { (_, documents) ->
-                val document = documents.first()
+                val document = documents.first { it.getBoolean("parsed") != false }
                 legs.add(Document().apply {
                     // created_at
                     put("created_at", document.getLong("created_at"))
@@ -133,15 +133,19 @@ abstract class SessionService {
 
                     // raw_data
                     val rawData = document.getString("raw_data")
-                    try {
-                        StringMsgParser().parseSIPMessage(rawData.toByteArray(Charsets.ISO_8859_1), true, false, null)?.let { message ->
-                            put("transaction_id", message.transactionId())
-                            putAll(extendedParamsFrom(message))
+                    val parsed = document.getBoolean("parsed") != false
+                    if (parsed) {
+                        try {
+                            StringMsgParser().parseSIPMessage(rawData.toByteArray(Charsets.ISO_8859_1), true, false, null)?.let { message ->
+                                put("transaction_id", message.transactionId())
+                                putAll(extendedParamsFrom(message))
+                            }
+                        } catch (e: Exception) {
+                            logger.error("StringMsgParser 'parseSIPMessage()' failed.", e)
                         }
-                    } catch (e: Exception) {
-                        logger.error("StringMsgParser 'parseSIPMessage()' failed.", e)
                     }
 
+                    put("parsed", parsed)
                     putIfAbsent("raw_data", rawData)
                 }
             }
