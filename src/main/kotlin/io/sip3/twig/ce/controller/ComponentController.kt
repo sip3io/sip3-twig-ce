@@ -133,11 +133,12 @@ class ComponentController {
     )
     @PutMapping(
         path = ["/{deploymentId}/shutdown"],
-        produces = [MediaType.APPLICATION_JSON_VALUE]
+        produces = [MediaType.APPLICATION_JSON_VALUE],
+        consumes = [MediaType.APPLICATION_JSON_VALUE]
     )
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
-    fun sendShutdown(@PathVariable("deploymentId") deploymentId: String) {
-        componentService.shutdown(deploymentId)
+    fun sendShutdown(@PathVariable("deploymentId") deploymentId: String, @RequestBody payload: Map<String, Any>?) {
+        componentService.shutdown(deploymentId, payload ?: emptyMap())
     }
 
     @Operation(summary = "Send Shutdown command to component by Name")
@@ -149,11 +150,12 @@ class ComponentController {
     )
     @PutMapping(
         path = ["/name/{name}/shutdown"],
-        produces = [MediaType.APPLICATION_JSON_VALUE]
+        produces = [MediaType.APPLICATION_JSON_VALUE],
+        consumes = [MediaType.APPLICATION_JSON_VALUE]
     )
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
-    fun sendShutdownByName(@PathVariable("name") name: String) {
-        componentService.shutdownByName(name)
+    fun sendShutdownByName(@PathVariable("name") name: String, @RequestBody payload: Map<String, Any>?) {
+        componentService.shutdownByName(name, payload ?: emptyMap())
     }
 
     @Operation(summary = "Delete component by Deployment ID")

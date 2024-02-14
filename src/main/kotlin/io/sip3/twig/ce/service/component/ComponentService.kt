@@ -68,11 +68,11 @@ open class ComponentService {
         throw UnsupportedOperationException("Media Recording Reset is not supported in CE version")
     }
 
-    open fun shutdown(deploymentId: String) {
+    open fun shutdown(deploymentId: String, params: Map<String, Any>) {
         throw UnsupportedOperationException("Shutdown is not supported in CE version")
     }
 
-    open fun shutdownByName(name: String) {
+    open fun shutdownByName(name: String, params: Map<String, Any>) {
         throw UnsupportedOperationException("Shutdown is not supported in CE version")
     }
 }
