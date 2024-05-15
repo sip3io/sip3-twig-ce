@@ -46,6 +46,7 @@ class UserController {
         return mutableMapOf<String, Any>().apply {
             put("is_authenticated", authentication.isAuthenticated)
             put("name", authentication.name)
+            put("authorities", authentication.authorities?.map { it.authority } ?: listOf("ROLE_SIP3_ADMIN") )
         }
     }
 }
