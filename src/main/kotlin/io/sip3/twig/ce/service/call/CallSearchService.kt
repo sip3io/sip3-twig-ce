@@ -132,7 +132,10 @@ open class CallSearchService : SearchService() {
                     request.fields
                         .filter { it.startsWith("sip") }
                         .forEach { field ->
-                            responseFields[field] = firstLeg.get(field.substringAfter("."))
+                            correlatedCall.legs
+                                .mapNotNull { it[field.substringAfter(".")] }
+                                .firstOrNull()
+                                ?.let { responseFields[field] = it }
                         }
                     fields = responseFields
                 }
