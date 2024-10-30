@@ -130,12 +130,13 @@ open class CallSearchService : SearchService() {
                     // Add fields from SIP index
                     val responseFields = mutableMapOf<String, Any?>()
                     request.fields
-                        .filter { it.startsWith("sip") }
+                        .filter { field -> field.src.startsWith("sip") }
                         .forEach { field ->
                             correlatedCall.legs
-                                .mapNotNull { it[field.substringAfter(".")] }
-                                .firstOrNull()
-                                ?.let { responseFields[field] = it }
+                                .mapNotNull { it[field.src.substringAfter(".")] }
+                                .let { values ->
+                                    responseFields[field.src] = if (field.all) values else values.firstOrNull()
+                                }
                         }
                     fields = responseFields
                 }
