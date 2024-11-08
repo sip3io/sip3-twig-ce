@@ -60,5 +60,24 @@ data class SearchRequest(
         example = "[\"sip.retransmits\"]"
     )
     @NotNull
-    val fields: Set<String> = emptySet()
-)
+    val fields: Set<Field> = emptySet()
+) {
+
+    @Schema(title = "Search Request Field")
+    data class Field(
+
+        @field:Schema(
+            required = true,
+            title = "Source",
+            example = "sip.prefix"
+        )
+        val src: String,
+
+        @field:Schema(
+            required = false,
+            title = "Return all values otherwise the first",
+            example = "false"
+        )
+        val all: Boolean = false
+    )
+}
