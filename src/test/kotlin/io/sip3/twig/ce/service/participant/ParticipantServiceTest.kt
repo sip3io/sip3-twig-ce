@@ -257,8 +257,9 @@ class ParticipantServiceTest {
     @BeforeEach
     fun init() {
         given(hostService.findByNameIgnoreCase(HOST_1.name)).willReturn(HOST_1)
-        given(hostService.findByNameIgnoreCase(HOST_2.name)).willReturn(HOST_2)
+        given(hostService.firstByNameIgnoreCase(HOST_2.name)).willReturn(HOST_2)
         given(hostService.findByAddr("10.242.2.7")).willReturn(HOST_3)
+        given(hostService.firstByAddr("10.242.2.7")).willReturn(HOST_3)
     }
 
     @Test

@@ -27,6 +27,9 @@ import io.sip3.twig.ce.service.media.util.LegSessionUtil.generatePartyId
 import io.sip3.twig.ce.service.media.util.MediaStatisticUtil.createMediaStatistic
 import io.sip3.twig.ce.service.media.util.MediaStatisticUtil.updateMediaStatistic
 import io.sip3.twig.ce.service.media.util.ReportUtil.splitReport
+import io.sip3.twig.ce.util.firstOrNull
+import io.sip3.twig.ce.util.merge
+import mu.KotlinLogging
 import org.bson.Document
 import org.bson.conversions.Bson
 import org.springframework.beans.factory.annotation.Autowired
@@ -35,6 +38,8 @@ import org.springframework.stereotype.Component
 
 @Component
 open class MediaSessionService {
+
+    private val logger = KotlinLogging.logger {}
 
     @Value("\${session.media.block-count:\${session.media.block_count:28}}")
     private var blockCount: Int = 28
@@ -80,7 +85,12 @@ open class MediaSessionService {
             .asSequence()
             .groupBy { generateLegId(it) }
             .forEach { (legId, documents) ->
-                sessions[legId] = createLegSession(documents.first(), blockCount)
+                try {
+                    sessions[legId] = createLegSession(documents.first(), blockCount)
+                } catch (e: Exception) {
+                    logger.error(e) { "MediaSessionService `createLegSession()` failed. LegId: $legId" }
+                    logger.trace { "Documents: $documents" }
+                }
             }
 
         // Add blocks to media sessions
@@ -109,11 +119,27 @@ open class MediaSessionService {
                 // Update Media Session leg session party
                 legReports
                     .groupBy { generatePartyId(it) }
-                    .forEach { (_, reports) -> updateMediaSession(source, legSession, reports.sortedBy { it.getLong("created_at") }) }
+                    .forEach { (_, reports) ->
+                        try {
+                            updateMediaSession(source, legSession, reports.sortedBy { it.getLong("created_at") })
+                        } catch (e: Exception) {
+                            legSession.invalid = true
+                            logger.error(e) { "MediaSessionService `updateMediaSession()` failed. LegId: $legId" }
+                            logger.trace { "Reports: $reports" }
+                        }
+                    }
+
+                sessions.values.forEach { session ->
+                    session.`in`.iterator().merge(session.out.iterator(), null)
+                        .firstOrNull { mediaSession ->
+                            mediaSession.blocks.size > blockCount || mediaSession.blocks.any { it.jitter.max >= 10000 }
+                        }
+                        ?.let { session.invalid = true }
+                }
             }
         }
 
-        if(withBlocks) sessions.values.forEach { it.updateTimestamps() }
+        if (withBlocks) sessions.values.forEach { it.updateTimestamps() }
 
         return sessions
     }

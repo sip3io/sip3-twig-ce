@@ -39,6 +39,8 @@ class LegSession {
     val out = mutableListOf<MediaSession>()
     val `in` = mutableListOf<MediaSession>()
 
+    var invalid: Boolean = false
+
     fun updateTimestamps() {
         createdAt = min(
             out.minOfOrNull { it.createdAt } ?: Long.MAX_VALUE,

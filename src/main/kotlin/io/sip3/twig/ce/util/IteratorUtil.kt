@@ -104,9 +104,18 @@ fun <T> Iterator<T>.nextOrNull(): T? {
     return if (hasNext()) next() else null
 }
 
+fun <T> Iterator<T>.firstOrNull(predicate: (T) -> Boolean): T? {
+    while (hasNext()) {
+        next().takeIf(predicate)?.let { return it }
+    }
+
+    return null
+}
+
 fun <T> Iterator<T>.equalsContent(o: Iterator<T>): Boolean {
     while (hasNext() && o.hasNext() && next() == o.next()) {
         // Do nothing...
     }
+
     return !hasNext() && !o.hasNext()
 }

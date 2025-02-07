@@ -40,8 +40,16 @@ open class HostService {
         return hostRepository.findByNameIgnoreCase(name)
     }
 
+    open fun firstByNameIgnoreCase(name: String): Host? {
+        return hostRepository.findFirstByNameIgnoreCase(name)
+    }
+
     open fun findByAddr(address: String): Host? {
         return hostRepository.findByAddrContains(address)
+    }
+
+    open fun firstByAddr(address: String): Host? {
+        return hostRepository.findFirstByAddrContains(address)
     }
 
     open fun create(host: Host): Host {
