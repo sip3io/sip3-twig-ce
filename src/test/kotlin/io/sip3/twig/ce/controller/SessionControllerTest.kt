@@ -29,7 +29,9 @@ import io.sip3.twig.ce.service.participant.ParticipantService
 import io.sip3.twig.ce.service.register.RegisterSessionService
 import org.bson.Document
 import org.hamcrest.Matchers
+import org.hamcrest.Matchers.hasKey
 import org.hamcrest.Matchers.`is`
+import org.hamcrest.Matchers.not
 import org.hamcrest.core.IsNull
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.BeforeEach
@@ -333,6 +335,7 @@ class SessionControllerTest {
             .andExpect(jsonPath("events[2].timestamp", `is`(CREATED_AT + 1)))
             .andExpect(jsonPath("events[2].type", `is`("SIP")))
             .andExpect(jsonPath("events[2].group", `is`("1:2:3")))
+            .andExpect(jsonPath("events[2]", not(hasKey("errors"))))
 
         assertNull(REGISTER_1.getString("transaction_id"))
         assertNull(REGISTER_2.getString("transaction_id"))

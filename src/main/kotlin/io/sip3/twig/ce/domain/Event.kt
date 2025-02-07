@@ -16,6 +16,7 @@
 
 package io.sip3.twig.ce.domain
 
+import com.fasterxml.jackson.annotation.JsonInclude
 import io.swagger.v3.oas.annotations.media.Schema
 
 @Schema(title = "Event")
@@ -61,5 +62,12 @@ data class Event(
         required = true,
         title = "Event details"
     )
-    val details: Any
+    val details: Any,
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @Schema(
+        required = false,
+        title = "Event errors",
+    )
+    var  errors: List<String>? = null
 )

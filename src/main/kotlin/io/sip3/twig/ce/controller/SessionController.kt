@@ -33,6 +33,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.*
 import java.util.*
+import kotlin.math.log
 
 @Tag(name = "Session API", description = "Session Controller")
 @RestController
@@ -125,34 +126,43 @@ class SessionController {
         // Add RTPR events only for calls
         if (req.method?.firstOrNull() == "INVITE") {
             // Add RTPR events
-            mediaSessionService.details(req).forEach { rtpr ->
-                rtpr.values.filterNotNull().minByOrNull { it.createdAt }?.let { legSession ->
+            try {
+                mediaSessionService.details(req).forEach { rtpr ->
+                    rtpr.values.filterNotNull().minByOrNull { it.createdAt }?.let { legSession ->
+                        events.add(
+                            Event(
+                                legSession.createdAt,
+                                legSession.srcHost ?: legSession.srcAddr,
+                                legSession.dstHost ?: legSession.dstAddr,
+                                "RTPR",
+                                null,
+                                rtpr
+                            )
+                        )
+                    }
+                }
+            } catch (e: Exception) {
+                logger.error(e) { "MediaSession `details()` failed. Request: $req" }
+            }
+
+            try {
+                mediaSessionService.dtmf(req).forEach { dtmf ->
                     events.add(
                         Event(
-                            legSession.createdAt,
-                            legSession.srcHost ?: legSession.srcAddr,
-                            legSession.dstHost ?: legSession.dstAddr,
-                            "RTPR",
+                            dtmf.getLong("created_at"),
+                            dtmf.getString("src_host") ?: dtmf.getString("src_addr"),
+                            dtmf.getString("dst_host") ?: dtmf.getString("dst_addr"),
+                            "DTMF",
                             null,
-                            rtpr
+                            dtmf
                         )
                     )
                 }
-            }
-
-            mediaSessionService.dtmf(req).forEach { dtmf ->
-                events.add(
-                    Event(
-                        dtmf.getLong("created_at"),
-                        dtmf.getString("src_host") ?: dtmf.getString("src_addr"),
-                        dtmf.getString("dst_host") ?: dtmf.getString("dst_addr"),
-                        "DTMF",
-                        null,
-                        dtmf
-                    )
-                )
+            } catch (e: Exception) {
+                logger.error(e) { "MediaSession `dtmf()` failed. Request: $req" }
             }
         }
+
         events.sortBy { it.timestamp }
 
         // Collect participants

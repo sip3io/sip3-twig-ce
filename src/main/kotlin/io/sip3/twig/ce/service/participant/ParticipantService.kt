@@ -60,7 +60,7 @@ open class ParticipantService {
                 val sipMessage = parseSIPMessage(event)
                 if (sipMessage != null && sipMessage.hasSdp()) {
                     val mediaAddresses = collectMediaAddresses(sipMessage)
-                        .map { hostService.findByAddr(it)?.name ?: it }
+                        .map { hostService.firstByAddr(it)?.name ?: it }
 
                     if (sipMessage.method() == "INVITE" && isFirst) {
                         isFirst = false
@@ -77,8 +77,14 @@ open class ParticipantService {
 
         return names.intersect(namesFromEvents)
             .map { name ->
-                val host = hostService.findByNameIgnoreCase(name) ?: Document()
-                Participant(name, "host", host)
+                val host = try {
+                    hostService.findByNameIgnoreCase(name) ?: Document()
+                } catch (e: Exception) {
+                    logger.error(e) { "HostService `findByNameIgnoreCase()` failed. Name: $name" }
+                    Document()
+                }
+
+                return@map Participant(name, "host", host)
             }
     }
 

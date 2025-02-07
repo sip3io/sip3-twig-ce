@@ -75,7 +75,7 @@ abstract class SessionService {
             .sortedWith(if (ignoreNanos) CREATED_AT else CREATED_AT_WITH_NANOS)
             .groupBy { document -> "${document.getString("src_addr")}:${document.getString("dst_addr")}" }
             .forEach { (_, documents) ->
-                val document = documents.first { it.getBoolean("parsed") != false }
+                val document = documents.firstOrNull { it.getBoolean("parsed") != false } ?: return@forEach
                 legs.add(Document().apply {
                     // created_at
                     put("created_at", document.getLong("created_at"))

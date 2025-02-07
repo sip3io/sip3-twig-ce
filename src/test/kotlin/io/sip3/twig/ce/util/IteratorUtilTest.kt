@@ -17,6 +17,8 @@
 package io.sip3.twig.ce.util
 
 import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Test
 import java.util.*
 
@@ -74,5 +76,14 @@ class IteratorUtilTest {
 
         val expected = listOf("1", "2", "3")
         assertTrue(expected.iterator().equalsContent(i1.iterator().map(Any::toString)))
+    }
+
+    @Test
+    fun `firstOrNull validation for Iterator`() {
+        val i1 = listOf(1, 2, 3)
+
+        assertEquals(3, i1.iterator().firstOrNull { it > 2 })
+        assertNull(i1.iterator().firstOrNull { it > 3 })
+        assertNull(EMPTY_ITERATOR.firstOrNull { true })
     }
 }
