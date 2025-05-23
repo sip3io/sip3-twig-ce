@@ -222,6 +222,25 @@
                             </execution>
                         </executions>
                     </plugin>
+                    <plugin>
+                        <groupId>pl.project13.maven</groupId>
+                        <artifactId>git-commit-id-plugin</artifactId>
+                        <version>3.0.0</version>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>revision</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <generateGitPropertiesFile>true</generateGitPropertiesFile>
+                            <includeOnlyProperties>
+                                <include>git.commit.id</include>
+                                <include>git.commit.id.abbrev</include>
+                            </includeOnlyProperties>
+                        </configuration>
+                    </plugin>
                 </plugins>
             </build>
         </profile>
