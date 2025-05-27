@@ -47,6 +47,7 @@ data class Component(
         example = "b8991970-21f4-4c1a-9e57-25de01d835ba"
     )
     @NotNull
+    @JsonProperty("deployment_id")
     var deploymentId: String,
 
     @field:Schema(

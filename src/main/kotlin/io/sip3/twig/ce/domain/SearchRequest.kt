@@ -16,6 +16,7 @@
 
 package io.sip3.twig.ce.domain
 
+import com.fasterxml.jackson.annotation.JsonProperty
 import io.swagger.v3.oas.annotations.media.Schema
 import jakarta.validation.constraints.NotNull
 
@@ -28,6 +29,7 @@ data class SearchRequest(
         example = "1581494059704"
     )
     @NotNull
+    @JsonProperty("created_at")
     val createdAt: Long,
 
     @field:Schema(
@@ -36,6 +38,7 @@ data class SearchRequest(
         example = "1581494069704"
     )
     @NotNull
+    @JsonProperty("terminated_at")
     val terminatedAt: Long,
 
     @field:Schema(
