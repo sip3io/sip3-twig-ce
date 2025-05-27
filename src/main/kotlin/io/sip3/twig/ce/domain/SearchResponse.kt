@@ -16,6 +16,7 @@
 
 package io.sip3.twig.ce.domain
 
+import com.fasterxml.jackson.annotation.JsonProperty
 import io.swagger.v3.oas.annotations.media.Schema
 
 @Schema(title = "Search Response")
@@ -26,6 +27,7 @@ open class SearchResponse {
         title = "Created at",
         example = "1581494059704"
     )
+    @JsonProperty("created_at")
     var createdAt: Long = 0
 
     @Schema(
@@ -33,6 +35,7 @@ open class SearchResponse {
         title = "Terminated at",
         example = "1581494069704"
     )
+    @JsonProperty("terminated_at")
     var terminatedAt: Long? = null
 
     @Schema(
@@ -68,6 +71,7 @@ open class SearchResponse {
         title = "Call IDs",
         example = "[\"73d68dd8548211eab1d1047d7bbbc100\", \"73d68dd854821147d7bbbc100eab1d10\"]"
     )
+    @JsonProperty("call_id")
     lateinit var callId: Set<String>
 
     @Schema(
@@ -82,6 +86,7 @@ open class SearchResponse {
         title = "Error code",
         example = "404"
     )
+    @JsonProperty("error_code")
     var errorCode: String? = null
 
     @Schema(

@@ -69,5 +69,5 @@ data class Event(
         required = false,
         title = "Event errors",
     )
-    var  errors: List<String>? = null
+    var errors: List<String>? = null
 )
