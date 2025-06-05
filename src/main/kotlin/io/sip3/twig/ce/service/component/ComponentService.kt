@@ -27,6 +27,10 @@ open class ComponentService {
     @Autowired
     protected lateinit var componentRepository: ComponentRepository
 
+    open fun register(component: Component): Component {
+        return componentRepository.save(component)
+    }
+
     open fun list(): List<Component> {
         return componentRepository.findAll().toList()
     }

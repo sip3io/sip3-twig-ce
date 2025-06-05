@@ -20,6 +20,11 @@ spring:
       uri: ${mongo.uri}
       database: ${mongo.db}
 
+#! Application
+name: sip3-twig-ce
+management:
+  register_delay: 60000
+
 #! Server
 server:
   port: 8080
