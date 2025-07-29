@@ -90,7 +90,7 @@
           "created_at": 1599699368433,
           "reported_at": 1599699373433,
           "duration": 5120,
-          "fraction_lost": 0,
+          "fraction_lost": 0.0,
           "codec": "PCMU",
           "jitter": {
             "last": 0.20461209118366241,
@@ -114,7 +114,7 @@
           "reported_at": 1599699378553,
           "codec": "PCMU",
           "duration": 5119,
-          "fraction_lost": 0,
+          "fraction_lost": 0.0,
           "jitter": {
             "last": 0.16368630528450012,
             "avg": 0.25806379318237305,
@@ -137,7 +137,7 @@
           "reported_at": 1599699383686,
           "codec": "PCMU",
           "duration": 9540,
-          "fraction_lost": 0,
+          "fraction_lost": 0.0,
           "jitter": {
             "last": 0.12251465022563934,
             "avg": 0.28577154874801636,
@@ -172,7 +172,7 @@
           "created_at": 1599699368452,
           "reported_at": 1599699373452,
           "duration": 5116,
-          "fraction_lost": 0,
+          "fraction_lost": 0.0,
           "codec": "PCMU",
           "jitter": {
             "last": 0.8373932838439941,
@@ -195,7 +195,7 @@
         {
           "created_at": 1599699373568,
           "reported_at": 1599699413568,
-          "fraction_lost": 0,
+          "fraction_lost": 0.0,
           "codec": "PCMU",
           "duration": 5120,
           "jitter": {
@@ -227,7 +227,7 @@
       "dst_port": 40042,
       "call_id": "NjBlMTZhOWQ1Y2JjMzk1NTY3MjFlZTc0MTU4OTA1NDA.",
       "duration": 9421,
-      "fraction_lost": 0,
+      "fraction_lost": 0.0,
       "codec": "PCMU",
       "jitter": {
         "last": 1.3305953741073608,
