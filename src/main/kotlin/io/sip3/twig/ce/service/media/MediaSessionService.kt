@@ -86,7 +86,7 @@ open class MediaSessionService {
             .groupBy { generateLegId(it) }
             .forEach { (legId, documents) ->
                 try {
-                    sessions[legId] = createLegSession(documents.first(), blockCount)
+                    sessions[legId] = createLegSession(documents.minBy { it.getLong("created_at") }, blockCount)
                 } catch (e: Exception) {
                     logger.error(e) { "MediaSessionService `createLegSession()` failed. LegId: $legId" }
                     logger.trace { "Documents: $documents" }
@@ -94,52 +94,54 @@ open class MediaSessionService {
             }
 
         // Add blocks to media sessions
-        sessions.forEach { (legId, legSession) ->
-            // Find Raw reports
-            var legReports = reports.filter { generateLegId(it) == legId }
+        sessions.entries
+            .sortedBy { (_, legSession) -> legSession.createdAt }
+            .forEach { (legId, legSession) ->
+                // Find Raw reports
+                var legReports = reports.filter { generateLegId(it) == legId }
 
-            if (legReports.isEmpty()) {
-                find("rtpr_${source}_raw", legSession.createdAt, legSession.terminatedAt, listOf(legSession.callId))
-                    .asSequence()
-                    .forEach { document ->
-                        document.getList("reports", Document::class.java)?.forEach { report ->
-                            report.put("src_addr", document.getString("src_addr"))
-                            report.put("src_port", document.getInteger("src_port"))
-                            report.put("dst_addr", document.getString("dst_addr"))
-                            report.put("dst_port", document.getInteger("dst_port"))
-                            report.put("call_id", document.getString("call_id"))
-                            reports.add(report)
-                        } ?: reports.add(document)
-                    }
-
-                legReports = reports.filter { generateLegId(it) == legId }
-            }
-
-            if (withBlocks) {
-                // Update Media Session leg session party
-                legReports
-                    .groupBy { generatePartyId(it) }
-                    .forEach { (_, reports) ->
-                        try {
-                            updateMediaSession(source, legSession, reports.sortedBy { it.getLong("created_at") })
-                        } catch (e: Exception) {
-                            legSession.invalid = true
-                            logger.error(e) { "MediaSessionService `updateMediaSession()` failed. LegId: $legId" }
-                            logger.trace { "Reports: $reports" }
+                if (legReports.isEmpty()) {
+                    find("rtpr_${source}_raw", legSession.createdAt, legSession.terminatedAt, listOf(legSession.callId))
+                        .asSequence()
+                        .forEach { document ->
+                            document.getList("reports", Document::class.java)?.forEach { report ->
+                                report.put("src_addr", document.getString("src_addr"))
+                                report.put("src_port", document.getInteger("src_port"))
+                                report.put("dst_addr", document.getString("dst_addr"))
+                                report.put("dst_port", document.getInteger("dst_port"))
+                                report.put("call_id", document.getString("call_id"))
+                                reports.add(report)
+                            } ?: reports.add(document)
                         }
-                    }
 
-                sessions.values.forEach { session ->
-                    session.`in`.iterator().merge(session.out.iterator(), null)
-                        .firstOrNull { mediaSession ->
-                            mediaSession.blocks.size > blockCount || mediaSession.blocks.any { it.jitter.max >= 10000 }
+                    legReports = reports.filter { generateLegId(it) == legId }
+                }
+
+                if (withBlocks) {
+                    // Update Media Session leg session party
+                    legReports
+                        .groupBy { generatePartyId(it) }
+                        .forEach { (_, reports) ->
+                            try {
+                                updateMediaSession(source, legSession, reports.sortedBy { it.getLong("created_at") })
+                            } catch (e: Exception) {
+                                legSession.invalid = true
+                                logger.error(e) { "MediaSessionService `updateMediaSession()` failed. LegId: $legId" }
+                                logger.trace { "Reports: $reports" }
+                            }
                         }
-                        ?.let { session.invalid = true }
                 }
             }
-        }
 
-        if (withBlocks) sessions.values.forEach { it.updateTimestamps() }
+        if (withBlocks) sessions.values.forEach { legSession ->
+            legSession.updateTimestamps()
+
+            legSession.`in`.iterator().merge(legSession.out.iterator(), null)
+                .firstOrNull { mediaSession ->
+                    mediaSession.blocks.size > blockCount || mediaSession.blocks.any { it.jitter.max >= 10000 }
+                }
+                ?.let { legSession.invalid = true }
+        }
 
         return sessions
     }
