@@ -67,7 +67,8 @@ open class MediaSessionService {
                 }.add(report)
             }
 
-        find("rtpr_${source}_raw", createdAt, terminatedAt, callId)
+
+        find("rtpr_${source}_raw", sessions.values.minOf { it.createdAt }, sessions.values.maxOf { it.terminatedAt }, callId)
             .forEachRemaining { document ->
                 document.getList("reports", Document::class.java)?.forEach { report ->
                     report.put("src_addr", document.getString("src_addr"))
