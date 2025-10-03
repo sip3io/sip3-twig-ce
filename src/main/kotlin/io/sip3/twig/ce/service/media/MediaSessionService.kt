@@ -67,8 +67,10 @@ open class MediaSessionService {
                 }.add(report)
             }
 
+        val createdAtFrom = sessions.values.minOfOrNull { it.createdAt } ?: createdAt
+        val terminatedAtTo = sessions.values.maxOfOrNull { it.terminatedAt } ?: terminatedAt
 
-        find("rtpr_${source}_raw", sessions.values.minOf { it.createdAt }, sessions.values.maxOf { it.terminatedAt }, callId)
+        find("rtpr_${source}_raw", createdAtFrom, terminatedAtTo, callId)
             .forEachRemaining { document ->
                 document.getList("reports", Document::class.java)?.forEach { report ->
                     report.put("src_addr", document.getString("src_addr"))
