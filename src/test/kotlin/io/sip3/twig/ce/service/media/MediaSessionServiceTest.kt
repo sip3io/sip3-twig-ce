@@ -80,7 +80,7 @@ class MediaSessionServiceTest {
         }
 
         assertEquals(1599699368433L, legSession.createdAt)
-        assertEquals(1599699388201L, legSession.terminatedAt)
+        assertEquals(1599699388212L, legSession.terminatedAt)
         assertEquals(19779, legSession.duration)
         assertEquals(request.callId!!.first(), legSession.callId)
         assertEquals(1, legSession.`out`.size)
@@ -89,8 +89,8 @@ class MediaSessionServiceTest {
         legSession.`out`.first().apply {
             assertEquals(legSession.createdAt, createdAt)
             assertEquals(legSession.terminatedAt, terminatedAt)
-            assertEquals(28, blocks.size)
-            assertEquals(19768, duration)
+            assertEquals(3, reports.size)
+            assertEquals(19779, duration)
 
             assertEquals(4.409228801727295, mos)
             assertEquals(93.19705963134766, rFactor)
@@ -108,7 +108,7 @@ class MediaSessionServiceTest {
         legSession.`in`.first().apply {
             assertEquals(1599699368452L, createdAt)
             assertEquals(1599699388109L, terminatedAt)
-            assertEquals(28, blocks.size)
+            assertEquals(3, reports.size)
             assertEquals(19657, duration)
 
             assertEquals(4.408666610717773, mos)

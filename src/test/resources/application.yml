@@ -33,5 +33,4 @@ session:
     aggregation_timeout: 10000
     duration_timeout: 900000
   media:
-    block_count: 28
     termination_timeout: 60000
