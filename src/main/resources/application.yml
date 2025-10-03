@@ -19,6 +19,7 @@ spring:
     mongodb:
       uri: ${mongo.uri}
       database: ${mongo.db}
+      field_naming_strategy: org.springframework.data.mapping.model.SnakeCaseFieldNamingStrategy
 
 #! Application
 name: sip3-twig-ce
@@ -43,7 +44,7 @@ mongo:
   uri: mongodb://127.0.0.1:27017
   db: sip3
   max_execution_time: 10000
-  batch-size: 128
+  batch_size: 128
 
 #! Application
 time_suffix: yyyyMMdd
@@ -61,7 +62,6 @@ session:
     aggregation_timeout: 10000
     duration_timeout: 900000
   media:
-    block_count: 28
     termination_timeout: 60000
 
 cache:

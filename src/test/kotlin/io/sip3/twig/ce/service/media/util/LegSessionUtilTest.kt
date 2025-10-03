@@ -16,13 +16,12 @@
 
 package io.sip3.twig.ce.service.media.util
 
+import io.sip3.twig.ce.service.media.domain.LegSession
 import io.sip3.twig.ce.service.media.domain.MediaSession
-import io.sip3.twig.ce.service.media.util.LegSessionUtil.createLegSession
 import io.sip3.twig.ce.service.media.util.LegSessionUtil.generateLegId
 import io.sip3.twig.ce.service.media.util.LegSessionUtil.generatePartyId
 import org.bson.Document
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertNotEquals
 import org.junit.jupiter.api.Test
 
 @Suppress("UNCHECKED_CAST")
@@ -77,8 +76,8 @@ class LegSessionUtilTest {
             "src_host" : "PBX-2",
             "dst_addr" : "192.168.10.113",
             "dst_port" : 40030,
-            "payload_type" : 8,
-            "ssrc" : 1459443922,
+            "payload_type" : [ 8 ],
+            "ssrc" : NumberLong(1459443922),
             "call_id" : "838f2897-35cd-475b-8111-b50fc1984dc9",
             "codec" : "PCMA",
             "duration" : 76634,
@@ -108,13 +107,23 @@ class LegSessionUtilTest {
     }
 
     @Test
-    fun `Generate party id`() {
-        assertNotEquals(generatePartyId(RTPR_INDEX_A), generatePartyId(RTPR_INDEX_B))
+    fun `PartyId generation validation`() {
+        val report = Document().apply {
+            put("src_addr", "1.1.1.1")
+            put("src_port", 1111)
+            put("dst_addr", "2.2.2.2")
+            put("dst_port", 2222)
+        }
+
+        assertEquals("1.1.1.1:1111:2.2.2.2:2222", generatePartyId(report, "rtp"))
+        assertEquals("2.2.2.2:2222:1.1.1.1:1111", generatePartyId(report, "rtcp"))
     }
 
     @Test
     fun `Create Leg Session`() {
-        val legSession = createLegSession(RTPR_INDEX_A, 24)
+        val legSession = LegSession().apply {
+            add(RTPR_INDEX_A)
+        }
 
         assertEquals(RTPR_INDEX_A.getLong("created_at"), legSession.createdAt)
         assertEquals(RTPR_INDEX_A.getLong("created_at") + RTPR_INDEX_A.getInteger("duration"), legSession.terminatedAt)

@@ -33,7 +33,6 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.*
 import java.util.*
-import kotlin.math.log
 
 @Tag(name = "Session API", description = "Session Controller")
 @RestController
@@ -63,7 +62,7 @@ class SessionController {
         consumes = [MediaType.APPLICATION_JSON_VALUE],
         produces = [MediaType.APPLICATION_JSON_VALUE]
     )
-    fun details(@RequestBody req: SessionRequest): Any? {
+    fun details(@RequestBody req: SessionRequest): Any {
         return getSessionService(req).details(req)
     }
 
@@ -186,7 +185,7 @@ class SessionController {
         consumes = [MediaType.APPLICATION_JSON_VALUE],
         produces = [MediaType.APPLICATION_JSON_VALUE]
     )
-    fun media(@RequestBody req: SessionRequest): Any? {
+    fun media(@RequestBody req: SessionRequest): Any {
         return mediaSessionService.details(req)
     }
 

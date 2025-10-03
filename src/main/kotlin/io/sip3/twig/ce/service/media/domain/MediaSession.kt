@@ -16,10 +16,74 @@
 
 package io.sip3.twig.ce.service.media.domain
 
-class MediaSession(blockCount: Int) : MediaStatistic() {
+import org.bson.Document
+
+open class MediaSession() : MediaStatistic() {
 
     var createdAt: Long = Long.MAX_VALUE
-    var terminatedAt: Long = Long.MAX_VALUE
+    var terminatedAt: Long = Long.MIN_VALUE
 
-    val blocks = ArrayList<MediaStatistic>(blockCount)
+    val partyId: String
+        get() = "$srcAddr:$srcPort:$dstAddr:$dstPort"
+
+    lateinit var srcAddr: String
+    var srcPort: Int = -1
+    lateinit var dstAddr: String
+    var dstPort: Int = -1
+    val reports = sortedSetOf<Report>(compareBy { it.createdAt })
+
+    fun add(documents: List<Document>) {
+        documents.map { document ->
+            Report().apply {
+                createdAt = document.getLong("created_at")
+                duration = document.getInteger("duration")
+                terminatedAt = document.getLong("created_at") + duration
+
+                mos = document.getDouble("mos")
+                rFactor = document.getDouble("r_factor")
+
+                packets.apply {
+                    val reportPackets = document.get("packets") as Document
+                    expected = reportPackets.getInteger("expected")
+                    lost = reportPackets.getInteger("lost")
+                    received = reportPackets.getInteger("received")
+                    rejected = reportPackets.getInteger("rejected")
+                }
+                jitter.apply {
+                    val reportJitter = document.get("jitter") as Document
+                    min = reportJitter.getDouble("min")
+                    max = reportJitter.getDouble("max")
+                    avg = reportJitter.getDouble("avg")
+                }
+                ssrc = document.getLong("ssrc")
+            }
+        }.let {
+            reports.addAll(it)
+        }
+
+        reports.firstOrNull()?.createdAt?.takeIf { it < createdAt }?.let {
+            createdAt = it
+        }
+        reports.lastOrNull()?.terminatedAt?.takeIf { it > terminatedAt}?.let {
+            terminatedAt = it
+        }
+
+        duration = (terminatedAt - createdAt).toInt()
+    }
+
+    override fun toString(): String {
+        return "MediaSession(srcAddr=$srcAddr, srcPort=$srcPort, dst=$dstAddr, dstPort=$dstPort, createdAt=$createdAt, terminatedAt=$terminatedAt)"
+    }
+
+    class Report : MediaStatistic() {
+
+        var createdAt: Long = Long.MAX_VALUE
+        var terminatedAt: Long = Long.MAX_VALUE
+
+        var ssrc: Long = -1L
+
+        override fun toString(): String {
+            return "Report(createdAt=$createdAt, terminatedAt=$terminatedAt, ssrc=$ssrc, mos=$mos, rFactor=$rFactor)"
+        }
+    }
 }
