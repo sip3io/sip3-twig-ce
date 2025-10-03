@@ -76,7 +76,7 @@ class LegSessionUtilTest {
             "src_host" : "PBX-2",
             "dst_addr" : "192.168.10.113",
             "dst_port" : 40030,
-            "payload_type" : 8,
+            "payload_type" : [ 8 ],
             "ssrc" : NumberLong(1459443922),
             "call_id" : "838f2897-35cd-475b-8111-b50fc1984dc9",
             "codec" : "PCMA",

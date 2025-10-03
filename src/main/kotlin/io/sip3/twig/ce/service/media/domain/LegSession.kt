@@ -61,7 +61,7 @@ open class LegSession {
             dstPort = document.getInteger("dst_port")
             document.getString("dst_host")?.let { dstHost = it }
 
-            val payloadTypes = document.getList("payload_type", Int::class.java)
+            val payloadTypes = document.getList("payload_type", Integer::class.java) as List<Int>
             val codecNames = document.getList("codec", String::class.java)
             payloadTypes.forEachIndexed { index, payloadType ->
                 codecs.add(Codec(codecNames.getOrElse(index) { "UNDEFINED($payloadType)" }, payloadType))
