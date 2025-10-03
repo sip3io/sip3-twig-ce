@@ -62,7 +62,7 @@ class SessionController {
         consumes = [MediaType.APPLICATION_JSON_VALUE],
         produces = [MediaType.APPLICATION_JSON_VALUE]
     )
-    fun details(@RequestBody req: SessionRequest): Any? {
+    fun details(@RequestBody req: SessionRequest): Any {
         return getSessionService(req).details(req)
     }
 
@@ -185,7 +185,7 @@ class SessionController {
         consumes = [MediaType.APPLICATION_JSON_VALUE],
         produces = [MediaType.APPLICATION_JSON_VALUE]
     )
-    fun media(@RequestBody req: SessionRequest): Any? {
+    fun media(@RequestBody req: SessionRequest): Any {
         return mediaSessionService.details(req)
     }
 

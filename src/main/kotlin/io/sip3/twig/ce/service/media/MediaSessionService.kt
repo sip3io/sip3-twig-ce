@@ -36,9 +36,6 @@ open class MediaSessionService {
 
     private val logger = KotlinLogging.logger {}
 
-    @Value("\${session.media.block-count:\${session.media.block_count:28}}")
-    private var blockCount: Int = 28
-
     @Value("\${session.media.termination-timeout:\${session.media.termination_timeout:60000}}")
     private var terminationTimeout: Long = 60000
 
