@@ -72,6 +72,20 @@ class HostController {
         return hostService.getByName(name.lowercase())
     }
 
+    @Operation(summary = "Find all hosts by IP Address")
+    @ApiResponses(
+        ApiResponse(responseCode = "200", description = "Returns host list"),
+        ApiResponse(responseCode = "500", description = "InternalServerError"),
+        ApiResponse(responseCode = "504", description = "ConnectionTimeoutError")
+    )
+    @GetMapping(
+        value = ["/addr/{addr}"],
+        produces = [MediaType.APPLICATION_JSON_VALUE]
+    )
+    fun findAllByAddr(@Valid @NotNull @PathVariable("addr") addr: String): List<Host> {
+        return hostService.findAllByAddr(addr)
+    }
+
     @Operation(summary = "Create host")
     @ApiResponses(
         ApiResponse(responseCode = "200", description = "Returns host"),
@@ -120,6 +134,22 @@ class HostController {
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
     fun deleteByName(@Valid @PathVariable("name") @NotNull name: String) {
         hostService.deleteByName(name)
+    }
+
+    @Operation(summary = "Delete all hosts by name")
+    @ApiResponses(
+        ApiResponse(responseCode = "204", description =  "Hosts deleted successfully"),
+        ApiResponse(responseCode = "400", description =  "Bad request"),
+        ApiResponse(responseCode = "500", description =  "InternalServerError"),
+        ApiResponse(responseCode = "504", description =  "ConnectionTimeoutError")
+    )
+    @DeleteMapping(
+        value = ["/{name}/all"],
+        produces = [MediaType.APPLICATION_JSON_VALUE]
+    )
+    @ResponseStatus(value = HttpStatus.NO_CONTENT)
+    fun deleteAllByName(@Valid @PathVariable("name") @NotNull name: String) {
+        hostService.deleteAllByName(name)
     }
 
     @Operation(summary = "Import hosts from JSON file")

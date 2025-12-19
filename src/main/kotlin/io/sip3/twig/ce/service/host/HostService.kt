@@ -48,6 +48,10 @@ open class HostService {
         return hostRepository.findByAddrContains(address)
     }
 
+    open fun findAllByAddr(address: String): List<Host> {
+        return hostRepository.findAllByAddrContains(address)
+    }
+
     open fun firstByAddr(address: String): Host? {
         return hostRepository.findFirstByAddrContains(address)
     }
@@ -57,10 +61,24 @@ open class HostService {
             throw DuplicateKeyException("Host with name \"${host.name}\" already exists")
         }
 
+        host.addr.forEach { addr ->
+            hostRepository.findByAddrContains(addr)?.let {
+                throw DuplicateKeyException("Host with addr \"$addr\" already exists: \"${it.name}\"")
+            }
+        }
+
         return hostRepository.save(host)
     }
 
     open fun update(host: Host): Host {
+        host.addr.forEach { addr ->
+            findAllByAddr(addr)
+                .firstOrNull { it.name != host.name }
+                ?.let {
+                    throw DuplicateKeyException("Host with addr \"$addr\" already exists: \"${it.name}\"")
+                }
+        }
+
         return hostRepository.getByNameIgnoreCase(host.name).let { existingHost ->
             existingHost.addr = host.addr
             existingHost.mapping = host.mapping
@@ -71,6 +89,11 @@ open class HostService {
 
     open fun deleteByName(name: String) {
         hostRepository.findByNameIgnoreCase(name)?.let { hostRepository.delete(it) }
+    }
+
+    open fun deleteAllByName(name: String) {
+        hostRepository.findAllByNameIgnoreCase(name)
+            .let { hostRepository.deleteAll(it) }
     }
 
     open fun saveAll(hosts: Set<Host>) {

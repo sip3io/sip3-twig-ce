@@ -26,9 +26,15 @@ interface HostRepository : PagingAndSortingRepository<Host, String>, CrudReposit
 
     fun findByNameIgnoreCase(name: String): Host?
 
+    fun findAllByNameIgnoreCase(name: String): List<Host>
+
     fun findFirstByNameIgnoreCase(name: String): Host?
 
     fun findByAddrContains(address: String): Host?
 
+    fun findAllByAddrContains(address: String): List<Host>
+
     fun findFirstByAddrContains(address: String): Host?
+
+    fun deleteByNameIgnoreCase(name: String)
 }
