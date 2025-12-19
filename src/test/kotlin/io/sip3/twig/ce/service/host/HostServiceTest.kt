@@ -52,6 +52,13 @@ class HostServiceTest {
             listOf(AddressMapping("10.0.0.1", "10.0.0.1")),
             setOf("proxy")
         )
+        val HOST_3 = Host(
+            "id2",
+            "host2",
+            listOf("10.10.10.0:5060", "10.10.30.0/28"),
+            emptyList(),
+            setOf("proxy")
+        )
     }
 
     @MockBean
@@ -106,9 +113,22 @@ class HostServiceTest {
     fun `Update existing host`() {
         given(hostRepository.getByNameIgnoreCase(any())).willReturn(HOST_1)
         given(hostRepository.save(any<Host>())).willReturn(HOST_1)
+        given(hostRepository.findAllByAddrContains(any())).willReturn(emptyList())
+
         hostService.update(HOST_1)
 
         verify(hostRepository, times(1)).save(HOST_1)
+    }
+
+    @Test
+    fun `Update existing host and duplication by address`() {
+        given(hostRepository.getByNameIgnoreCase(any())).willReturn(HOST_1)
+        given(hostRepository.save(any<Host>())).willReturn(HOST_1)
+        given(hostRepository.findAllByAddrContains(any())).willReturn(listOf(HOST_1, HOST_3))
+
+        assertThrows<DuplicateKeyException> {
+            hostService.update(HOST_1)
+        }
     }
 
     @Test
