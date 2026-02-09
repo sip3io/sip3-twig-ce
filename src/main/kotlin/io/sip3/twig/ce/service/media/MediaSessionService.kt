@@ -17,6 +17,7 @@
 package io.sip3.twig.ce.service.media
 
 import com.mongodb.client.model.Filters
+import io.github.oshai.kotlinlogging.KotlinLogging
 import io.sip3.twig.ce.domain.SessionRequest
 import io.sip3.twig.ce.mongo.MongoClient
 import io.sip3.twig.ce.service.media.domain.LegSession
@@ -24,7 +25,6 @@ import io.sip3.twig.ce.service.media.util.LegSessionUtil.generateLegId
 import io.sip3.twig.ce.service.media.util.LegSessionUtil.generatePartyId
 import io.sip3.twig.ce.util.firstOrNull
 import io.sip3.twig.ce.util.merge
-import mu.KotlinLogging
 import org.bson.Document
 import org.bson.conversions.Bson
 import org.springframework.beans.factory.annotation.Autowired

@@ -20,9 +20,9 @@ import com.mongodb.client.MongoClient
 import com.mongodb.client.MongoClients
 import com.mongodb.client.MongoCursor
 import com.mongodb.client.model.WriteModel
+import io.github.oshai.kotlinlogging.KotlinLogging
 import io.sip3.commons.util.format
 import jakarta.annotation.PostConstruct
-import mu.KotlinLogging
 import org.bson.Document
 import org.bson.conversions.Bson
 import org.springframework.beans.factory.annotation.Autowired

@@ -33,11 +33,27 @@
     </dependencyManagement>
 
     <dependencies>
+        <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-stdlib</artifactId>
+            <version>2.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-reflect</artifactId>
+            <version>2.0.0</version> <!-- Match with Spring Boot's Kotlin version -->
+        </dependency>
         <!-- SIP3 -->
         <dependency>
             <groupId>io.sip3.commons</groupId>
             <artifactId>sip3-commons</artifactId>
             <version>2025.3.2-SNAPSHOT</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>io.sip3</groupId>
+                    <artifactId>logback-webhook-appender</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <!-- SIP -->
@@ -159,11 +175,13 @@
         <dependency>
             <groupId>org.testcontainers</groupId>
             <artifactId>junit-jupiter</artifactId>
+            <version>1.21.4</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.testcontainers</groupId>
             <artifactId>mongodb</artifactId>
+            <version>1.21.4</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

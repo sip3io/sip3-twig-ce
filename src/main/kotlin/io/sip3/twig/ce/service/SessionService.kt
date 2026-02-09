@@ -19,6 +19,7 @@ package io.sip3.twig.ce.service
 import com.mongodb.client.model.Filters.*
 import gov.nist.javax.sip.message.SIPMessage
 import gov.nist.javax.sip.parser.StringMsgParser
+import io.github.oshai.kotlinlogging.KotlinLogging
 import io.pkts.PcapOutputStream
 import io.pkts.buffer.Buffers
 import io.pkts.frame.PcapGlobalHeader
@@ -27,7 +28,6 @@ import io.sip3.twig.ce.domain.SessionRequest
 import io.sip3.twig.ce.mongo.MongoClient
 import io.sip3.twig.ce.service.host.HostService
 import io.sip3.twig.ce.util.*
-import mu.KotlinLogging
 import org.bson.Document
 import org.bson.conversions.Bson
 import org.springframework.beans.factory.annotation.Autowired
@@ -93,7 +93,7 @@ abstract class SessionService {
                     try {
                         message = StringMsgParser().parseSIPMessage(rawData.toByteArray(Charsets.ISO_8859_1), true, false, null)
                     } catch (e: Exception) {
-                        logger.error("StringMsgParser 'parseSIPMessage()' failed.", e)
+                        logger.error(e) { "StringMsgParser 'parseSIPMessage()' failed." }
                     }
                     message?.let {
                         put("call_id", message.callId())
@@ -141,7 +141,7 @@ abstract class SessionService {
                                 putAll(extendedParamsFrom(message))
                             }
                         } catch (e: Exception) {
-                            logger.error("StringMsgParser 'parseSIPMessage()' failed.", e)
+                            logger.error(e) { "StringMsgParser 'parseSIPMessage()' failed." }
                         }
                     }
 

@@ -28,11 +28,11 @@ import org.mockito.BDDMockito.*
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
-import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.dao.DuplicateKeyException
 import org.springframework.dao.EmptyResultDataAccessException
 import org.springframework.http.MediaType
 import org.springframework.mock.web.MockMultipartFile
+import org.springframework.test.context.bean.override.mockito.MockitoBean
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
@@ -66,7 +66,7 @@ class HostControllerTest {
     @Autowired
     private lateinit var mockMvc: MockMvc
 
-    @MockBean
+    @MockitoBean
     private lateinit var hostService: HostService
 
     @Test
@@ -164,7 +164,7 @@ class HostControllerTest {
         given(hostService.update(any())).willThrow(EmptyResultDataAccessException(1))
 
         mockMvc.perform(
-            put("/host/")
+            put("/hosts")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("""{"name": "host2", "addr": ["10.10.10.0:5060"], "mapping": [{"source": "10.0.0.1","target": "10.0.0.1"}]}""")
         )

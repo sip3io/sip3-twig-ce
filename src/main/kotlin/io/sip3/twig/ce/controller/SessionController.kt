@@ -16,6 +16,7 @@
 
 package io.sip3.twig.ce.controller
 
+import io.github.oshai.kotlinlogging.KotlinLogging
 import io.sip3.twig.ce.domain.Event
 import io.sip3.twig.ce.domain.SessionRequest
 import io.sip3.twig.ce.service.ServiceLocator
@@ -27,7 +28,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
 import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.servlet.http.HttpServletResponse
-import mu.KotlinLogging
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType

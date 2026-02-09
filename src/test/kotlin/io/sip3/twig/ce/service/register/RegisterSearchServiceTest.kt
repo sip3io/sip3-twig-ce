@@ -29,7 +29,7 @@ import org.junit.jupiter.api.Test
 import org.mockito.BDDMockito.*
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.boot.test.mock.mockito.MockBean
+import org.springframework.test.context.bean.override.mockito.MockitoBean
 
 @SpringBootTest
 class RegisterSearchServiceTest {
@@ -168,10 +168,10 @@ class RegisterSearchServiceTest {
 
     }
 
-    @MockBean
+    @MockitoBean
     lateinit var client: MongoClient
 
-    @MockBean
+    @MockitoBean
     lateinit var attributeService: AttributeService
 
     @Autowired

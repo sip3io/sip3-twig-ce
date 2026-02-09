@@ -16,7 +16,7 @@
 
 package io.sip3.twig.ce.security
 
-import mu.KotlinLogging
+import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.http.HttpEntity
@@ -31,13 +31,13 @@ import org.springframework.web.client.RestTemplate
 
 @Component("grafana")
 @ConditionalOnProperty(prefix = "security.grafana", name = ["url"])
-class GrafanaAuthenticationProvider(private val config: GrafanaSecurityConfiguration) : AuthenticationProvider {
+open class GrafanaAuthenticationProvider(private val config: GrafanaSecurityConfiguration) : AuthenticationProvider {
 
     private val logger = KotlinLogging.logger {}
 
     private val restTemplate = RestTemplate()
 
-    override fun authenticate(auth: Authentication?): Authentication {
+    override fun authenticate(auth: Authentication): Authentication {
         requireNotNull(auth) { "Authentication data required." }
         val username = auth.name
         val password = auth.credentials as String
@@ -57,7 +57,7 @@ class GrafanaAuthenticationProvider(private val config: GrafanaSecurityConfigura
         throw BadCredentialsException(username)
     }
 
-    override fun supports(auth: Class<*>?): Boolean {
+    override fun supports(auth: Class<*>): Boolean {
         return auth?.equals(UsernamePasswordAuthenticationToken::class.java) ?: false
     }
 }

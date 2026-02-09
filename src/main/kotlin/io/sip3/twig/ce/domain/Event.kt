@@ -22,28 +22,28 @@ import io.swagger.v3.oas.annotations.media.Schema
 @Schema(title = "Event")
 data class Event(
 
-    @Schema(
+    @field:Schema(
         required = true,
         title = "Event timestamp",
         example = "1581383715357"
     )
     val timestamp: Long,
 
-    @Schema(
+    @field:Schema(
         required = true,
         title = "Source of event",
         example = "192.168.10.5"
     )
     val src: String,
 
-    @Schema(
+    @field:Schema(
         required = true,
         title = "Destination for event",
         example = "PBX"
     )
     val dst: String,
 
-    @Schema(
+    @field:Schema(
         required = true,
         title = "Type of Event",
         example = "SIP",
@@ -51,21 +51,21 @@ data class Event(
     )
     val type: String,
 
-    @Schema(
+    @field:Schema(
         required = false,
         title = "Event group",
         example = "some:group:id",
     )
     val group: String?,
 
-    @Schema(
+    @field:Schema(
         required = true,
         title = "Event details"
     )
     val details: Any,
 
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    @Schema(
+    @field:JsonInclude(JsonInclude.Include.NON_NULL)
+    @field:Schema(
         required = false,
         title = "Event errors",
     )
