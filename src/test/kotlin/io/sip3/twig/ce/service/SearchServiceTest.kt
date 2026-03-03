@@ -27,8 +27,8 @@ import org.mockito.BDDMockito.given
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.stereotype.Component
+import org.springframework.test.context.bean.override.mockito.MockitoBean
 import java.util.*
 
 @SpringBootTest
@@ -53,7 +53,7 @@ class SearchServiceTest {
         )
     }
 
-    @MockBean
+    @MockitoBean
     private lateinit var attributeService: AttributeService
 
     @Autowired

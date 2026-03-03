@@ -32,8 +32,8 @@ import org.junit.jupiter.api.Test
 import org.mockito.Mockito.`when`
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.stereotype.Component
+import org.springframework.test.context.bean.override.mockito.MockitoBean
 import java.io.ByteArrayInputStream
 import java.util.*
 
@@ -164,7 +164,7 @@ class SessionServiceTest {
         val DOCUMENTS = listOf(REGISTER_1, REGISTER_1, REGISTER_1, REGISTER_2, REGISTER_3, REGISTER_4)
     }
 
-    @MockBean
+    @MockitoBean
     private lateinit var hostService: HostService
 
     @Autowired

@@ -16,9 +16,9 @@
 
 package io.sip3.twig.ce.service.component
 
+import io.github.oshai.kotlinlogging.KotlinLogging
 import io.sip3.twig.ce.configuration.TwigApplicationProperties
 import io.sip3.twig.ce.domain.Component
-import mu.KotlinLogging
 import org.bson.Document
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
@@ -121,7 +121,7 @@ open class ComponentRegistrationService {
         buildProperties?.let { props ->
             config.put("version", props.version)
             config.put("project", props.artifact)
-            config.put("build_at", props.time.atZone(ZoneId.of("UTC")).toString())
+            config.put("build_at", props.time?.atZone(ZoneId.of("UTC")).toString())
         }
 
         gitProperties?.let { props ->

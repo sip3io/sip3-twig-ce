@@ -28,9 +28,9 @@ import org.mockito.BDDMockito.given
 import org.mockito.Mockito.*
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.dao.DuplicateKeyException
 import org.springframework.dao.EmptyResultDataAccessException
+import org.springframework.test.context.bean.override.mockito.MockitoBean
 import org.springframework.test.context.junit.jupiter.SpringExtension
 
 @ExtendWith(SpringExtension::class)
@@ -61,7 +61,7 @@ class HostServiceTest {
         )
     }
 
-    @MockBean
+    @MockitoBean
     private lateinit var hostRepository: HostRepository
 
     @Autowired

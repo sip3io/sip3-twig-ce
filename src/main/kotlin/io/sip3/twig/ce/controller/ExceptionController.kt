@@ -17,9 +17,9 @@
 package io.sip3.twig.ce.controller
 
 import com.mongodb.MongoExecutionTimeoutException
+import io.github.oshai.kotlinlogging.KotlinLogging
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.validation.ValidationException
-import mu.KotlinLogging
 import org.springframework.dao.DuplicateKeyException
 import org.springframework.dao.EmptyResultDataAccessException
 import org.springframework.http.HttpStatus
@@ -36,7 +36,7 @@ class ExceptionController {
 
     @ExceptionHandler(Exception::class)
     fun exception(e: Exception, req: HttpServletRequest): ResponseEntity<*> {
-        logger.error("$req failed.", e)
+        logger.error(e) { "$req failed." }
 
         return when (e) {
             is HttpMessageNotReadableException -> ResponseEntity.badRequest()

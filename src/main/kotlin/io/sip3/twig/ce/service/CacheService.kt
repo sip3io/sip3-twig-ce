@@ -1,8 +1,8 @@
 package io.sip3.twig.ce.service
 
+import io.github.oshai.kotlinlogging.KotlinLogging
 import io.sip3.twig.ce.mongo.MongoClient
 import io.sip3.twig.ce.service.attribute.AttributeService
-import mu.KotlinLogging
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.scheduling.annotation.EnableScheduling

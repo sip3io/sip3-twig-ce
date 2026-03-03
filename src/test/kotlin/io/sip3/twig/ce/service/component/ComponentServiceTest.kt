@@ -29,8 +29,8 @@ import org.mockito.BDDMockito.verify
 import org.mockito.internal.verification.VerificationModeFactory.times
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.dao.EmptyResultDataAccessException
+import org.springframework.test.context.bean.override.mockito.MockitoBean
 import org.springframework.test.context.junit.jupiter.SpringExtension
 
 @ExtendWith(SpringExtension::class)
@@ -78,7 +78,7 @@ class ComponentServiceTest {
         )
     }
 
-    @MockBean
+    @MockitoBean
     private lateinit var componentRepository: ComponentRepository
 
     @Autowired

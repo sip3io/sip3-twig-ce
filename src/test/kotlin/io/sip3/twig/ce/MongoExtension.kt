@@ -36,7 +36,7 @@ class MongoExtension : BeforeAllCallback {
             get() = "mongodb://${MONGODB_CONTAINER.host}:${MONGODB_CONTAINER.firstMappedPort}"
     }
 
-    override fun beforeAll(context: ExtensionContext?) {
+    override fun beforeAll(context: ExtensionContext) {
         // Do nothing
     }
 

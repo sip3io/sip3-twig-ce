@@ -25,7 +25,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.boot.test.mock.mockito.MockBean
+import org.springframework.test.context.bean.override.mockito.MockitoBean
 
 @SpringBootTest(
     classes = [
@@ -38,16 +38,16 @@ import org.springframework.boot.test.mock.mockito.MockBean
 )
 class ServiceLocatorTest {
 
-    @MockBean
+    @MockitoBean
     private lateinit var callSearchService: CallSearchService
 
-    @MockBean
+    @MockitoBean
     private lateinit var registerSearchService: RegisterSearchService
 
-    @MockBean
+    @MockitoBean
     private lateinit var callSessionService: CallSessionService
 
-    @MockBean
+    @MockitoBean
     private lateinit var registerSessionService: RegisterSessionService
 
     @Autowired

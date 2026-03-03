@@ -2,7 +2,11 @@
 security:
   enabled: false
 
+
 spring:
+  cache:
+    type: none
+
   jackson:
     property_naming_strategy: SNAKE_CASE
 

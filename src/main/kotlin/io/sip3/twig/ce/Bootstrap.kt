@@ -18,7 +18,7 @@ package io.sip3.twig.ce
 
 import gov.nist.javax.sip.message.MessageFactoryImpl
 import gov.nist.javax.sip.parser.StringMsgParser
-import mu.KotlinLogging
+import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.cache.annotation.EnableCaching

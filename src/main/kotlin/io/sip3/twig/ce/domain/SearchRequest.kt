@@ -28,8 +28,8 @@ data class SearchRequest(
         title = "From time",
         example = "1581494059704"
     )
-    @NotNull
-    @JsonProperty("created_at")
+    @field:NotNull
+    @field:JsonProperty("created_at")
     val createdAt: Long,
 
     @field:Schema(
@@ -37,8 +37,8 @@ data class SearchRequest(
         title = "To time",
         example = "1581494069704"
     )
-    @NotNull
-    @JsonProperty("terminated_at")
+    @field:NotNull
+    @field:JsonProperty("terminated_at")
     val terminatedAt: Long,
 
     @field:Schema(
@@ -46,7 +46,7 @@ data class SearchRequest(
         title = "Search query",
         example = "sip.method=INVITE sip.dst_addr=23.08.20.15 sip.state=answered"
     )
-    @NotNull
+    @field:NotNull
     var query: String,
 
     @field:Schema(
@@ -54,7 +54,7 @@ data class SearchRequest(
         title = "Search limit",
         example = "50"
     )
-    @NotNull
+    @field:NotNull
      val limit: Int?,
 
     @field:Schema(
@@ -62,7 +62,7 @@ data class SearchRequest(
         title = "Fields",
         example = "[\"sip.retransmits\"]"
     )
-    @NotNull
+    @field:NotNull
     val fields: Set<Field> = emptySet()
 ) {
 

@@ -37,7 +37,7 @@ data class Component(
         type = "string",
         example = "pbx1.captain.sip3.io"
     )
-    @NotNull
+    @field:NotNull
     var name: String,
 
     @field:Schema(
@@ -46,8 +46,8 @@ data class Component(
         type = "string",
         example = "b8991970-21f4-4c1a-9e57-25de01d835ba"
     )
-    @NotNull
-    @JsonProperty("deployment_id")
+    @field:NotNull
+    @field:JsonProperty("deployment_id")
     var deploymentId: String,
 
     @field:Schema(
@@ -56,7 +56,7 @@ data class Component(
         type = "string",
         example = "captain"
     )
-    @NotNull
+    @field:NotNull
     var type: String,
 
     @field:Schema(
@@ -64,7 +64,7 @@ data class Component(
         title = "Component URI",
         example = "[\"udp://127.0.0.1:34567\"]"
     )
-    @NotNull
+    @field:NotNull
     var uri: Set<String>,
 
     @field:Schema(
@@ -73,8 +73,8 @@ data class Component(
         description = "List of SIP3 components or URI",
         example = "[\"sip3-salto-01\"]"
     )
-    @NotNull
-    @JsonProperty("connected_to")
+    @field:NotNull
+    @field:JsonProperty("connected_to")
     var connectedTo: Set<String>,
 
     @field:Schema(
@@ -84,8 +84,8 @@ data class Component(
         type = "long",
         example = "1676031280000"
     )
-    @NotNull
-    @JsonProperty("registered_at")
+    @field:NotNull
+    @field:JsonProperty("registered_at")
     var registeredAt: Long,
 
     @field:Schema(
@@ -95,8 +95,8 @@ data class Component(
         type = "long",
         example = "1676031280000"
     )
-    @NotNull
-    @JsonProperty("updated_at")
+    @field:NotNull
+    @field:JsonProperty("updated_at")
     var updatedAt: Long,
 
     @field:Schema(
@@ -106,8 +106,8 @@ data class Component(
         type = "long",
         example = "1676031270000"
     )
-    @NotNull
-    @JsonProperty("remote_updated_at")
+    @field:NotNull
+    @field:JsonProperty("remote_updated_at")
     var remoteUpdatedAt: Long,
 
     @field:Schema(

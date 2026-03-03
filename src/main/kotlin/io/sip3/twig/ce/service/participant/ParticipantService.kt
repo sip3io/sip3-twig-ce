@@ -18,6 +18,7 @@ package io.sip3.twig.ce.service.participant
 
 import gov.nist.javax.sip.message.SIPMessage
 import gov.nist.javax.sip.parser.StringMsgParser
+import io.github.oshai.kotlinlogging.KotlinLogging
 import io.sip3.twig.ce.domain.Event
 import io.sip3.twig.ce.domain.Participant
 import io.sip3.twig.ce.service.host.HostService
@@ -25,7 +26,6 @@ import io.sip3.twig.ce.util.address
 import io.sip3.twig.ce.util.hasSdp
 import io.sip3.twig.ce.util.method
 import io.sip3.twig.ce.util.sessionDescription
-import mu.KotlinLogging
 import org.bson.Document
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
