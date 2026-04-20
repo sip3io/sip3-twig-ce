@@ -25,6 +25,7 @@ import org.springframework.dao.EmptyResultDataAccessException
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.http.converter.HttpMessageNotReadableException
+import org.springframework.security.core.AuthenticationException
 import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
@@ -39,6 +40,9 @@ class ExceptionController {
         logger.error(e) { "$req failed." }
 
         return when (e) {
+            is AuthenticationException -> ResponseEntity.status(HttpStatus.FORBIDDEN)
+                .body("Forbidden: ${e.message}")
+
             is HttpMessageNotReadableException -> ResponseEntity.badRequest()
                 .body("HttpMessageNotReadableError: Check your HTTP request.")
 

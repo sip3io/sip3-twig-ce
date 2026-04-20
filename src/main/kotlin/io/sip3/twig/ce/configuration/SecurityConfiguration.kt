@@ -31,7 +31,6 @@ import org.springframework.security.web.authentication.Http403ForbiddenEntryPoin
 import org.springframework.web.context.WebApplicationContext
 
 @Configuration
-@ConditionalOnProperty(prefix = "security.oauth2", name = ["client_id"], matchIfMissing = true)
 open class SecurityConfiguration {
 
     private val logger = KotlinLogging.logger {}
@@ -43,7 +42,8 @@ open class SecurityConfiguration {
     private var securityEnabled = false
 
     @Bean
-    open fun filterChain(http: HttpSecurity): SecurityFilterChain {
+    @ConditionalOnProperty(name = ["security.oauth2.enabled"], matchIfMissing = true, havingValue = "false")
+    fun filterChain(http: HttpSecurity): SecurityFilterChain {
         if (securityEnabled) {
             val auth: AuthenticationManagerBuilder = http.getSharedObject(AuthenticationManagerBuilder::class.java)
             context.getBeansOfType(AuthenticationProvider::class.java).forEach { (name, provider) ->
