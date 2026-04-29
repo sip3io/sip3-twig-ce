@@ -43,7 +43,7 @@ open class SecurityConfiguration {
 
     @Bean
     @ConditionalOnProperty(name = ["security.oauth2.enabled"], matchIfMissing = true, havingValue = "false")
-    fun filterChain(http: HttpSecurity): SecurityFilterChain {
+    open fun filterChain(http: HttpSecurity): SecurityFilterChain {
         if (securityEnabled) {
             val auth: AuthenticationManagerBuilder = http.getSharedObject(AuthenticationManagerBuilder::class.java)
             context.getBeansOfType(AuthenticationProvider::class.java).forEach { (name, provider) ->
