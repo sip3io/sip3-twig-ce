@@ -17,7 +17,7 @@
 
     <properties>
         <io-pkts.version>3.0.1</io-pkts.version>
-        <jackson.version>2.15.2</jackson.version>
+        <jackson.version>2.18.9</jackson.version>
     </properties>
 
     <dependencyManagement>
