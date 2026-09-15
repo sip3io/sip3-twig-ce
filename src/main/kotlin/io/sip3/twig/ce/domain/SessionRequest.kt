@@ -41,7 +41,7 @@ data class SessionRequest(
         title = "Source addresses",
         example = "[\"192.168.9.119\",\"192.168.10.5\"]"
     )
-    @field:JsonProperty("scr_addr")
+    @field:JsonProperty("src_addr")
     var srcAddr: List<String>? = null,
 
     @field:Schema(
@@ -56,7 +56,7 @@ data class SessionRequest(
         title = "Source hosts",
         example = "[\"PBX-1\",\"PBX-2\"]"
     )
-    @field:JsonProperty("scr_host")
+    @field:JsonProperty("src_host")
     var srcHost: List<String>? = null,
 
     @field:Schema(

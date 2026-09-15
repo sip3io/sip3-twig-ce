@@ -210,6 +210,27 @@ class SessionController {
         }
     }
 
+    @Operation(summary = "Get WAV for session")
+    @ApiResponses(
+        ApiResponse(responseCode = "200", description = "Returns session WAV file"),
+        ApiResponse(responseCode = "400", description = "Bad request"),
+        ApiResponse(responseCode = "500", description = "InternalServerError"),
+        ApiResponse(responseCode = "504", description = "ConnectionTimeoutError")
+    )
+    @PostMapping(
+        value = ["/wav"],
+        consumes = [MediaType.APPLICATION_JSON_VALUE],
+        produces = [MediaType.APPLICATION_OCTET_STREAM_VALUE]
+    )
+    fun wav(@RequestBody req: SessionRequest, response: HttpServletResponse) {
+        response.contentType = "audio/wav"
+        response.setHeader("Content-Disposition", "attachment; filename=\"SIP3_${UUID.randomUUID()}.wav\"")
+
+        getSessionService(req).wav(req).use { content ->
+            response.outputStream.use { response -> content.writeTo(response) }
+        }
+    }
+
     @Operation(summary = "Stash session")
     @ApiResponses(
         ApiResponse(responseCode = "204", description = "Session stashed"),
