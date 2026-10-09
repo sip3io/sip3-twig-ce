@@ -30,9 +30,11 @@ open class LegSession {
 
     lateinit var srcAddr: String
     var srcPort: Int = 0
+    val srcPorts = mutableSetOf<Int>()
     var srcHost: String? = null
     lateinit var dstAddr: String
     var dstPort: Int = 0
+    val dstPorts = mutableSetOf<Int>()
     var dstHost: String? = null
 
     val codecs = mutableSetOf<Codec>()
@@ -55,10 +57,12 @@ open class LegSession {
 
             srcAddr = document.getString("src_addr")
             srcPort = document.getInteger("src_port")
+            srcPorts.add(srcPort)
             document.getString("src_host")?.let { srcHost = it }
 
             dstAddr = document.getString("dst_addr")
             dstPort = document.getInteger("dst_port")
+            dstPorts.add(dstPort)
             document.getString("dst_host")?.let { dstHost = it }
 
             val payloadTypes = document.getList("payload_type", Integer::class.java) as List<Int>
@@ -66,6 +70,17 @@ open class LegSession {
             payloadTypes.forEachIndexed { index, payloadType ->
                 codecs.add(Codec(codecNames.getOrElse(index) { "UNDEFINED($payloadType)" }, payloadType))
             }
+        } else {
+            if (createdAt > sessionCreatedAt) {
+                createdAt = sessionCreatedAt
+            }
+
+            if (terminatedAt < sessionTerminatedAt) {
+                terminatedAt = sessionTerminatedAt
+            }
+
+            srcPorts.add(document.getInteger("src_port"))
+            dstPorts.add(document.getInteger("dst_port"))
         }
 
         // Get lists of values
@@ -123,6 +138,7 @@ open class LegSession {
             out.maxOfOrNull { it.terminatedAt } ?: Long.MIN_VALUE,
             `in`.maxOfOrNull { it.terminatedAt } ?: Long.MIN_VALUE
         )
+        duration = (terminatedAt - createdAt).toInt()
     }
 
     override fun toString(): String {

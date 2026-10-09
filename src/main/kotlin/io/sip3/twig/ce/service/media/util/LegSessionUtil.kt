@@ -18,7 +18,6 @@ package io.sip3.twig.ce.service.media.util
 
 import org.bson.Document
 
-@Suppress("UNCHECKED_CAST")
 object LegSessionUtil {
 
     fun generateLegId(report: Document): String {

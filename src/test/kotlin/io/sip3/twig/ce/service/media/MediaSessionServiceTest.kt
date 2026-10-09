@@ -124,4 +124,55 @@ class MediaSessionServiceTest {
             assertEquals(0.7710570693016052, jitter.avg)
         }
     }
+
+    @Test
+    fun `Validate 'details()' method for multiple rtp streams`() {
+        // Init
+        val request = SessionRequest().apply {
+            createdAt = 1789567001918
+            terminatedAt = 1789568501918
+            callId = listOf("Kdr5OUL5b-")
+        }
+
+        // Execute
+        val result = service.details(request)
+
+        // Assert
+        assertEquals(1, result.size)
+        assertNull(result[0]["rtcp"])
+
+        val legSession = result[0]["rtp"]
+        assertNotNull(legSession)
+        assertEquals(1, legSession!!.out.size)
+        assertEquals(2, legSession.`in`.size)
+
+        assertEquals(2, legSession.srcPorts.size)
+        assertEquals(1, legSession.dstPorts.size)
+    }
+
+    @Test
+    fun `Validate 'details()' method for hidden rtp streams`() {
+        // Init
+        val request = SessionRequest().apply {
+            createdAt = 1789995521192
+            terminatedAt = 1789996621192
+            callId = listOf("6biyuJ3BIo")
+        }
+
+        // Execute
+        val result = service.details(request)
+
+        // Assert
+        assertEquals(1, result.size)
+        assertNull(result[0]["rtcp"])
+
+        val legSession = result[0]["rtp"]
+        assertNotNull(legSession)
+
+        assertEquals(1, legSession!!.out.size)
+        assertEquals(2, legSession.`in`.size)
+
+        assertEquals(2, legSession.srcPorts.size)
+        assertEquals(1, legSession.dstPorts.size)
+    }
 }

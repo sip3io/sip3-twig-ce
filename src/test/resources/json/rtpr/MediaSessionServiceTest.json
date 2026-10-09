@@ -246,5 +246,3390 @@
       "r_factor": 93.16806030273438,
       "ssrc": 16750329810000
     }
+  ],
+  "rtpr_rtp_index_20260916": [
+    {
+      "created_at": 1789567501918,
+      "terminated_at": 1789567502298,
+      "src_addr": "14.21.177.66",
+      "src_port": 60571,
+      "dst_addr": "10.241.41.63",
+      "dst_port": 23640,
+      "dst_host": "rtp-engine-28",
+      "call_id": "Kdr5OUL5b-",
+      "caller": "rtp-engine",
+      "callee": "rtp-engine",
+      "duration": 380,
+      "report_count": 1,
+      "bad_report_count": 0,
+      "bad_report_fraction": 0,
+      "one_way": true,
+      "direction": [ "in" ],
+      "mos": [ 4.409285545349121 ],
+      "r_factor": [ 93.19999694824219 ],
+      "payload_type": [ 103 ],
+      "codec": [ "OPUS" ],
+      "ssrc": [ 2067738292 ],
+      "packets": { "expected": [ 20 ], "received": [ 20 ], "lost": [ 0 ], "rejected": [ 0 ] },
+      "jitter": { "last": [ 0.0 ], "avg": [ 0.0 ], "min": [ 10000.0 ], "max": [ 0.0 ] },
+      "fraction_lost": [ 0 ]
+    },
+    {
+      "created_at": 1789567502737,
+      "terminated_at": 1789567631684,
+      "src_addr": "14.21.177.66",
+      "src_port": 2009,
+      "dst_addr": "10.241.41.63",
+      "dst_port": 23640,
+      "dst_host": "rtp-engine-28",
+      "call_id": "Kdr5OUL5b-",
+      "caller": "rtp-engine",
+      "callee": "rtp-engine",
+      "duration": 128947,
+      "report_count": 47,
+      "bad_report_count": 0,
+      "bad_report_fraction": 0,
+      "direction": [ "out", "in" ],
+      "mos": [ 4.407254219055176, 4.4091949462890625 ],
+      "r_factor": [ 93.09552764892578, 93.1953125 ],
+      "payload_type": [ 103, 103 ],
+      "codec": [ "OPUS", "OPUS" ],
+      "ssrc": [ 1417181093000, 2067738292000 ],
+      "packets": {
+        "expected": [ 6391, 6418 ],
+        "received": [ 6391, 6418 ],
+        "lost": [ 0, 0 ],
+        "rejected": [ 0, 0 ]
+      },
+      "jitter": {
+        "last": [ 15.305632591247559, 0.006376801058650017 ],
+        "avg": [ 3.5565059185028076, 0.07627702504396439 ],
+        "min": [ 0.005937457084655762, 0.003734985599294305 ],
+        "max": [ 15.305632591247559, 0.9301053881645203 ]
+      },
+      "fraction_lost": [ 0, 0 ]
+    }
+  ],
+  "rtpr_rtp_raw_20260916": [
+    {
+      "reported_at": 1789567512972,
+      "created_at": 1789567502737,
+      "call_id": "Kdr5OUL5b-",
+      "src_addr": "14.21.177.66",
+      "src_port": 2009,
+      "dst_addr": "10.241.41.63",
+      "dst_port": 23640,
+      "dst_host": "rtp-engine-28",
+      "reports": [
+        {
+          "reported_at": 1789567512972,
+          "created_at": 1789567502737,
+          "payload_type": 103,
+          "ssrc": 1417181093000,
+          "codec": "OPUS",
+          "duration": 5121,
+          "packets": {
+            "expected": 256,
+            "received": 256,
+            "lost": 0,
+            "rejected": 0
+          },
+          "jitter": {
+            "last": 2.999669313430786,
+            "avg": 4.791728496551514,
+            "min": 0.005937457084655762,
+            "max": 10.075912475585938
+          },
+          "r_factor": 93.12800598144531,
+          "mos": 4.407887935638428,
+          "fraction_lost": 0
+        },
+        {
+          "reported_at": 1789567518084,
+          "created_at": 1789567507861,
+          "payload_type": 103,
+          "ssrc": 1417181093000,
+          "codec": "OPUS",
+          "duration": 5116,
+          "packets": {
+            "expected": 256,
+            "received": 256,
+            "lost": 0,
+            "rejected": 0
+          },
+          "jitter": {
+            "last": 2.6344757080078125,
+            "avg": 2.783292055130005,
+            "min": 0.7682197690010071,
+            "max": 5.529036521911621
+          },
+          "r_factor": 93.13677215576172,
+          "mos": 4.4080586433410645,
+          "fraction_lost": 0
+        },
+        {
+          "reported_at": 1789567523208,
+          "created_at": 1789567512971,
+          "payload_type": 103,
+          "ssrc": 1417181093000,
+          "codec": "OPUS",
+          "duration": 5126,
+          "packets": {
+            "expected": 256,
+            "received": 256,
+            "lost": 0,
+            "rejected": 0
+          },
+          "jitter": {
+            "last": 4.997857093811035,
+            "avg": 3.368612766265869,
+            "min": 1.5643861293792725,
+            "max": 6.717528343200684
+          },
+          "r_factor": 93.08004760742188,
+          "mos": 4.406951904296875,
+          "fraction_lost": 0
+        },
+        {
+          "reported_at": 1789567528332,
+          "created_at": 1789567518097,
+          "payload_type": 103,
+          "ssrc": 1417181093000,
+          "codec": "OPUS",
+          "duration": 5125,
+          "packets": {
+            "expected": 256,
+            "received": 256,
+            "lost": 0,
+            "rejected": 0
+          },
+          "jitter": {
+            "last": 10.618103981018066,
+            "avg": 5.355179309844971,
+            "min": 1.5101746320724487,
+            "max": 11.113415718078613
+          },
+          "r_factor": 92.94515991210938,
+          "mos": 4.404298782348633,
+          "fraction_lost": 0
+        },
+        {
+          "reported_at": 1789567530404,
+          "created_at": 1789567523211,
+          "payload_type": 103,
+          "ssrc": 1417181093000,
+          "codec": "OPUS",
+          "duration": 6901,
+          "packets": {
+            "expected": 345,
+            "received": 345,
+            "lost": 0,
+            "rejected": 0
+          },
+          "jitter": {
+            "last": 3.920698881149292,
+            "avg": 5.390275955200195,
+            "min": 2.8142778873443604,
+            "max": 10.408592224121094
+          },
+          "r_factor": 93.10590362548828,
+          "mos": 4.407456874847412,
+          "fraction_lost": 0
+        },
+        {
+          "reported_at": 1789567540325,
+          "created_at": 1789567530097,
+          "payload_type": 103,
+          "ssrc": 1417181093000,
+          "codec": "OPUS",
+          "duration": 5119,
+          "packets": {
+            "expected": 256,
+            "received": 256,
+            "lost": 0,
+            "rejected": 0
+          },
+          "jitter": {
+            "last": 4.4067277908325195,
+            "avg": 3.858571767807007,
+            "min": 1.2431681156158447,
+            "max": 8.587020874023438
+          },
+          "r_factor": 93.09423828125,
+          "mos": 4.407229423522949,
+          "fraction_lost": 0
+        },
+        {
+          "reported_at": 1789567545444,
+          "created_at": 1789567535217,
+          "payload_type": 103,
+          "ssrc": 1417181093000,
+          "codec": "OPUS",
+          "duration": 5124,
+          "packets": {
+            "expected": 256,
+            "received": 256,
+            "lost": 0,
+            "rejected": 0
+          },
+          "jitter": {
+            "last": 6.473212242126465,
+            "avg": 2.4795241355895996,
+            "min": 0.9037792086601257,
+            "max": 6.473212242126465
+          },
+          "r_factor": 93.04463958740234,
+          "mos": 4.4062581062316895,
+          "fraction_lost": 0
+        },
+        {
+          "reported_at": 1789567550568,
+          "created_at": 1789567540337,
+          "payload_type": 103,
+          "ssrc": 1417181093000,
+          "codec": "OPUS",
+          "duration": 5119,
+          "packets": {
+            "expected": 256,
+            "received": 256,
+            "lost": 0,
+            "rejected": 0
+          },
+          "jitter": {
+            "last": 1.4174596071243286,
+            "avg": 3.0133535861968994,
+            "min": 1.2892582416534424,
+            "max": 6.742349147796631
+          },
+          "r_factor": 93.16597747802734,
+          "mos": 4.408626079559326,
+          "fraction_lost": 0
+        }
+      ]
+    },
+    {
+      "reported_at": 1789567517749,
+      "created_at": 1789567501918,
+      "call_id": "Kdr5OUL5b-",
+      "src_addr": "10.241.41.63",
+      "src_port": 23640,
+      "src_host": "rtp-engine-28",
+      "dst_addr": "14.21.177.66",
+      "dst_port": 60571,
+      "reports": [
+        {
+          "reported_at": 1789567517749,
+          "created_at": 1789567501918,
+          "payload_type": 103,
+          "ssrc": 2067738292000,
+          "codec": "OPUS",
+          "duration": 380,
+          "packets": {
+            "expected": 20,
+            "received": 20,
+            "lost": 0,
+            "rejected": 0
+          },
+          "jitter": {
+            "last": 0.0,
+            "avg": 0.0,
+            "min": 3.4028234663852886e+38,
+            "max": 0.0
+          },
+          "r_factor": 93.19999694824219,
+          "mos": 4.409285545349121,
+          "fraction_lost": 0.0
+        }
+      ]
+    },
+    {
+      "reported_at": 1789567505665,
+      "created_at": 1789567502818,
+      "call_id": "Kdr5OUL5b-",
+      "src_addr": "10.241.41.63",
+      "src_port": 23640,
+      "src_host": "rtp-engine-28",
+      "dst_addr": "14.21.177.66",
+      "dst_port": 2009,
+      "reports": [
+        {
+          "reported_at": 1789567505665,
+          "created_at": 1789567502818,
+          "payload_type": 103,
+          "ssrc": 2067738292000,
+          "codec": "OPUS",
+          "duration": 2440,
+          "packets": {
+            "expected": 122,
+            "received": 122,
+            "lost": 0,
+            "rejected": 0
+          },
+          "jitter": {
+            "last": 0.052283432334661484,
+            "avg": 0.03284083306789398,
+            "min": 0.0038750171661376953,
+            "max": 0.05876318737864494
+          },
+          "r_factor": 93.19874572753906,
+          "mos": 4.409261703491211,
+          "fraction_lost": 0
+        },
+        {
+          "reported_at": 1789567505941,
+          "created_at": 1789567505298,
+          "payload_type": 103,
+          "ssrc": 2067738292000,
+          "codec": "OPUS",
+          "duration": 280,
+          "packets": {
+            "expected": 14,
+            "received": 14,
+            "lost": 0,
+            "rejected": 0
+          },
+          "jitter": {
+            "last": 0.03254839405417442,
+            "avg": 0.04107881337404251,
+            "min": 0.03254839405417442,
+            "max": 0.0
+          },
+          "r_factor": 93.19921875,
+          "mos": 4.409270763397217,
+          "fraction_lost": 0
+        },
+        {
+          "reported_at": 1789567506341,
+          "created_at": 1789567505618,
+          "payload_type": 103,
+          "ssrc": 2067738292000,
+          "codec": "OPUS",
+          "duration": 360,
+          "packets": {
+            "expected": 18,
+            "received": 18,
+            "lost": 0,
+            "rejected": 0
+          },
+          "jitter": {
+            "last": 0.050895433872938156,
+            "avg": 0.058987777680158615,
+            "min": 0.04288911819458008,
+            "max": 0.06871870905160904
+          },
+          "r_factor": 93.19877624511719,
+          "mos": 4.409262180328369,
+          "fraction_lost": 0
+        },
+        {
+          "reported_at": 1789567516240,
+          "created_at": 1789567506018,
+          "payload_type": 103,
+          "ssrc": 2067738292000,
+          "codec": "OPUS",
+          "duration": 5106,
+          "packets": {
+            "expected": 256,
+            "received": 256,
+            "lost": 0,
+            "rejected": 0
+          },
+          "jitter": {
+            "last": 0.012795683927834034,
+            "avg": 0.08481363952159882,
+            "min": 0.008714302442967892,
+            "max": 0.9301053881645203
+          },
+          "r_factor": 93.19969177246094,
+          "mos": 4.409279823303223,
+          "fraction_lost": 0
+        },
+        {
+          "reported_at": 1789567520169,
+          "created_at": 1789567511124,
+          "payload_type": 103,
+          "ssrc": 2067738292000,
+          "codec": "OPUS",
+          "duration": 8674,
+          "packets": {
+            "expected": 433,
+            "received": 433,
+            "lost": 0,
+            "rejected": 0
+          },
+          "jitter": {
+            "last": 0.4199615716934204,
+            "avg": 0.03509610518813133,
+            "min": 0.0040273224003612995,
+            "max": 0.8961808085441589
+          },
+          "r_factor": 93.1899185180664,
+          "mos": 4.409090518951416,
+          "fraction_lost": 0
+        },
+        {
+          "reported_at": 1789567530053,
+          "created_at": 1789567519838,
+          "payload_type": 103,
+          "ssrc": 2067738292000,
+          "codec": "OPUS",
+          "duration": 5106,
+          "packets": {
+            "expected": 256,
+            "received": 256,
+            "lost": 0,
+            "rejected": 0
+          },
+          "jitter": {
+            "last": 0.007730764336884022,
+            "avg": 0.102703757584095,
+            "min": 0.006791456136852503,
+            "max": 0.9142550230026245
+          },
+          "r_factor": 93.19981384277344,
+          "mos": 4.409282207489014,
+          "fraction_lost": 0
+        },
+        {
+          "reported_at": 1789567534609,
+          "created_at": 1789567524944,
+          "payload_type": 103,
+          "ssrc": 2067738292000,
+          "codec": "OPUS",
+          "duration": 9294,
+          "packets": {
+            "expected": 464,
+            "received": 464,
+            "lost": 0,
+            "rejected": 0
+          },
+          "jitter": {
+            "last": 0.5411413311958313,
+            "avg": 0.021857084706425667,
+            "min": 0.003734985599294305,
+            "max": 0.8786334991455078
+          },
+          "r_factor": 93.18701171875,
+          "mos": 4.409034252166748,
+          "fraction_lost": 0
+        },
+        {
+          "reported_at": 1789567544500,
+          "created_at": 1789567534278,
+          "payload_type": 103,
+          "ssrc": 2067738292000,
+          "codec": "OPUS",
+          "duration": 5106,
+          "packets": {
+            "expected": 256,
+            "received": 256,
+            "lost": 0,
+            "rejected": 0
+          },
+          "jitter": {
+            "last": 0.007306516636162996,
+            "avg": 0.10249222815036774,
+            "min": 0.00613759271800518,
+            "max": 0.9004066586494446
+          },
+          "r_factor": 93.19982147216797,
+          "mos": 4.409282207489014,
+          "fraction_lost": 0
+        },
+        {
+          "reported_at": 1789567549608,
+          "created_at": 1789567539384,
+          "payload_type": 103,
+          "ssrc": 2067738292000,
+          "codec": "OPUS",
+          "duration": 5120,
+          "packets": {
+            "expected": 256,
+            "received": 256,
+            "lost": 0,
+            "rejected": 0
+          },
+          "jitter": {
+            "last": 0.06670434772968292,
+            "avg": 0.016102034598588943,
+            "min": 0.004599189851433039,
+            "max": 0.15525877475738525
+          },
+          "r_factor": 93.19839477539062,
+          "mos": 4.409254550933838,
+          "fraction_lost": 0
+        },
+        {
+          "reported_at": 1789567554740,
+          "created_at": 1789567544504,
+          "payload_type": 103,
+          "ssrc": 2067738292000,
+          "codec": "OPUS",
+          "duration": 5120,
+          "packets": {
+            "expected": 256,
+            "received": 256,
+            "lost": 0,
+            "rejected": 0
+          },
+          "jitter": {
+            "last": 0.08532179892063141,
+            "avg": 0.1337832808494568,
+            "min": 0.006272191181778908,
+            "max": 0.9143682718276978
+          },
+          "r_factor": 93.19795227050781,
+          "mos": 4.40924596786499,
+          "fraction_lost": 0
+        },
+        {
+          "reported_at": 1789567559909,
+          "created_at": 1789567549624,
+          "payload_type": 103,
+          "ssrc": 2067738292000,
+          "codec": "OPUS",
+          "duration": 9914,
+          "packets": {
+            "expected": 495,
+            "received": 495,
+            "lost": 0,
+            "rejected": 0
+          },
+          "jitter": {
+            "last": 0.4174688756465912,
+            "avg": 0.02746310830116272,
+            "min": 0.004501103889197111,
+            "max": 0.8910911679267883
+          },
+          "r_factor": 93.18997955322266,
+          "mos": 4.409091949462891,
+          "fraction_lost": 0
+        },
+        {
+          "reported_at": 1789567569796,
+          "created_at": 1789567559579,
+          "payload_type": 103,
+          "ssrc": 2067738292000,
+          "codec": "OPUS",
+          "duration": 5105,
+          "packets": {
+            "expected": 256,
+            "received": 256,
+            "lost": 0,
+            "rejected": 0
+          },
+          "jitter": {
+            "last": 0.008978471159934998,
+            "avg": 0.09907203167676926,
+            "min": 0.004643741529434919,
+            "max": 0.9078123569488525
+          },
+          "r_factor": 93.19978332519531,
+          "mos": 4.4092817306518555,
+          "fraction_lost": 0
+        },
+        {
+          "reported_at": 1789567572885,
+          "created_at": 1789567564684,
+          "payload_type": 103,
+          "ssrc": 2067738292000,
+          "codec": "OPUS",
+          "duration": 7794,
+          "packets": {
+            "expected": 389,
+            "received": 389,
+            "lost": 0,
+            "rejected": 0
+          },
+          "jitter": {
+            "last": 0.45873311161994934,
+            "avg": 0.028952758759260178,
+            "min": 0.00451315613463521,
+            "max": 0.9002887606620789
+          },
+          "r_factor": 93.1889877319336,
+          "mos": 4.409072399139404,
+          "fraction_lost": 0
+        },
+        {
+          "reported_at": 1789567573161,
+          "created_at": 1789567572518,
+          "payload_type": 103,
+          "ssrc": 2067738292000,
+          "codec": "OPUS",
+          "duration": 280,
+          "packets": {
+            "expected": 14,
+            "received": 14,
+            "lost": 0,
+            "rejected": 0
+          },
+          "jitter": {
+            "last": 0.22119449079036713,
+            "avg": 0.316236674785614,
+            "min": 0.22119449079036713,
+            "max": 0.0
+          },
+          "r_factor": 93.19468688964844,
+          "mos": 4.409183025360107,
+          "fraction_lost": 0
+        },
+        {
+          "reported_at": 1789567583052,
+          "created_at": 1789567572839,
+          "payload_type": 103,
+          "ssrc": 2067738292000,
+          "codec": "OPUS",
+          "duration": 5105,
+          "packets": {
+            "expected": 256,
+            "received": 256,
+            "lost": 0,
+            "rejected": 0
+          },
+          "jitter": {
+            "last": 0.018166543915867805,
+            "avg": 0.08853890001773834,
+            "min": 0.009856938384473324,
+            "max": 0.8993228077888489
+          },
+          "r_factor": 93.1995620727539,
+          "mos": 4.409277439117432,
+          "fraction_lost": 0
+        }
+      ]
+    },
+    {
+      "reported_at": 1789567555681,
+      "created_at": 1789567545456,
+      "call_id": "Kdr5OUL5b-",
+      "src_addr": "14.21.177.66",
+      "src_port": 2009,
+      "dst_addr": "10.241.41.63",
+      "dst_port": 23640,
+      "dst_host": "rtp-engine-28",
+      "reports": [
+        {
+          "reported_at": 1789567555681,
+          "created_at": 1789567545456,
+          "payload_type": 103,
+          "ssrc": 1417181093000,
+          "codec": "OPUS",
+          "duration": 5121,
+          "packets": {
+            "expected": 256,
+            "received": 256,
+            "lost": 0,
+            "rejected": 0
+          },
+          "jitter": {
+            "last": 4.985240459442139,
+            "avg": 2.868946075439453,
+            "min": 1.177860975265503,
+            "max": 5.572105884552002
+          },
+          "r_factor": 93.08035278320312,
+          "mos": 4.406957626342773,
+          "fraction_lost": 0
+        },
+        {
+          "reported_at": 1789567560820,
+          "created_at": 1789567550576,
+          "payload_type": 103,
+          "ssrc": 1417181093000,
+          "codec": "OPUS",
+          "duration": 5120,
+          "packets": {
+            "expected": 256,
+            "received": 256,
+            "lost": 0,
+            "rejected": 0
+          },
+          "jitter": {
+            "last": 2.442502498626709,
+            "avg": 3.3086650371551514,
+            "min": 1.3222836256027222,
+            "max": 7.180730819702148
+          },
+          "r_factor": 93.1413803100586,
+          "mos": 4.408148288726807,
+          "fraction_lost": 0
+        },
+        {
+          "reported_at": 1789567565924,
+          "created_at": 1789567555696,
+          "payload_type": 103,
+          "ssrc": 1417181093000,
+          "codec": "OPUS",
+          "duration": 5130,
+          "packets": {
+            "expected": 256,
+            "received": 256,
+            "lost": 0,
+            "rejected": 0
+          },
+          "jitter": {
+            "last": 5.018716812133789,
+            "avg": 2.6348421573638916,
+            "min": 0.4997113347053528,
+            "max": 6.210101127624512
+          },
+          "r_factor": 93.07954406738281,
+          "mos": 4.406941890716553,
+          "fraction_lost": 0
+        },
+        {
+          "reported_at": 1789567571052,
+          "created_at": 1789567560816,
+          "payload_type": 103,
+          "ssrc": 1417181093000,
+          "codec": "OPUS",
+          "duration": 5121,
+          "packets": {
+            "expected": 256,
+            "received": 256,
+            "lost": 0,
+            "rejected": 0
+          },
+          "jitter": {
+            "last": 2.412799835205078,
+            "avg": 3.448012113571167,
+            "min": 1.5198755264282227,
+            "max": 6.3003010749816895
+          },
+          "r_factor": 93.14208984375,
+          "mos": 4.4081621170043945,
+          "fraction_lost": 0
+        },
+        {
+          "reported_at": 1789567576176,
+          "created_at": 1789567565937,
+          "payload_type": 103,
+          "ssrc": 1417181093000,
+          "codec": "OPUS",
+          "duration": 5120,
+          "packets": {
+            "expected": 256,
+            "received": 256,
+            "lost": 0,
+            "rejected": 0
+          },
+          "jitter": {
+            "last": 3.7553460597991943,
+            "avg": 2.5020785331726074,
+            "min": 0.8060387372970581,
+            "max": 5.503513336181641
+          },
+          "r_factor": 93.10987091064453,
+          "mos": 4.407534599304199,
+          "fraction_lost": 0
+        },
+        {
+          "reported_at": 1789567581292,
+          "created_at": 1789567571056,
+          "payload_type": 103,
+          "ssrc": 1417181093000,
+          "codec": "OPUS",
+          "duration": 5126,
+          "packets": {
+            "expected": 256,
+            "received": 256,
+            "lost": 0,
+            "rejected": 0
+          },
+          "jitter": {
+            "last": 2.446410655975342,
+            "avg": 3.1581175327301025,
+            "min": 1.3461321592330933,
+            "max": 6.363919734954834
+          },
+          "r_factor": 93.14128112792969,
+          "mos": 4.408146381378174,
+          "fraction_lost": 0
+        },
+        {
+          "reported_at": 1789567586412,
+          "created_at": 1789567576177,
+          "payload_type": 103,
+          "ssrc": 1417181093000,
+          "codec": "OPUS",
+          "duration": 5120,
+          "packets": {
+            "expected": 256,
+            "received": 256,
+            "lost": 0,
+            "rejected": 0
+          },
+          "jitter": {
+            "last": 2.055832862854004,
+            "avg": 2.275254011154175,
+            "min": 0.541084885597229,
+            "max": 4.796422958374023
+          },
+          "r_factor": 93.1506576538086,
+          "mos": 4.408328533172607,
+          "fraction_lost": 0
+        },
+        {
+          "reported_at": 1789567591524,
+          "created_at": 1789567581297,
+          "payload_type": 103,
+          "ssrc": 1417181093000,
+          "codec": "OPUS",
+          "duration": 5120,
+          "packets": {
+            "expected": 256,
+            "received": 256,
+            "lost": 0,
+            "rejected": 0
+          },
+          "jitter": {
+            "last": 4.333734035491943,
+            "avg": 3.5371150970458984,
+            "min": 1.005342721939087,
+            "max": 6.5589118003845215
+          },
+          "r_factor": 93.09598541259766,
+          "mos": 4.407263278961182,
+          "fraction_lost": 0
+        },
+        {
+          "reported_at": 1789567597704,
+          "created_at": 1789567586417,
+          "payload_type": 103,
+          "ssrc": 1417181093000,
+          "codec": "OPUS",
+          "duration": 5120,
+          "packets": {
+            "expected": 256,
+            "received": 256,
+            "lost": 0,
+            "rejected": 0
+          },
+          "jitter": {
+            "last": 4.413482666015625,
+            "avg": 4.136544704437256,
+            "min": 0.8824626207351685,
+            "max": 11.034109115600586
+          },
+          "r_factor": 93.09407043457031,
+          "mos": 4.407226085662842,
+          "fraction_lost": 0
+        },
+        {
+          "reported_at": 1789567602832,
+          "created_at": 1789567591537,
+          "payload_type": 103,
+          "ssrc": 1417181093000,
+          "codec": "OPUS",
+          "duration": 6179,
+          "packets": {
+            "expected": 256,
+            "received": 256,
+            "lost": 0,
+            "rejected": 0
+          },
+          "jitter": {
+            "last": 3.30966854095459,
+            "avg": 4.3289103507995605,
+            "min": 1.7222039699554443,
+            "max": 7.869697570800781
+          },
+          "r_factor": 93.12056732177734,
+          "mos": 4.407742977142334,
+          "fraction_lost": 0
+        },
+        {
+          "reported_at": 1789567607948,
+          "created_at": 1789567597717,
+          "payload_type": 103,
+          "ssrc": 1417181093000,
+          "codec": "OPUS",
+          "duration": 5119,
+          "packets": {
+            "expected": 256,
+            "received": 256,
+            "lost": 0,
+            "rejected": 0
+          },
+          "jitter": {
+            "last": 2.1362833976745605,
+            "avg": 3.926793336868286,
+            "min": 1.3798102140426636,
+            "max": 8.622093200683594
+          },
+          "r_factor": 93.14872741699219,
+          "mos": 4.408291339874268,
+          "fraction_lost": 0
+        },
+        {
+          "reported_at": 1789567613068,
+          "created_at": 1789567602837,
+          "payload_type": 103,
+          "ssrc": 1417181093000,
+          "codec": "OPUS",
+          "duration": 5120,
+          "packets": {
+            "expected": 256,
+            "received": 256,
+            "lost": 0,
+            "rejected": 0
+          },
+          "jitter": {
+            "last": 2.81398868560791,
+            "avg": 3.1516592502593994,
+            "min": 1.1670492887496948,
+            "max": 5.580644607543945
+          },
+          "r_factor": 93.13246154785156,
+          "mos": 4.407974720001221,
+          "fraction_lost": 0
+        },
+        {
+          "reported_at": 1789567618188,
+          "created_at": 1789567607957,
+          "payload_type": 103,
+          "ssrc": 1417181093000,
+          "codec": "OPUS",
+          "duration": 5120,
+          "packets": {
+            "expected": 256,
+            "received": 256,
+            "lost": 0,
+            "rejected": 0
+          },
+          "jitter": {
+            "last": 7.145995616912842,
+            "avg": 3.9455223083496094,
+            "min": 1.4191933870315552,
+            "max": 8.074483871459961
+          },
+          "r_factor": 93.02849578857422,
+          "mos": 4.405941486358643,
+          "fraction_lost": 0
+        },
+        {
+          "reported_at": 1789567623308,
+          "created_at": 1789567613077,
+          "payload_type": 103,
+          "ssrc": 1417181093000,
+          "codec": "OPUS",
+          "duration": 5119,
+          "packets": {
+            "expected": 256,
+            "received": 256,
+            "lost": 0,
+            "rejected": 0
+          },
+          "jitter": {
+            "last": 2.2626636028289795,
+            "avg": 3.1595089435577393,
+            "min": 0.604347288608551,
+            "max": 7.99225378036499
+          },
+          "r_factor": 93.14569091796875,
+          "mos": 4.40823221206665,
+          "fraction_lost": 0
+        }
+      ]
+    },
+    {
+      "reported_at": 1789567586573,
+      "created_at": 1789567577944,
+      "call_id": "Kdr5OUL5b-",
+      "src_addr": "10.241.41.63",
+      "src_port": 23640,
+      "src_host": "rtp-engine-28",
+      "dst_addr": "14.21.177.66",
+      "dst_port": 2009,
+      "reports": [
+        {
+          "reported_at": 1789567586573,
+          "created_at": 1789567577944,
+          "payload_type": 103,
+          "ssrc": 2067738292000,
+          "codec": "OPUS",
+          "duration": 8234,
+          "packets": {
+            "expected": 411,
+            "received": 411,
+            "lost": 0,
+            "rejected": 0
+          },
+          "jitter": {
+            "last": 0.5426106452941895,
+            "avg": 0.031808119267225266,
+            "min": 0.0044423313811421394,
+            "max": 0.8894754648208618
+          },
+          "r_factor": 93.18697357177734,
+          "mos": 4.409033298492432,
+          "fraction_lost": 0
+        },
+        {
+          "reported_at": 1789567596440,
+          "created_at": 1789567586218,
+          "payload_type": 103,
+          "ssrc": 2067738292000,
+          "codec": "OPUS",
+          "duration": 5106,
+          "packets": {
+            "expected": 256,
+            "received": 256,
+            "lost": 0,
+            "rejected": 0
+          },
+          "jitter": {
+            "last": 0.025293264538049698,
+            "avg": 0.10677935928106308,
+            "min": 0.006493300199508667,
+            "max": 0.8974384665489197
+          },
+          "r_factor": 93.19938659667969,
+          "mos": 4.409274101257324,
+          "fraction_lost": 0
+        },
+        {
+          "reported_at": 1789567600105,
+          "created_at": 1789567591324,
+          "payload_type": 103,
+          "ssrc": 2067738292000,
+          "codec": "OPUS",
+          "duration": 8414,
+          "packets": {
+            "expected": 420,
+            "received": 420,
+            "lost": 0,
+            "rejected": 0
+          },
+          "jitter": {
+            "last": 0.45676496624946594,
+            "avg": 0.039539165794849396,
+            "min": 0.005212954245507717,
+            "max": 0.9028719067573547
+          },
+          "r_factor": 93.18903350830078,
+          "mos": 4.409073352813721,
+          "fraction_lost": 0
+        },
+        {
+          "reported_at": 1789567610000,
+          "created_at": 1789567599778,
+          "payload_type": 103,
+          "ssrc": 2067738292000,
+          "codec": "OPUS",
+          "duration": 5106,
+          "packets": {
+            "expected": 256,
+            "received": 256,
+            "lost": 0,
+            "rejected": 0
+          },
+          "jitter": {
+            "last": 0.013240854255855083,
+            "avg": 0.10814462602138519,
+            "min": 0.010924933478236198,
+            "max": 0.9136485457420349
+          },
+          "r_factor": 93.19967651367188,
+          "mos": 4.4092793464660645,
+          "fraction_lost": 0
+        },
+        {
+          "reported_at": 1789567612472,
+          "created_at": 1789567604884,
+          "payload_type": 103,
+          "ssrc": 2067738292000,
+          "codec": "OPUS",
+          "duration": 7214,
+          "packets": {
+            "expected": 360,
+            "received": 360,
+            "lost": 0,
+            "rejected": 0
+          },
+          "jitter": {
+            "last": 0.5810070633888245,
+            "avg": 0.04001811146736145,
+            "min": 0.010475028306245804,
+            "max": 0.8984813690185547
+          },
+          "r_factor": 93.18605041503906,
+          "mos": 4.409015655517578,
+          "fraction_lost": 0
+        },
+        {
+          "reported_at": 1789567622349,
+          "created_at": 1789567612139,
+          "payload_type": 103,
+          "ssrc": 2067738292000,
+          "codec": "OPUS",
+          "duration": 5105,
+          "packets": {
+            "expected": 256,
+            "received": 256,
+            "lost": 0,
+            "rejected": 0
+          },
+          "jitter": {
+            "last": 0.012146901339292526,
+            "avg": 0.10819561779499054,
+            "min": 0.010995828546583652,
+            "max": 0.9261786937713623
+          },
+          "r_factor": 93.19970703125,
+          "mos": 4.409280300140381,
+          "fraction_lost": 0
+        },
+        {
+          "reported_at": 1789567626945,
+          "created_at": 1789567617244,
+          "payload_type": 103,
+          "ssrc": 2067738292000,
+          "codec": "OPUS",
+          "duration": 9334,
+          "packets": {
+            "expected": 466,
+            "received": 466,
+            "lost": 0,
+            "rejected": 0
+          },
+          "jitter": {
+            "last": 0.46398741006851196,
+            "avg": 0.030755648389458656,
+            "min": 0.00601025577634573,
+            "max": 0.8880096077919006
+          },
+          "r_factor": 93.18885803222656,
+          "mos": 4.409070014953613,
+          "fraction_lost": 0
+        },
+        {
+          "reported_at": 1789567646749,
+          "created_at": 1789567626618,
+          "payload_type": 103,
+          "ssrc": 2067738292000,
+          "codec": "OPUS",
+          "duration": 5026,
+          "packets": {
+            "expected": 252,
+            "received": 252,
+            "lost": 0,
+            "rejected": 0
+          },
+          "jitter": {
+            "last": 0.006376801058650017,
+            "avg": 0.09911216795444489,
+            "min": 0.00636082561686635,
+            "max": 0.8958421349525452
+          },
+          "r_factor": 93.19984436035156,
+          "mos": 4.409282684326172,
+          "fraction_lost": 0
+        }
+      ]
+    },
+    {
+      "reported_at": 1789567628424,
+      "created_at": 1789567618197,
+      "call_id": "Kdr5OUL5b-",
+      "src_addr": "14.21.177.66",
+      "src_port": 2009,
+      "dst_addr": "10.241.41.63",
+      "dst_port": 23640,
+      "dst_host": "rtp-engine-1",
+      "reports": [
+        {
+          "reported_at": 1789567628424,
+          "created_at": 1789567618197,
+          "payload_type": 103,
+          "ssrc": 1417181093000,
+          "codec": "OPUS",
+          "duration": 5120,
+          "packets": {
+            "expected": 256,
+            "received": 256,
+            "lost": 0,
+            "rejected": 0
+          },
+          "jitter": {
+            "last": 2.1568636894226074,
+            "avg": 3.12524676322937,
+            "min": 1.5015079975128174,
+            "max": 6.789371967315674
+          },
+          "r_factor": 93.14823150634766,
+          "mos": 4.408281326293945,
+          "fraction_lost": 0
+        },
+        {
+          "reported_at": 1789567646749,
+          "created_at": 1789567623316,
+          "payload_type": 103,
+          "ssrc": 1417181093000,
+          "codec": "OPUS",
+          "duration": 8321,
+          "packets": {
+            "expected": 414,
+            "received": 414,
+            "lost": 0,
+            "rejected": 0
+          },
+          "jitter": {
+            "last": 15.305632591247559,
+            "avg": 4.808389663696289,
+            "min": 0.9201750159263611,
+            "max": 15.305632591247559
+          },
+          "r_factor": 92.8326644897461,
+          "mos": 4.402062892913818,
+          "fraction_lost": 0
+        }
+      ]
+    }
+  ],
+  "rtpr_rtp_index_20260921": [
+    {
+      "created_at": 1789995603492,
+      "terminated_at": 1789995605232,
+      "src_addr": "135.127.240.4",
+      "src_port": 42521,
+      "dst_addr": "10.241.49.121",
+      "dst_port": 42268,
+      "dst_host": "rtp-engine-2",
+      "call_id": "6biyuJ3BIo",
+      "caller": "rtp-engine",
+      "callee": "rtp-engine",
+      "duration": 1740,
+      "report_count": 1,
+      "bad_report_count": 0,
+      "bad_report_fraction": 0,
+      "one_way": true,
+      "direction": [
+        "in"
+      ],
+      "mos": [
+        4.409285545349121
+      ],
+      "r_factor": [
+        93.19999694824219
+      ],
+      "payload_type": [
+        103
+      ],
+      "codec": [
+        "OPUS"
+      ],
+      "ssrc": [
+        4160985992
+      ],
+      "packets": {
+        "expected": [
+          88
+        ],
+        "received": [
+          88
+        ],
+        "lost": [
+          0
+        ],
+        "rejected": [
+          0
+        ]
+      },
+      "jitter": {
+        "last": [
+          0.0
+        ],
+        "avg": [
+          0.0
+        ],
+        "min": [
+          10000.0
+        ],
+        "max": [
+          0.0
+        ]
+      },
+      "fraction_lost": [
+        0.0
+      ]
+    },
+    {
+      "created_at": 1789995605249,
+      "terminated_at": 1789995828153,
+      "src_addr": "135.127.240.4",
+      "src_port": 14916,
+      "dst_addr": "10.241.49.121",
+      "dst_port": 42268,
+      "dst_host": "rtp-engine-2",
+      "call_id": "6biyuJ3BIo",
+      "caller": "rtp-engine",
+      "callee": "rtp-engine",
+      "duration": 222904,
+      "report_count": 81,
+      "bad_report_count": 26,
+      "bad_report_fraction": 0.32098765432098764,
+      "direction": [
+        "out",
+        "in"
+      ],
+      "mos": [
+        4.207914352416992,
+        4.409273624420166
+      ],
+      "r_factor": [
+        85.31109619140625,
+        93.1993637084961
+      ],
+      "payload_type": [
+        103,
+        103
+      ],
+      "codec": [
+        "OPUS",
+        "OPUS"
+      ],
+      "ssrc": [
+        3516357567,
+        4160985992
+      ],
+      "packets": {
+        "expected": [
+          11111,
+          10624
+        ],
+        "received": [
+          11060,
+          10624
+        ],
+        "lost": [
+          51,
+          0
+        ],
+        "rejected": [
+          0,
+          0
+        ]
+      },
+      "jitter": {
+        "last": [
+          13.510528564453125,
+          0.013395189307630062
+        ],
+        "avg": [
+          17.879901885986328,
+          0.029983263462781906
+        ],
+        "min": [
+          1.25,
+          0.003437519073486328
+        ],
+        "max": [
+          55.896663665771484,
+          0.3038345277309418
+        ]
+      },
+      "fraction_lost": [
+        0.004590046126395464,
+        0
+      ]
+    }
+  ],
+  "rtpr_rtp_raw_20260921": [
+    {
+      "reported_at": 1789995621192,
+      "created_at": 1789995603492,
+      "call_id": "6biyuJ3BIo",
+      "src_addr": "10.241.49.121",
+      "src_port": 42268,
+      "src_host": "rtp-engine-2",
+      "dst_addr": "135.127.240.4",
+      "dst_port": 42521,
+      "reports": [
+        {
+          "reported_at": 1789995621192,
+          "created_at": 1789995603492,
+          "payload_type": 103,
+          "ssrc": 4160985992,
+          "codec": "OPUS",
+          "duration": 1740,
+          "packets": {
+            "expected": 88,
+            "received": 88,
+            "lost": 0,
+            "rejected": 0
+          },
+          "jitter": {
+            "last": 0.0,
+            "avg": 0.0,
+            "min": 3.4028234663852886e+38,
+            "max": 0.0
+          },
+          "r_factor": 93.19999694824219,
+          "mos": 4.409285545349121,
+          "fraction_lost": 0.0
+        }
+      ]
+    },
+    {
+      "reported_at": 1789995608171,
+      "created_at": 1789995605249,
+      "call_id": "6biyuJ3BIo",
+      "src_addr": "135.127.240.4",
+      "src_port": 14916,
+      "dst_addr": "10.241.49.121",
+      "dst_port": 42268,
+      "dst_host": "rtp-engine-2",
+      "reports": [
+        {
+          "reported_at": 1789995608171,
+          "created_at": 1789995605249,
+          "payload_type": 103,
+          "ssrc": 3516357567,
+          "codec": "OPUS",
+          "duration": 2657,
+          "packets": {
+            "expected": 136,
+            "received": 136,
+            "lost": 0,
+            "rejected": 0
+          },
+          "jitter": {
+            "last": 16.541393280029297,
+            "avg": 22.01221466064453,
+            "min": 1.25,
+            "max": 32.593345642089844
+          },
+          "r_factor": 92.8030014038086,
+          "mos": 4.401469707489014,
+          "fraction_lost": 0.0
+        },
+        {
+          "reported_at": 1789995618468,
+          "created_at": 1789995607891,
+          "payload_type": 103,
+          "ssrc": 3516357567,
+          "codec": "OPUS",
+          "duration": 5114,
+          "packets": {
+            "expected": 256,
+            "received": 253,
+            "lost": 3,
+            "rejected": 0
+          },
+          "jitter": {
+            "last": 16.797883987426758,
+            "avg": 17.234268188476562,
+            "min": 12.837501525878906,
+            "max": 22.46525001525879
+          },
+          "r_factor": 72.45132446289062,
+          "mos": 3.709760904312134,
+          "fraction_lost": 0.01171875
+        },
+        {
+          "reported_at": 1789995623552,
+          "created_at": 1789995612991,
+          "payload_type": 103,
+          "ssrc": 3516357567,
+          "codec": "OPUS",
+          "duration": 5135,
+          "packets": {
+            "expected": 256,
+            "received": 255,
+            "lost": 1,
+            "rejected": 0
+          },
+          "jitter": {
+            "last": 18.151683807373047,
+            "avg": 20.893030166625977,
+            "min": 15.298395156860352,
+            "max": 31.6232852935791
+          },
+          "r_factor": 84.85296630859375,
+          "mos": 4.193453311920166,
+          "fraction_lost": 0.00390625
+        },
+        {
+          "reported_at": 1789995628691,
+          "created_at": 1789995618106,
+          "payload_type": 103,
+          "ssrc": 3516357567,
+          "codec": "OPUS",
+          "duration": 5127,
+          "packets": {
+            "expected": 256,
+            "received": 250,
+            "lost": 6,
+            "rejected": 0
+          },
+          "jitter": {
+            "last": 16.809946060180664,
+            "avg": 17.512434005737305,
+            "min": 13.44521713256836,
+            "max": 23.87624740600586
+          },
+          "r_factor": 59.28291702270508,
+          "mos": 3.0627856254577637,
+          "fraction_lost": 0.0234375
+        },
+        {
+          "reported_at": 1789995633735,
+          "created_at": 1789995623257,
+          "payload_type": 103,
+          "ssrc": 3516357567,
+          "codec": "OPUS",
+          "duration": 5100,
+          "packets": {
+            "expected": 256,
+            "received": 255,
+            "lost": 1,
+            "rejected": 0
+          },
+          "jitter": {
+            "last": 15.095069885253906,
+            "avg": 18.934406280517578,
+            "min": 13.133363723754883,
+            "max": 29.538772583007812
+          },
+          "r_factor": 84.92632293701172,
+          "mos": 4.1957879066467285,
+          "fraction_lost": 0.00390625
+        },
+        {
+          "reported_at": 1789995638903,
+          "created_at": 1789995628363,
+          "payload_type": 103,
+          "ssrc": 3516357567,
+          "codec": "OPUS",
+          "duration": 5141,
+          "packets": {
+            "expected": 256,
+            "received": 254,
+            "lost": 2,
+            "rejected": 0
+          },
+          "jitter": {
+            "last": 15.757555961608887,
+            "avg": 16.253849029541016,
+            "min": 12.393675804138184,
+            "max": 19.024505615234375
+          },
+          "r_factor": 78.21541595458984,
+          "mos": 3.954798936843872,
+          "fraction_lost": 0.0078125
+        },
+        {
+          "reported_at": 1789995639368,
+          "created_at": 1789995633488,
+          "payload_type": 103,
+          "ssrc": 3516357567,
+          "codec": "OPUS",
+          "duration": 5585,
+          "packets": {
+            "expected": 281,
+            "received": 279,
+            "lost": 2,
+            "rejected": 0
+          },
+          "jitter": {
+            "last": 14.604912757873535,
+            "avg": 20.596424102783203,
+            "min": 13.372773170471191,
+            "max": 35.464229583740234
+          },
+          "r_factor": 79.35801696777344,
+          "mos": 3.9995040893554688,
+          "fraction_lost": 0.007117437664419413
+        },
+        {
+          "reported_at": 1789995644375,
+          "created_at": 1789995639088,
+          "payload_type": 103,
+          "ssrc": 3516357567,
+          "codec": "OPUS",
+          "duration": 5000,
+          "packets": {
+            "expected": 251,
+            "received": 250,
+            "lost": 1,
+            "rejected": 0
+          },
+          "jitter": {
+            "last": 14.760860443115234,
+            "avg": 15.850397109985352,
+            "min": 13.399298667907715,
+            "max": 22.77059555053711
+          },
+          "r_factor": 84.7901611328125,
+          "mos": 4.191449165344238,
+          "fraction_lost": 0.0039840638637542725
+        },
+        {
+          "reported_at": 1789995648615,
+          "created_at": 1789995644113,
+          "payload_type": 103,
+          "ssrc": 3516357567,
+          "codec": "OPUS",
+          "duration": 4198,
+          "packets": {
+            "expected": 212,
+            "received": 210,
+            "lost": 2,
+            "rejected": 0
+          },
+          "jitter": {
+            "last": 17.14966583251953,
+            "avg": 22.023033142089844,
+            "min": 14.765408515930176,
+            "max": 36.95165252685547
+          },
+          "r_factor": 75.69589233398438,
+          "mos": 3.8514885902404785,
+          "fraction_lost": 0.009433962404727936
+        },
+        {
+          "reported_at": 1789995658884,
+          "created_at": 1789995648301,
+          "payload_type": 103,
+          "ssrc": 3516357567,
+          "codec": "OPUS",
+          "duration": 5125,
+          "packets": {
+            "expected": 256,
+            "received": 256,
+            "lost": 0,
+            "rejected": 0
+          },
+          "jitter": {
+            "last": 16.447284698486328,
+            "avg": 16.631868362426758,
+            "min": 13.884562492370605,
+            "max": 19.226974487304688
+          },
+          "r_factor": 92.80525970458984,
+          "mos": 4.401515007019043,
+          "fraction_lost": 0
+        },
+        {
+          "reported_at": 1789995661815,
+          "created_at": 1789995653411,
+          "payload_type": 103,
+          "ssrc": 3516357567,
+          "codec": "OPUS",
+          "duration": 8100,
+          "packets": {
+            "expected": 405,
+            "received": 398,
+            "lost": 7,
+            "rejected": 0
+          },
+          "jitter": {
+            "last": 14.472152709960938,
+            "avg": 20.590473175048828,
+            "min": 13.514640808105469,
+            "max": 33.29202651977539
+          },
+          "r_factor": 65.61528778076172,
+          "mos": 3.3852181434631348,
+          "fraction_lost": 0.017283950001001358
+        },
+        {
+          "reported_at": 1789995672083,
+          "created_at": 1789995661521,
+          "payload_type": 103,
+          "ssrc": 3516357567,
+          "codec": "OPUS",
+          "duration": 5105,
+          "packets": {
+            "expected": 256,
+            "received": 254,
+            "lost": 2,
+            "rejected": 0
+          },
+          "jitter": {
+            "last": 18.649314880371094,
+            "avg": 20.93767738342285,
+            "min": 13.472540855407715,
+            "max": 33.990455627441406
+          },
+          "r_factor": 78.14601135253906,
+          "mos": 3.9520390033721924,
+          "fraction_lost": 0.0078125
+        },
+        {
+          "reported_at": 1789995677307,
+          "created_at": 1789995671778,
+          "payload_type": 103,
+          "ssrc": 3516357567,
+          "codec": "OPUS",
+          "duration": 5261,
+          "packets": {
+            "expected": 265,
+            "received": 264,
+            "lost": 1,
+            "rejected": 0
+          },
+          "jitter": {
+            "last": 25.883039474487305,
+            "avg": 20.096059799194336,
+            "min": 11.867269515991211,
+            "max": 31.51776695251465
+          },
+          "r_factor": 84.9144515991211,
+          "mos": 4.195410251617432,
+          "fraction_lost": 0.0037735849618911743
+        },
+        {
+          "reported_at": 1789995683363,
+          "created_at": 1789995677044,
+          "payload_type": 103,
+          "ssrc": 3516357567,
+          "codec": "OPUS",
+          "duration": 6063,
+          "packets": {
+            "expected": 303,
+            "received": 303,
+            "lost": 0,
+            "rejected": 0
+          },
+          "jitter": {
+            "last": 15.832330703735352,
+            "avg": 20.224863052368164,
+            "min": 14.302449226379395,
+            "max": 32.187564849853516
+          },
+          "r_factor": 92.82002258300781,
+          "mos": 4.401810169219971,
+          "fraction_lost": 0
+        }
+      ]
+    },
+    {
+      "reported_at": 1789995615567,
+      "created_at": 1789995605332,
+      "call_id": "6biyuJ3BIo",
+      "src_addr": "10.241.49.121",
+      "src_port": 42268,
+      "src_host": "rtp-engine-2",
+      "dst_addr": "135.127.240.4",
+      "dst_port": 14916,
+      "reports": [
+        {
+          "reported_at": 1789995615567,
+          "created_at": 1789995605332,
+          "payload_type": 103,
+          "ssrc": 4160985992,
+          "codec": "OPUS",
+          "duration": 5120,
+          "packets": {
+            "expected": 256,
+            "received": 256,
+            "lost": 0,
+            "rejected": 0
+          },
+          "jitter": {
+            "last": 0.045130856335163116,
+            "avg": 0.034243274480104446,
+            "min": 0.003437519073486328,
+            "max": 0.06729701161384583
+          },
+          "r_factor": 93.19891357421875,
+          "mos": 4.40926456451416,
+          "fraction_lost": 0.0
+        },
+        {
+          "reported_at": 1789995620676,
+          "created_at": 1789995610452,
+          "payload_type": 103,
+          "ssrc": 4160985992,
+          "codec": "OPUS",
+          "duration": 5120,
+          "packets": {
+            "expected": 256,
+            "received": 256,
+            "lost": 0,
+            "rejected": 0
+          },
+          "jitter": {
+            "last": 0.027159791439771652,
+            "avg": 0.0267433263361454,
+            "min": 0.011030157096683979,
+            "max": 0.04895094409584999
+          },
+          "r_factor": 93.19934844970703,
+          "mos": 4.409273147583008,
+          "fraction_lost": 0.0
+        },
+        {
+          "reported_at": 1789995625799,
+          "created_at": 1789995615572,
+          "payload_type": 103,
+          "ssrc": 4160985992,
+          "codec": "OPUS",
+          "duration": 5120,
+          "packets": {
+            "expected": 256,
+            "received": 256,
+            "lost": 0,
+            "rejected": 0
+          },
+          "jitter": {
+            "last": 0.03485244885087013,
+            "avg": 0.029535699635744095,
+            "min": 0.015892792493104935,
+            "max": 0.04594041779637337
+          },
+          "r_factor": 93.19915771484375,
+          "mos": 4.409269332885742,
+          "fraction_lost": 0.0
+        },
+        {
+          "reported_at": 1789995630919,
+          "created_at": 1789995620692,
+          "payload_type": 103,
+          "ssrc": 4160985992,
+          "codec": "OPUS",
+          "duration": 5120,
+          "packets": {
+            "expected": 256,
+            "received": 256,
+            "lost": 0,
+            "rejected": 0
+          },
+          "jitter": {
+            "last": 0.025925686582922935,
+            "avg": 0.03982705995440483,
+            "min": 0.021838093176484108,
+            "max": 0.07482393085956573
+          },
+          "r_factor": 93.19937133789062,
+          "mos": 4.409273624420166,
+          "fraction_lost": 0.0
+        },
+        {
+          "reported_at": 1789995641167,
+          "created_at": 1789995630932,
+          "payload_type": 103,
+          "ssrc": 4160985992,
+          "codec": "OPUS",
+          "duration": 5120,
+          "packets": {
+            "expected": 256,
+            "received": 256,
+            "lost": 0,
+            "rejected": 0
+          },
+          "jitter": {
+            "last": 0.026677144691348076,
+            "avg": 0.04717366397380829,
+            "min": 0.01773376576602459,
+            "max": 0.2741020917892456
+          },
+          "r_factor": 93.19935607910156,
+          "mos": 4.409273147583008,
+          "fraction_lost": 0.0
+        },
+        {
+          "reported_at": 1789995646287,
+          "created_at": 1789995636052,
+          "payload_type": 103,
+          "ssrc": 4160985992,
+          "codec": "OPUS",
+          "duration": 5120,
+          "packets": {
+            "expected": 256,
+            "received": 256,
+            "lost": 0,
+            "rejected": 0
+          },
+          "jitter": {
+            "last": 0.030720390379428864,
+            "avg": 0.02995433658361435,
+            "min": 0.014575086534023285,
+            "max": 0.07844215631484985
+          },
+          "r_factor": 93.19925689697266,
+          "mos": 4.409271240234375,
+          "fraction_lost": 0.0
+        },
+        {
+          "reported_at": 1789995651407,
+          "created_at": 1789995641172,
+          "payload_type": 103,
+          "ssrc": 4160985992,
+          "codec": "OPUS",
+          "duration": 5120,
+          "packets": {
+            "expected": 256,
+            "received": 256,
+            "lost": 0,
+            "rejected": 0
+          },
+          "jitter": {
+            "last": 0.04054543748497963,
+            "avg": 0.03548870235681534,
+            "min": 0.01848798245191574,
+            "max": 0.07593487948179245
+          },
+          "r_factor": 93.19902038574219,
+          "mos": 4.409266948699951,
+          "fraction_lost": 0.0
+        },
+        {
+          "reported_at": 1789995656524,
+          "created_at": 1789995646292,
+          "payload_type": 103,
+          "ssrc": 4160985992,
+          "codec": "OPUS",
+          "duration": 5120,
+          "packets": {
+            "expected": 256,
+            "received": 256,
+            "lost": 0,
+            "rejected": 0
+          },
+          "jitter": {
+            "last": 0.024253888055682182,
+            "avg": 0.03775439038872719,
+            "min": 0.02023669332265854,
+            "max": 0.09875579178333282
+          },
+          "r_factor": 93.19941711425781,
+          "mos": 4.409274578094482,
+          "fraction_lost": 0.0
+        },
+        {
+          "reported_at": 1789995661639,
+          "created_at": 1789995651412,
+          "payload_type": 103,
+          "ssrc": 4160985992,
+          "codec": "OPUS",
+          "duration": 5120,
+          "packets": {
+            "expected": 256,
+            "received": 256,
+            "lost": 0,
+            "rejected": 0
+          },
+          "jitter": {
+            "last": 0.03334729000926018,
+            "avg": 0.030339621007442474,
+            "min": 0.01947992667555809,
+            "max": 0.04571327939629555
+          },
+          "r_factor": 93.1991958618164,
+          "mos": 4.409270286560059,
+          "fraction_lost": 0.0
+        },
+        {
+          "reported_at": 1789995662163,
+          "created_at": 1789995656532,
+          "payload_type": 103,
+          "ssrc": 4160985992,
+          "codec": "OPUS",
+          "duration": 5260,
+          "packets": {
+            "expected": 263,
+            "received": 263,
+            "lost": 0,
+            "rejected": 0
+          },
+          "jitter": {
+            "last": 0.02254858799278736,
+            "avg": 0.03530517965555191,
+            "min": 0.01942908950150013,
+            "max": 0.062126241624355316
+          },
+          "r_factor": 93.19945526123047,
+          "mos": 4.409275054931641,
+          "fraction_lost": 0.0
+        },
+        {
+          "reported_at": 1789995672067,
+          "created_at": 1789995661832,
+          "payload_type": 103,
+          "ssrc": 4160985992,
+          "codec": "OPUS",
+          "duration": 5120,
+          "packets": {
+            "expected": 256,
+            "received": 256,
+            "lost": 0,
+            "rejected": 0
+          },
+          "jitter": {
+            "last": 0.02301839180290699,
+            "avg": 0.042086075991392136,
+            "min": 0.014037663117051125,
+            "max": 0.24880355596542358
+          },
+          "r_factor": 93.19944763183594,
+          "mos": 4.409275054931641,
+          "fraction_lost": 0.0
+        },
+        {
+          "reported_at": 1789995677180,
+          "created_at": 1789995666952,
+          "payload_type": 103,
+          "ssrc": 4160985992,
+          "codec": "OPUS",
+          "duration": 5120,
+          "packets": {
+            "expected": 256,
+            "received": 256,
+            "lost": 0,
+            "rejected": 0
+          },
+          "jitter": {
+            "last": 0.015716150403022766,
+            "avg": 0.03401774913072586,
+            "min": 0.011890617199242115,
+            "max": 0.18722644448280334
+          },
+          "r_factor": 93.19962310791016,
+          "mos": 4.409278392791748,
+          "fraction_lost": 0.0
+        },
+        {
+          "reported_at": 1789995682307,
+          "created_at": 1789995672072,
+          "payload_type": 103,
+          "ssrc": 4160985992,
+          "codec": "OPUS",
+          "duration": 5120,
+          "packets": {
+            "expected": 256,
+            "received": 256,
+            "lost": 0,
+            "rejected": 0
+          },
+          "jitter": {
+            "last": 0.02169768698513508,
+            "avg": 0.02594618685543537,
+            "min": 0.012345233000814915,
+            "max": 0.057662513107061386
+          },
+          "r_factor": 93.19947814941406,
+          "mos": 4.409275531768799,
+          "fraction_lost": 0.0
+        },
+        {
+          "reported_at": 1789995687427,
+          "created_at": 1789995677192,
+          "payload_type": 103,
+          "ssrc": 4160985992,
+          "codec": "OPUS",
+          "duration": 5120,
+          "packets": {
+            "expected": 256,
+            "received": 256,
+            "lost": 0,
+            "rejected": 0
+          },
+          "jitter": {
+            "last": 0.02249382808804512,
+            "avg": 0.030035538598895073,
+            "min": 0.014101848006248474,
+            "max": 0.06504024565219879
+          },
+          "r_factor": 93.19945526123047,
+          "mos": 4.409275054931641,
+          "fraction_lost": 0.0
+        }
+      ]
+    },
+    {
+      "reported_at": 1789995693011,
+      "created_at": 1789995683107,
+      "call_id": "6biyuJ3BIo",
+      "src_addr": "135.127.240.4",
+      "src_port": 14916,
+      "dst_addr": "10.241.49.121",
+      "dst_port": 42268,
+      "dst_host": "rtp-engine-2",
+      "reports": [
+        {
+          "reported_at": 1789995693011,
+          "created_at": 1789995683107,
+          "payload_type": 103,
+          "ssrc": 3516357567,
+          "codec": "OPUS",
+          "duration": 9637,
+          "packets": {
+            "expected": 483,
+            "received": 483,
+            "lost": 0,
+            "rejected": 0
+          },
+          "jitter": {
+            "last": 18.208845138549805,
+            "avg": 18.155099868774414,
+            "min": 12.555307388305664,
+            "max": 33.304290771484375
+          },
+          "r_factor": 92.76298522949219,
+          "mos": 4.400667190551758,
+          "fraction_lost": 0.0
+        },
+        {
+          "reported_at": 1789995702955,
+          "created_at": 1789995692733,
+          "payload_type": 103,
+          "ssrc": 3516357567,
+          "codec": "OPUS",
+          "duration": 5121,
+          "packets": {
+            "expected": 256,
+            "received": 256,
+            "lost": 0,
+            "rejected": 0
+          },
+          "jitter": {
+            "last": 18.5180721282959,
+            "avg": 17.510902404785156,
+            "min": 13.345451354980469,
+            "max": 23.844402313232422
+          },
+          "r_factor": 92.75556182861328,
+          "mos": 4.40051794052124,
+          "fraction_lost": 0.0
+        },
+        {
+          "reported_at": 1789995708399,
+          "created_at": 1789995697834,
+          "payload_type": 103,
+          "ssrc": 3516357567,
+          "codec": "OPUS",
+          "duration": 5136,
+          "packets": {
+            "expected": 256,
+            "received": 256,
+            "lost": 0,
+            "rejected": 0
+          },
+          "jitter": {
+            "last": 16.210330963134766,
+            "avg": 15.144574165344238,
+            "min": 10.445843696594238,
+            "max": 20.15435218811035
+          },
+          "r_factor": 92.81095123291016,
+          "mos": 4.401628494262695,
+          "fraction_lost": 0.0
+        },
+        {
+          "reported_at": 1789995711923,
+          "created_at": 1789995702954,
+          "payload_type": 103,
+          "ssrc": 3516357567,
+          "codec": "OPUS",
+          "duration": 8695,
+          "packets": {
+            "expected": 435,
+            "received": 434,
+            "lost": 1,
+            "rejected": 0
+          },
+          "jitter": {
+            "last": 16.18546485900879,
+            "avg": 18.534984588623047,
+            "min": 11.840455055236816,
+            "max": 38.005374908447266
+          },
+          "r_factor": 87.99047088623047,
+          "mos": 4.28671407699585,
+          "fraction_lost": 0.002298850566148758
+        },
+        {
+          "reported_at": 1789995722227,
+          "created_at": 1789995711644,
+          "payload_type": 103,
+          "ssrc": 3516357567,
+          "codec": "OPUS",
+          "duration": 5130,
+          "packets": {
+            "expected": 256,
+            "received": 254,
+            "lost": 2,
+            "rejected": 0
+          },
+          "jitter": {
+            "last": 17.946720123291016,
+            "avg": 15.550524711608887,
+            "min": 10.95341682434082,
+            "max": 20.639122009277344
+          },
+          "r_factor": 78.16287231445312,
+          "mos": 3.952709913253784,
+          "fraction_lost": 0.0078125
+        },
+        {
+          "reported_at": 1789995727307,
+          "created_at": 1789995716769,
+          "payload_type": 103,
+          "ssrc": 3516357567,
+          "codec": "OPUS",
+          "duration": 5121,
+          "packets": {
+            "expected": 256,
+            "received": 254,
+            "lost": 2,
+            "rejected": 0
+          },
+          "jitter": {
+            "last": 15.123498916625977,
+            "avg": 16.24687957763672,
+            "min": 12.509468078613281,
+            "max": 23.119104385375977
+          },
+          "r_factor": 78.23063659667969,
+          "mos": 3.9554035663604736,
+          "fraction_lost": 0.0078125
+        },
+        {
+          "reported_at": 1789995732084,
+          "created_at": 1789995721875,
+          "payload_type": 103,
+          "ssrc": 3516357567,
+          "codec": "OPUS",
+          "duration": 5111,
+          "packets": {
+            "expected": 256,
+            "received": 256,
+            "lost": 0,
+            "rejected": 0
+          },
+          "jitter": {
+            "last": 15.824381828308105,
+            "avg": 15.745916366577148,
+            "min": 13.197427749633789,
+            "max": 18.57267189025879
+          },
+          "r_factor": 92.8202133178711,
+          "mos": 4.401813983917236,
+          "fraction_lost": 0.0
+        },
+        {
+          "reported_at": 1789995737216,
+          "created_at": 1789995726986,
+          "payload_type": 103,
+          "ssrc": 3516357567,
+          "codec": "OPUS",
+          "duration": 5115,
+          "packets": {
+            "expected": 256,
+            "received": 256,
+            "lost": 0,
+            "rejected": 0
+          },
+          "jitter": {
+            "last": 17.500125885009766,
+            "avg": 16.114110946655273,
+            "min": 13.41921615600586,
+            "max": 20.044872283935547
+          },
+          "r_factor": 92.77999114990234,
+          "mos": 4.401008605957031,
+          "fraction_lost": 0.0
+        },
+        {
+          "reported_at": 1789995742371,
+          "created_at": 1789995732126,
+          "payload_type": 103,
+          "ssrc": 3516357567,
+          "codec": "OPUS",
+          "duration": 5106,
+          "packets": {
+            "expected": 256,
+            "received": 256,
+            "lost": 0,
+            "rejected": 0
+          },
+          "jitter": {
+            "last": 15.866134643554688,
+            "avg": 15.043534278869629,
+            "min": 10.326696395874023,
+            "max": 18.332382202148438
+          },
+          "r_factor": 92.81920623779297,
+          "mos": 4.401793956756592,
+          "fraction_lost": 0.0
+        },
+        {
+          "reported_at": 1789995747467,
+          "created_at": 1789995737247,
+          "payload_type": 103,
+          "ssrc": 3516357567,
+          "codec": "OPUS",
+          "duration": 5130,
+          "packets": {
+            "expected": 256,
+            "received": 256,
+            "lost": 0,
+            "rejected": 0
+          },
+          "jitter": {
+            "last": 16.783496856689453,
+            "avg": 16.477523803710938,
+            "min": 13.308578491210938,
+            "max": 19.916828155517578
+          },
+          "r_factor": 92.79719543457031,
+          "mos": 4.401353359222412,
+          "fraction_lost": 0.0
+        },
+        {
+          "reported_at": 1789995752583,
+          "created_at": 1789995742357,
+          "payload_type": 103,
+          "ssrc": 3516357567,
+          "codec": "OPUS",
+          "duration": 5116,
+          "packets": {
+            "expected": 256,
+            "received": 256,
+            "lost": 0,
+            "rejected": 0
+          },
+          "jitter": {
+            "last": 15.654699325561523,
+            "avg": 17.395965576171875,
+            "min": 13.216850280761719,
+            "max": 20.516279220581055
+          },
+          "r_factor": 92.82428741455078,
+          "mos": 4.401895523071289,
+          "fraction_lost": 0.0
+        },
+        {
+          "reported_at": 1789995757724,
+          "created_at": 1789995747513,
+          "payload_type": 103,
+          "ssrc": 3516357567,
+          "codec": "OPUS",
+          "duration": 5076,
+          "packets": {
+            "expected": 256,
+            "received": 256,
+            "lost": 0,
+            "rejected": 0
+          },
+          "jitter": {
+            "last": 18.762104034423828,
+            "avg": 16.137948989868164,
+            "min": 12.750153541564941,
+            "max": 19.614564895629883
+          },
+          "r_factor": 92.74971008300781,
+          "mos": 4.400400638580322,
+          "fraction_lost": 0.0
+        }
+      ]
+    },
+    {
+      "reported_at": 1789995692543,
+      "created_at": 1789995682312,
+      "call_id": "6biyuJ3BIo",
+      "src_addr": "10.241.49.121",
+      "src_port": 42268,
+      "src_host": "rtp-engine-2",
+      "dst_addr": "135.127.240.4",
+      "dst_port": 14916,
+      "reports": [
+        {
+          "reported_at": 1789995692543,
+          "created_at": 1789995682312,
+          "payload_type": 103,
+          "ssrc": 4160985992,
+          "codec": "OPUS",
+          "duration": 5120,
+          "packets": {
+            "expected": 256,
+            "received": 256,
+            "lost": 0,
+            "rejected": 0
+          },
+          "jitter": {
+            "last": 0.01446283794939518,
+            "avg": 0.024790016934275627,
+            "min": 0.014360310509800911,
+            "max": 0.0404122956097126
+          },
+          "r_factor": 93.19965362548828,
+          "mos": 4.4092793464660645,
+          "fraction_lost": 0.0
+        },
+        {
+          "reported_at": 1789995697659,
+          "created_at": 1789995687432,
+          "payload_type": 103,
+          "ssrc": 4160985992,
+          "codec": "OPUS",
+          "duration": 5120,
+          "packets": {
+            "expected": 256,
+            "received": 256,
+            "lost": 0,
+            "rejected": 0
+          },
+          "jitter": {
+            "last": 0.02945895865559578,
+            "avg": 0.023760998621582985,
+            "min": 0.012364321388304234,
+            "max": 0.05465921759605408
+          },
+          "r_factor": 93.19928741455078,
+          "mos": 4.409272193908691,
+          "fraction_lost": 0.0
+        },
+        {
+          "reported_at": 1789995702780,
+          "created_at": 1789995692552,
+          "payload_type": 103,
+          "ssrc": 4160985992,
+          "codec": "OPUS",
+          "duration": 5120,
+          "packets": {
+            "expected": 256,
+            "received": 256,
+            "lost": 0,
+            "rejected": 0
+          },
+          "jitter": {
+            "last": 0.032732442021369934,
+            "avg": 0.03596821054816246,
+            "min": 0.014714227989315987,
+            "max": 0.20368340611457825
+          },
+          "r_factor": 93.19921112060547,
+          "mos": 4.409270763397217,
+          "fraction_lost": 0.0
+        },
+        {
+          "reported_at": 1789995707900,
+          "created_at": 1789995697672,
+          "payload_type": 103,
+          "ssrc": 4160985992,
+          "codec": "OPUS",
+          "duration": 5120,
+          "packets": {
+            "expected": 256,
+            "received": 256,
+            "lost": 0,
+            "rejected": 0
+          },
+          "jitter": {
+            "last": 0.03589872270822525,
+            "avg": 0.0307980515062809,
+            "min": 0.014813526533544064,
+            "max": 0.05195033177733421
+          },
+          "r_factor": 93.19913482666016,
+          "mos": 4.409268856048584,
+          "fraction_lost": 0.0
+        },
+        {
+          "reported_at": 1789995713016,
+          "created_at": 1789995702792,
+          "payload_type": 103,
+          "ssrc": 4160985992,
+          "codec": "OPUS",
+          "duration": 5120,
+          "packets": {
+            "expected": 256,
+            "received": 256,
+            "lost": 0,
+            "rejected": 0
+          },
+          "jitter": {
+            "last": 0.021789085119962692,
+            "avg": 0.04062211886048317,
+            "min": 0.021789085119962692,
+            "max": 0.09932097792625427
+          },
+          "r_factor": 93.19947052001953,
+          "mos": 4.409275531768799,
+          "fraction_lost": 0.0
+        },
+        {
+          "reported_at": 1789995718143,
+          "created_at": 1789995707912,
+          "payload_type": 103,
+          "ssrc": 4160985992,
+          "codec": "OPUS",
+          "duration": 5120,
+          "packets": {
+            "expected": 256,
+            "received": 256,
+            "lost": 0,
+            "rejected": 0
+          },
+          "jitter": {
+            "last": 0.021125873550772667,
+            "avg": 0.03209388628602028,
+            "min": 0.01856912672519684,
+            "max": 0.06297881156206131
+          },
+          "r_factor": 93.19949340820312,
+          "mos": 4.409276008605957,
+          "fraction_lost": 0.0
+        },
+        {
+          "reported_at": 1789995723259,
+          "created_at": 1789995713032,
+          "payload_type": 103,
+          "ssrc": 4160985992,
+          "codec": "OPUS",
+          "duration": 5120,
+          "packets": {
+            "expected": 256,
+            "received": 256,
+            "lost": 0,
+            "rejected": 0
+          },
+          "jitter": {
+            "last": 0.012775915674865246,
+            "avg": 0.024993108585476875,
+            "min": 0.012775915674865246,
+            "max": 0.045670755207538605
+          },
+          "r_factor": 93.19969177246094,
+          "mos": 4.409279823303223,
+          "fraction_lost": 0.0
+        },
+        {
+          "reported_at": 1789995728379,
+          "created_at": 1789995718152,
+          "payload_type": 103,
+          "ssrc": 4160985992,
+          "codec": "OPUS",
+          "duration": 5120,
+          "packets": {
+            "expected": 256,
+            "received": 256,
+            "lost": 0,
+            "rejected": 0
+          },
+          "jitter": {
+            "last": 0.04422638192772865,
+            "avg": 0.025373512879014015,
+            "min": 0.012424173764884472,
+            "max": 0.04422638192772865
+          },
+          "r_factor": 93.19893646240234,
+          "mos": 4.409265041351318,
+          "fraction_lost": 0.0
+        },
+        {
+          "reported_at": 1789995733507,
+          "created_at": 1789995723272,
+          "payload_type": 103,
+          "ssrc": 4160985992,
+          "codec": "OPUS",
+          "duration": 5120,
+          "packets": {
+            "expected": 256,
+            "received": 256,
+            "lost": 0,
+            "rejected": 0
+          },
+          "jitter": {
+            "last": 0.0783195048570633,
+            "avg": 0.038563072681427,
+            "min": 0.026677094399929047,
+            "max": 0.13173586130142212
+          },
+          "r_factor": 93.1981201171875,
+          "mos": 4.409249305725098,
+          "fraction_lost": 0.0
+        },
+        {
+          "reported_at": 1789995738616,
+          "created_at": 1789995728392,
+          "payload_type": 103,
+          "ssrc": 4160985992,
+          "codec": "OPUS",
+          "duration": 5120,
+          "packets": {
+            "expected": 256,
+            "received": 256,
+            "lost": 0,
+            "rejected": 0
+          },
+          "jitter": {
+            "last": 0.05019163712859154,
+            "avg": 0.03708205744624138,
+            "min": 0.01584049127995968,
+            "max": 0.12069876492023468
+          },
+          "r_factor": 93.19879150390625,
+          "mos": 4.409262657165527,
+          "fraction_lost": 0.0
+        },
+        {
+          "reported_at": 1789995743735,
+          "created_at": 1789995733512,
+          "payload_type": 103,
+          "ssrc": 4160985992,
+          "codec": "OPUS",
+          "duration": 5120,
+          "packets": {
+            "expected": 256,
+            "received": 256,
+            "lost": 0,
+            "rejected": 0
+          },
+          "jitter": {
+            "last": 0.027828112244606018,
+            "avg": 0.03663318604230881,
+            "min": 0.024508846923708916,
+            "max": 0.05687881261110306
+          },
+          "r_factor": 93.19932556152344,
+          "mos": 4.40927267074585,
+          "fraction_lost": 0.0
+        },
+        {
+          "reported_at": 1789995748855,
+          "created_at": 1789995738632,
+          "payload_type": 103,
+          "ssrc": 4160985992,
+          "codec": "OPUS",
+          "duration": 5120,
+          "packets": {
+            "expected": 256,
+            "received": 256,
+            "lost": 0,
+            "rejected": 0
+          },
+          "jitter": {
+            "last": 0.045654747635126114,
+            "avg": 0.052759215235710144,
+            "min": 0.028088830411434174,
+            "max": 0.09835222363471985
+          },
+          "r_factor": 93.19889831542969,
+          "mos": 4.40926456451416,
+          "fraction_lost": 0.0
+        },
+        {
+          "reported_at": 1789995753976,
+          "created_at": 1789995743752,
+          "payload_type": 103,
+          "ssrc": 4160985992,
+          "codec": "OPUS",
+          "duration": 5120,
+          "packets": {
+            "expected": 256,
+            "received": 256,
+            "lost": 0,
+            "rejected": 0
+          },
+          "jitter": {
+            "last": 0.03141003102064133,
+            "avg": 0.06291639059782028,
+            "min": 0.029000621289014816,
+            "max": 0.3038345277309418
+          },
+          "r_factor": 93.1992416381836,
+          "mos": 4.409271240234375,
+          "fraction_lost": 0.0
+        },
+        {
+          "reported_at": 1789995759096,
+          "created_at": 1789995748872,
+          "payload_type": 103,
+          "ssrc": 4160985992,
+          "codec": "OPUS",
+          "duration": 5120,
+          "packets": {
+            "expected": 256,
+            "received": 256,
+            "lost": 0,
+            "rejected": 0
+          },
+          "jitter": {
+            "last": 0.03662978112697601,
+            "avg": 0.05743018910288811,
+            "min": 0.03033093363046646,
+            "max": 0.15857580304145813
+          },
+          "r_factor": 93.1991195678711,
+          "mos": 4.409268856048584,
+          "fraction_lost": 0.0
+        }
+      ]
+    },
+    {
+      "reported_at": 1789995762816,
+      "created_at": 1789995752599,
+      "call_id": "6biyuJ3BIo",
+      "src_addr": "135.127.240.4",
+      "src_port": 14916,
+      "dst_addr": "10.241.49.121",
+      "dst_port": 42268,
+      "dst_host": "rtp-engine-2",
+      "reports": [
+        {
+          "reported_at": 1789995762816,
+          "created_at": 1789995752599,
+          "payload_type": 103,
+          "ssrc": 3516357567,
+          "codec": "OPUS",
+          "duration": 5141,
+          "packets": {
+            "expected": 256,
+            "received": 256,
+            "lost": 0,
+            "rejected": 0
+          },
+          "jitter": {
+            "last": 16.712919235229492,
+            "avg": 17.221391677856445,
+            "min": 12.776426315307617,
+            "max": 20.84714698791504
+          },
+          "r_factor": 92.79888916015625,
+          "mos": 4.4013872146606445,
+          "fraction_lost": 0.0
+        },
+        {
+          "reported_at": 1789995767967,
+          "created_at": 1789995757720,
+          "payload_type": 103,
+          "ssrc": 3516357567,
+          "codec": "OPUS",
+          "duration": 5115,
+          "packets": {
+            "expected": 256,
+            "received": 256,
+            "lost": 0,
+            "rejected": 0
+          },
+          "jitter": {
+            "last": 17.684728622436523,
+            "avg": 18.931577682495117,
+            "min": 16.234302520751953,
+            "max": 23.4965763092041
+          },
+          "r_factor": 92.77556610107422,
+          "mos": 4.4009199142456055,
+          "fraction_lost": 0.0
+        },
+        {
+          "reported_at": 1789995773068,
+          "created_at": 1789995762825,
+          "payload_type": 103,
+          "ssrc": 3516357567,
+          "codec": "OPUS",
+          "duration": 5150,
+          "packets": {
+            "expected": 256,
+            "received": 256,
+            "lost": 0,
+            "rejected": 0
+          },
+          "jitter": {
+            "last": 17.392698287963867,
+            "avg": 16.57259178161621,
+            "min": 13.454062461853027,
+            "max": 20.526630401611328
+          },
+          "r_factor": 92.7825698852539,
+          "mos": 4.401060104370117,
+          "fraction_lost": 0.0
+        },
+        {
+          "reported_at": 1789995778179,
+          "created_at": 1789995767955,
+          "payload_type": 103,
+          "ssrc": 3516357567,
+          "codec": "OPUS",
+          "duration": 5131,
+          "packets": {
+            "expected": 256,
+            "received": 256,
+            "lost": 0,
+            "rejected": 0
+          },
+          "jitter": {
+            "last": 21.086360931396484,
+            "avg": 16.418365478515625,
+            "min": 12.794820785522461,
+            "max": 22.423519134521484
+          },
+          "r_factor": 92.69392395019531,
+          "mos": 4.399276256561279,
+          "fraction_lost": 0.0
+        },
+        {
+          "reported_at": 1789995783659,
+          "created_at": 1789995773072,
+          "payload_type": 103,
+          "ssrc": 3516357567,
+          "codec": "OPUS",
+          "duration": 5116,
+          "packets": {
+            "expected": 256,
+            "received": 256,
+            "lost": 0,
+            "rejected": 0
+          },
+          "jitter": {
+            "last": 18.737775802612305,
+            "avg": 22.934457778930664,
+            "min": 14.455265045166016,
+            "max": 36.13340377807617
+          },
+          "r_factor": 92.75028991699219,
+          "mos": 4.400412082672119,
+          "fraction_lost": 0.0
+        },
+        {
+          "reported_at": 1789995788759,
+          "created_at": 1789995778207,
+          "payload_type": 103,
+          "ssrc": 3516357567,
+          "codec": "OPUS",
+          "duration": 5120,
+          "packets": {
+            "expected": 256,
+            "received": 254,
+            "lost": 2,
+            "rejected": 0
+          },
+          "jitter": {
+            "last": 17.59502601623535,
+            "avg": 17.32805061340332,
+            "min": 13.750755310058594,
+            "max": 20.70858383178711
+          },
+          "r_factor": 78.17131805419922,
+          "mos": 3.9530458450317383,
+          "fraction_lost": 0.0078125
+        },
+        {
+          "reported_at": 1789995789911,
+          "created_at": 1789995783307,
+          "payload_type": 103,
+          "ssrc": 3516357567,
+          "codec": "OPUS",
+          "duration": 6326,
+          "packets": {
+            "expected": 316,
+            "received": 315,
+            "lost": 1,
+            "rejected": 0
+          },
+          "jitter": {
+            "last": 18.359331130981445,
+            "avg": 21.896411895751953,
+            "min": 14.781116485595703,
+            "max": 34.02223205566406
+          },
+          "r_factor": 86.24723052978516,
+          "mos": 4.2365827560424805,
+          "fraction_lost": 0.0031645570416003466
+        },
+        {
+          "reported_at": 1789995800191,
+          "created_at": 1789995789632,
+          "payload_type": 103,
+          "ssrc": 3516357567,
+          "codec": "OPUS",
+          "duration": 5121,
+          "packets": {
+            "expected": 256,
+            "received": 256,
+            "lost": 0,
+            "rejected": 0
+          },
+          "jitter": {
+            "last": 19.178190231323242,
+            "avg": 15.781221389770508,
+            "min": 9.673884391784668,
+            "max": 20.355091094970703
+          },
+          "r_factor": 92.7397232055664,
+          "mos": 4.4001994132995605,
+          "fraction_lost": 0.0
+        },
+        {
+          "reported_at": 1789995805299,
+          "created_at": 1789995794733,
+          "payload_type": 103,
+          "ssrc": 3516357567,
+          "codec": "OPUS",
+          "duration": 5141,
+          "packets": {
+            "expected": 256,
+            "received": 246,
+            "lost": 10,
+            "rejected": 0
+          },
+          "jitter": {
+            "last": 16.038354873657227,
+            "avg": 22.256052017211914,
+            "min": 14.928723335266113,
+            "max": 34.783447265625
+          },
+          "r_factor": 47.594207763671875,
+          "mos": 2.4491984844207764,
+          "fraction_lost": 0.0390625
+        },
+        {
+          "reported_at": 1789995810415,
+          "created_at": 1789995799869,
+          "payload_type": 103,
+          "ssrc": 3516357567,
+          "codec": "OPUS",
+          "duration": 5121,
+          "packets": {
+            "expected": 256,
+            "received": 256,
+            "lost": 0,
+            "rejected": 0
+          },
+          "jitter": {
+            "last": 16.49030876159668,
+            "avg": 15.231575012207031,
+            "min": 11.512767791748047,
+            "max": 17.879745483398438
+          },
+          "r_factor": 92.80422973632812,
+          "mos": 4.401494026184082,
+          "fraction_lost": 0.0
+        },
+        {
+          "reported_at": 1789995815555,
+          "created_at": 1789995804985,
+          "payload_type": 103,
+          "ssrc": 3516357567,
+          "codec": "OPUS",
+          "duration": 5110,
+          "packets": {
+            "expected": 256,
+            "received": 254,
+            "lost": 2,
+            "rejected": 0
+          },
+          "jitter": {
+            "last": 16.722122192382812,
+            "avg": 16.135974884033203,
+            "min": 11.834589958190918,
+            "max": 18.866405487060547
+          },
+          "r_factor": 78.19226837158203,
+          "mos": 3.9538791179656982,
+          "fraction_lost": 0.0078125
+        },
+        {
+          "reported_at": 1789995820667,
+          "created_at": 1789995810106,
+          "payload_type": 103,
+          "ssrc": 3516357567,
+          "codec": "OPUS",
+          "duration": 5155,
+          "packets": {
+            "expected": 256,
+            "received": 256,
+            "lost": 0,
+            "rejected": 0
+          },
+          "jitter": {
+            "last": 21.6474609375,
+            "avg": 19.189449310302734,
+            "min": 13.186741828918457,
+            "max": 55.896663665771484
+          },
+          "r_factor": 92.68045806884766,
+          "mos": 4.399003982543945,
+          "fraction_lost": 0.0
+        },
+        {
+          "reported_at": 1789995826628,
+          "created_at": 1789995815241,
+          "payload_type": 103,
+          "ssrc": 3516357567,
+          "codec": "OPUS",
+          "duration": 5110,
+          "packets": {
+            "expected": 256,
+            "received": 255,
+            "lost": 1,
+            "rejected": 0
+          },
+          "jitter": {
+            "last": 15.812490463256836,
+            "avg": 15.536375045776367,
+            "min": 10.774921417236328,
+            "max": 22.034786224365234
+          },
+          "r_factor": 84.90910339355469,
+          "mos": 4.195240497589111,
+          "fraction_lost": 0.00390625
+        }
+      ]
+    },
+    {
+      "reported_at": 1789995763967,
+      "created_at": 1789995753992,
+      "call_id": "6biyuJ3BIo",
+      "src_addr": "10.241.49.121",
+      "src_port": 42268,
+      "src_host": "rtp-engine-2",
+      "dst_addr": "135.127.240.4",
+      "dst_port": 14916,
+      "reports": [
+        {
+          "reported_at": 1789995763967,
+          "created_at": 1789995753992,
+          "payload_type": 103,
+          "ssrc": 4160985992,
+          "codec": "OPUS",
+          "duration": 9640,
+          "packets": {
+            "expected": 482,
+            "received": 482,
+            "lost": 0,
+            "rejected": 0
+          },
+          "jitter": {
+            "last": 0.031053690239787102,
+            "avg": 0.03992648795247078,
+            "min": 0.020977918058633804,
+            "max": 0.10738661885261536
+          },
+          "r_factor": 93.19924926757812,
+          "mos": 4.409271240234375,
+          "fraction_lost": 0.0
+        },
+        {
+          "reported_at": 1789995773871,
+          "created_at": 1789995763636,
+          "payload_type": 103,
+          "ssrc": 4160985992,
+          "codec": "OPUS",
+          "duration": 5120,
+          "packets": {
+            "expected": 256,
+            "received": 256,
+            "lost": 0,
+            "rejected": 0
+          },
+          "jitter": {
+            "last": 0.009866011328995228,
+            "avg": 0.018089452758431435,
+            "min": 0.0079658143222332,
+            "max": 0.04724472761154175
+          },
+          "r_factor": 93.19976043701172,
+          "mos": 4.409281253814697,
+          "fraction_lost": 0.0
+        },
+        {
+          "reported_at": 1789995778981,
+          "created_at": 1789995768756,
+          "payload_type": 103,
+          "ssrc": 4160985992,
+          "codec": "OPUS",
+          "duration": 5120,
+          "packets": {
+            "expected": 256,
+            "received": 256,
+            "lost": 0,
+            "rejected": 0
+          },
+          "jitter": {
+            "last": 0.013190031982958317,
+            "avg": 0.01557689718902111,
+            "min": 0.005484630353748798,
+            "max": 0.0479748360812664
+          },
+          "r_factor": 93.1996841430664,
+          "mos": 4.409279823303223,
+          "fraction_lost": 0.0
+        },
+        {
+          "reported_at": 1789995784107,
+          "created_at": 1789995773876,
+          "payload_type": 103,
+          "ssrc": 4160985992,
+          "codec": "OPUS",
+          "duration": 5120,
+          "packets": {
+            "expected": 256,
+            "received": 256,
+            "lost": 0,
+            "rejected": 0
+          },
+          "jitter": {
+            "last": 0.016608010977506638,
+            "avg": 0.01892436482012272,
+            "min": 0.0072386739775538445,
+            "max": 0.08317249268293381
+          },
+          "r_factor": 93.19960021972656,
+          "mos": 4.40927791595459,
+          "fraction_lost": 0.0
+        },
+        {
+          "reported_at": 1789995789224,
+          "created_at": 1789995778996,
+          "payload_type": 103,
+          "ssrc": 4160985992,
+          "codec": "OPUS",
+          "duration": 5120,
+          "packets": {
+            "expected": 256,
+            "received": 256,
+            "lost": 0,
+            "rejected": 0
+          },
+          "jitter": {
+            "last": 0.009288923814892769,
+            "avg": 0.01457950472831726,
+            "min": 0.008898337371647358,
+            "max": 0.03103959932923317
+          },
+          "r_factor": 93.19977569580078,
+          "mos": 4.409281253814697,
+          "fraction_lost": 0.0
+        },
+        {
+          "reported_at": 1789995799471,
+          "created_at": 1789995789236,
+          "payload_type": 103,
+          "ssrc": 4160985992,
+          "codec": "OPUS",
+          "duration": 5120,
+          "packets": {
+            "expected": 256,
+            "received": 256,
+            "lost": 0,
+            "rejected": 0
+          },
+          "jitter": {
+            "last": 0.011533272452652454,
+            "avg": 0.013942807912826538,
+            "min": 0.004884767346084118,
+            "max": 0.055834319442510605
+          },
+          "r_factor": 93.19972229003906,
+          "mos": 4.409280300140381,
+          "fraction_lost": 0.0
+        },
+        {
+          "reported_at": 1789995804579,
+          "created_at": 1789995794356,
+          "payload_type": 103,
+          "ssrc": 4160985992,
+          "codec": "OPUS",
+          "duration": 5120,
+          "packets": {
+            "expected": 256,
+            "received": 256,
+            "lost": 0,
+            "rejected": 0
+          },
+          "jitter": {
+            "last": 0.02528580091893673,
+            "avg": 0.015543901361525059,
+            "min": 0.006447129882872105,
+            "max": 0.050206027925014496
+          },
+          "r_factor": 93.19938659667969,
+          "mos": 4.409274101257324,
+          "fraction_lost": 0.0
+        },
+        {
+          "reported_at": 1789995809707,
+          "created_at": 1789995799476,
+          "payload_type": 103,
+          "ssrc": 4160985992,
+          "codec": "OPUS",
+          "duration": 5120,
+          "packets": {
+            "expected": 256,
+            "received": 256,
+            "lost": 0,
+            "rejected": 0
+          },
+          "jitter": {
+            "last": 0.01036754995584488,
+            "avg": 0.013101056218147278,
+            "min": 0.00728853652253747,
+            "max": 0.02109789103269577
+          },
+          "r_factor": 93.19974517822266,
+          "mos": 4.409280776977539,
+          "fraction_lost": 0.0
+        },
+        {
+          "reported_at": 1789995814831,
+          "created_at": 1789995804596,
+          "payload_type": 103,
+          "ssrc": 4160985992,
+          "codec": "OPUS",
+          "duration": 5120,
+          "packets": {
+            "expected": 256,
+            "received": 256,
+            "lost": 0,
+            "rejected": 0
+          },
+          "jitter": {
+            "last": 0.005903192795813084,
+            "avg": 0.011756719090044498,
+            "min": 0.00515697430819273,
+            "max": 0.034447550773620605
+          },
+          "r_factor": 93.1998519897461,
+          "mos": 4.40928316116333,
+          "fraction_lost": 0.0
+        },
+        {
+          "reported_at": 1789995819951,
+          "created_at": 1789995809716,
+          "payload_type": 103,
+          "ssrc": 4160985992,
+          "codec": "OPUS",
+          "duration": 5120,
+          "packets": {
+            "expected": 256,
+            "received": 256,
+            "lost": 0,
+            "rejected": 0
+          },
+          "jitter": {
+            "last": 0.01141845528036356,
+            "avg": 0.011687307618558407,
+            "min": 0.005602745339274406,
+            "max": 0.026757894083857536
+          },
+          "r_factor": 93.19972229003906,
+          "mos": 4.409280300140381,
+          "fraction_lost": 0.0
+        },
+        {
+          "reported_at": 1789995825064,
+          "created_at": 1789995814836,
+          "payload_type": 103,
+          "ssrc": 4160985992,
+          "codec": "OPUS",
+          "duration": 5120,
+          "packets": {
+            "expected": 256,
+            "received": 256,
+            "lost": 0,
+            "rejected": 0
+          },
+          "jitter": {
+            "last": 0.008737856522202492,
+            "avg": 0.010553723201155663,
+            "min": 0.006123069208115339,
+            "max": 0.01931445486843586
+          },
+          "r_factor": 93.19979095458984,
+          "mos": 4.4092817306518555,
+          "fraction_lost": 0.0
+        }
+      ]
+    },
+    {
+      "reported_at": 1789995831756,
+      "created_at": 1789995820336,
+      "call_id": "6biyuJ3BIo",
+      "src_addr": "135.127.240.4",
+      "src_port": 14916,
+      "dst_addr": "10.241.49.121",
+      "dst_port": 42268,
+      "dst_host": "rtp-engine-2",
+      "reports": [
+        {
+          "reported_at": 1789995831756,
+          "created_at": 1789995820336,
+          "payload_type": 103,
+          "ssrc": 3516357567,
+          "codec": "OPUS",
+          "duration": 5963,
+          "packets": {
+            "expected": 256,
+            "received": 256,
+            "lost": 0,
+            "rejected": 0
+          },
+          "jitter": {
+            "last": 13.631196022033691,
+            "avg": 15.071393013000488,
+            "min": 10.195794105529785,
+            "max": 26.059385299682617
+          },
+          "r_factor": 92.87284851074219,
+          "mos": 4.4028639793396,
+          "fraction_lost": 0.0
+        },
+        {
+          "reported_at": 1789995848192,
+          "created_at": 1789995826309,
+          "payload_type": 103,
+          "ssrc": 3516357567,
+          "codec": "OPUS",
+          "duration": 6879,
+          "packets": {
+            "expected": 344,
+            "received": 342,
+            "lost": 2,
+            "rejected": 0
+          },
+          "jitter": {
+            "last": 13.510528564453125,
+            "avg": 14.722107887268066,
+            "min": 10.686430931091309,
+            "max": 19.863603591918945
+          },
+          "r_factor": 81.56082916259766,
+          "mos": 4.081608295440674,
+          "fraction_lost": 0.0058139534667134285
+        }
+      ]
+    },
+    {
+      "reported_at": 1789995849192,
+      "created_at": 1789995825076,
+      "call_id": "6biyuJ3BIo",
+      "src_addr": "10.241.49.121",
+      "src_port": 42268,
+      "src_host": "rtp-engine-2",
+      "dst_addr": "135.127.240.4",
+      "dst_port": 14916,
+      "reports": [
+        {
+          "reported_at": 1789995849192,
+          "created_at": 1789995825076,
+          "payload_type": 103,
+          "ssrc": 4160985992,
+          "codec": "OPUS",
+          "duration": 8140,
+          "packets": {
+            "expected": 407,
+            "received": 407,
+            "lost": 0,
+            "rejected": 0
+          },
+          "jitter": {
+            "last": 0.013395189307630062,
+            "avg": 0.013413279317319393,
+            "min": 0.006341102998703718,
+            "max": 0.05636575445532799
+          },
+          "r_factor": 93.19967651367188,
+          "mos": 4.4092793464660645,
+          "fraction_lost": 0.0
+        }
+      ]
+    }
   ]
 }

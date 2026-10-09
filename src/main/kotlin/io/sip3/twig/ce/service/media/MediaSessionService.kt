@@ -21,6 +21,7 @@ import io.github.oshai.kotlinlogging.KotlinLogging
 import io.sip3.twig.ce.domain.SessionRequest
 import io.sip3.twig.ce.mongo.MongoClient
 import io.sip3.twig.ce.service.media.domain.LegSession
+import io.sip3.twig.ce.service.media.domain.MediaSession
 import io.sip3.twig.ce.service.media.util.LegSessionUtil.generateLegId
 import io.sip3.twig.ce.service.media.util.LegSessionUtil.generatePartyId
 import io.sip3.twig.ce.util.firstOrNull
@@ -56,8 +57,7 @@ open class MediaSessionService {
 
     private fun findLegSessions(source: String, createdAt: Long, terminatedAt: Long, callId: List<String>): Map<String, LegSession> {
         val sessions = mutableMapOf<String, LegSession>()
-        val reports = mutableListOf<Document>()
-
+        val reports = mutableMapOf<String, MutableList<Document>>()
         // Create leg sessions from reports index
         find("rtpr_${source}_index", createdAt, terminatedAt, callId)
             .forEachRemaining { report ->
@@ -72,48 +72,89 @@ open class MediaSessionService {
 
         find("rtpr_${source}_raw", createdAtFrom, terminatedAtTo, callId)
             .forEachRemaining { document ->
+                val group = reports.getOrPut(generateLegId(document), { mutableListOf() })
                 document.getList("reports", Document::class.java)?.forEach { report ->
                     report.put("src_addr", document.getString("src_addr"))
                     report.put("src_port", document.getInteger("src_port"))
                     report.put("dst_addr", document.getString("dst_addr"))
                     report.put("dst_port", document.getInteger("dst_port"))
                     report.put("call_id", document.getString("call_id"))
-                    reports.add(report)
-                } ?: reports.add(document)
+                    group.add(report)
+                } ?: group.add(document)
             }
+
+        val unassignedKeys = reports.keys.minus(sessions.keys)
+        if (unassignedKeys.isNotEmpty()) {
+            logger.debug { "LegSession not found by id $unassignedKeys" }
+
+            unassignedKeys.forEach { key ->
+                val unassignedReports = reports[key]!!
+                val report = unassignedReports.first()
+                val srcAddr = report.getString("src_addr")
+                val srcPort = report.getInteger("src_port")
+                val dstAddr = report.getString("dst_addr")
+                val dstPort = report.getInteger("dst_port")
+                sessions.keys.filter { it.startsWith(report.getString("call_id")) }
+                    .map { sessions[it]!! }
+                    .forEach { session ->
+                        val matchScore = listOf<Pair<Any, Any>>(
+                            srcAddr to session.srcAddr,
+                            srcPort to session.srcPort,
+                            srcAddr to session.dstAddr,
+                            srcPort to session.dstPort,
+                            dstAddr to session.dstAddr,
+                            dstPort to session.dstPort,
+                            dstAddr to session.srcAddr,
+                            dstPort to session.srcPort
+                        ).count { (first, second) -> first == second }
+
+                        when {
+                            matchScore < 2 -> logger.debug { "No matches for unassigned key $key" }
+                            else -> {
+                                logger.trace { "Match score: $matchScore for $key. Found session: $session" }
+                                val mediaSession = MediaSession().apply {
+                                    add(unassignedReports)
+                                }
+                                if (srcAddr == session.srcAddr || dstAddr == session.dstAddr) {
+                                    session.`out`.add(mediaSession)
+                                } else {
+                                    session.`in`.add(mediaSession)
+                                }
+                            }
+                        }
+                    }
+            }
+        }
 
         // Add blocks to media sessions
         sessions.forEach { (legId, legSession) ->
             try {
-                reports.filter { generateLegId(it) == legId }
-                    .sortedBy { it.getLong("created_at") }
-                    .let { legReports ->
-                        legSession.`in`.forEach { mediaSessionReport ->
-                            legReports.filter { generatePartyId(it, source) == mediaSessionReport.partyId }
-                                .let { mediaSessionReport.add(it) }
-                        }
-
-                        legSession.`out`.forEach { mediaSessionReport ->
-                            legReports.filter { generatePartyId(it, source) == mediaSessionReport.partyId }
-                                .let { mediaSessionReport.add(it) }
+                reports[legId]?.sortedBy { it.getLong("created_at") }
+                    ?.let { legReports ->
+                        legSession.`in`.iterator().merge(legSession.out.iterator()).forEachRemaining { mediaSession ->
+                            legReports.filter { report ->
+                                generatePartyId(report, source) == mediaSession.partyId
+                                        || report.srcAddrPort() == mediaSession.srcPartyId
+                                        || report.dstAddrPort() == mediaSession.dstPartyId
+                            }
+                                .let { streamReports ->
+                                    mediaSession.add(streamReports)
+                                }
                         }
                     }
             } catch (e: Exception) {
                 legSession.invalid = true
                 logger.error(e) { "MediaSessionService `updateSession()` failed. LegId: $legId" }
             }
+        }
 
-            sessions.values.forEach { session ->
+        sessions.values.forEach { session ->
                 session.`in`.iterator().merge(session.out.iterator(), null)
                     .firstOrNull { mediaSession ->
                         mediaSession.reports.any { it.jitter.max >= 10000 }
-                    }
+                }
                     ?.let { session.invalid = true }
             }
-
-        }
-
-        sessions.values.forEach { it.updateTimestamps() }
 
         return sessions
     }
@@ -134,5 +175,17 @@ open class MediaSessionService {
         }
 
         return mongoClient.find(prefix, Pair(createdAt, terminatedAt + terminationTimeout), Filters.and(filters))
+    }
+
+    private fun Document.addrPort(source: String): String {
+        return "${getString("${source}_addr")}:${getInteger("${source}_port")}"
+    }
+
+    private fun Document.srcAddrPort(): String {
+        return addrPort("src")
+    }
+
+    private fun Document.dstAddrPort(): String {
+        return addrPort("dst")
     }
 }
