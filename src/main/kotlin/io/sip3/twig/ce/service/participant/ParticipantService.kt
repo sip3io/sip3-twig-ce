@@ -22,10 +22,12 @@ import io.github.oshai.kotlinlogging.KotlinLogging
 import io.sip3.twig.ce.domain.Event
 import io.sip3.twig.ce.domain.Participant
 import io.sip3.twig.ce.service.host.HostService
+import io.sip3.twig.ce.util.SessionDescriptionParser
 import io.sip3.twig.ce.util.address
 import io.sip3.twig.ce.util.hasSdp
 import io.sip3.twig.ce.util.method
 import io.sip3.twig.ce.util.sessionDescription
+import jakarta.annotation.PostConstruct
 import org.bson.Document
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
@@ -33,14 +35,21 @@ import org.springframework.stereotype.Component
 @Component
 open class ParticipantService {
 
+    protected val logger = KotlinLogging.logger {}
+
     init {
         StringMsgParser.setComputeContentLengthFromMessage(true)
     }
 
-    protected val logger = KotlinLogging.logger {}
-
     @Autowired
     protected lateinit var hostService: HostService
+
+    protected lateinit var parser: SessionDescriptionParser
+
+    @PostConstruct
+    open fun init() {
+        parser = SessionDescriptionParser()
+    }
 
     open fun collectParticipants(events: List<Event>): List<Participant> {
         var isFirst = true
@@ -101,7 +110,7 @@ open class ParticipantService {
 
     open fun collectMediaAddresses(sipMessage: SIPMessage): Set<String> {
         val sessionDescription = try {
-            sipMessage.sessionDescription()
+            sipMessage.sessionDescription(parser)
         } catch (e: Exception) {
             logger.error(e) { "SIPMessage 'sessionDescription()' failed." }
             null

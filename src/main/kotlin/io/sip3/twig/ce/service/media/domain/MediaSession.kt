@@ -26,41 +26,37 @@ open class MediaSession() : MediaStatistic() {
     val partyId: String
         get() = "$srcAddr:$srcPort:$dstAddr:$dstPort"
 
+    val srcPartyId: String
+        get() = "$srcAddr:$srcPort"
+
+    val dstPartyId: String
+        get() = "$dstAddr:$dstPort"
+
     lateinit var srcAddr: String
     var srcPort: Int = -1
+    val srcPorts: MutableSet<Int> = mutableSetOf()
+
     lateinit var dstAddr: String
     var dstPort: Int = -1
+    val dstPorts: MutableSet<Int> = mutableSetOf()
+
     val reports = sortedSetOf<Report>(compareBy { it.createdAt })
 
     fun add(documents: List<Document>) {
-        documents.map { document ->
-            Report().apply {
-                createdAt = document.getLong("created_at")
-                duration = document.getInteger("duration")
-                terminatedAt = document.getLong("created_at") + duration
-
-                mos = document.getDouble("mos")
-                rFactor = document.getDouble("r_factor")
-
-                packets.apply {
-                    val reportPackets = document.get("packets") as Document
-                    expected = reportPackets.getInteger("expected")
-                    lost = reportPackets.getInteger("lost")
-                    received = reportPackets.getInteger("received")
-                    rejected = reportPackets.getInteger("rejected")
-                }
-                jitter.apply {
-                    val reportJitter = document.get("jitter") as Document
-                    min = reportJitter.getDouble("min")
-                    max = reportJitter.getDouble("max")
-                    avg = reportJitter.getDouble("avg")
-                }
-                ssrc = document.getLong("ssrc")
-            }
-        }.let {
-            reports.addAll(it)
+        if (documents.isEmpty()) {
+            return
         }
 
+        documents.map { toReport(it) }
+            .let { reports.addAll(it) }
+        documents.forEach { document ->
+            document.getInteger("src_port")?.let { srcPorts.add(it) }
+            document.getInteger("dst_port")?.let { dstPorts.add(it) }
+        }
+        updateTimestamps()
+    }
+
+    fun updateTimestamps() {
         reports.firstOrNull()?.createdAt?.takeIf { it < createdAt }?.let {
             createdAt = it
         }
@@ -69,6 +65,32 @@ open class MediaSession() : MediaStatistic() {
         }
 
         duration = (terminatedAt - createdAt).toInt()
+    }
+
+    private fun toReport(document: Document): Report {
+        return Report().apply {
+            createdAt = document.getLong("created_at")
+            duration = document.getInteger("duration")
+            terminatedAt = document.getLong("created_at") + duration
+
+            mos = document.getDouble("mos")
+            rFactor = document.getDouble("r_factor")
+
+            packets.apply {
+                val reportPackets = document.get("packets") as Document
+                expected = reportPackets.getInteger("expected")
+                lost = reportPackets.getInteger("lost")
+                received = reportPackets.getInteger("received")
+                rejected = reportPackets.getInteger("rejected")
+            }
+            jitter.apply {
+                val reportJitter = document.get("jitter") as Document
+                min = reportJitter.getDouble("min")
+                max = reportJitter.getDouble("max")
+                avg = reportJitter.getDouble("avg")
+            }
+            ssrc = document.getLong("ssrc")
+        }
     }
 
     override fun toString(): String {
