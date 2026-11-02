@@ -25,6 +25,7 @@ import io.pkts.buffer.Buffers
 import io.pkts.frame.PcapGlobalHeader
 import io.pkts.packet.PacketFactory
 import io.sip3.twig.ce.domain.SessionRequest
+import io.sip3.twig.ce.domain.WavFile
 import io.sip3.twig.ce.mongo.MongoClient
 import io.sip3.twig.ce.service.host.HostService
 import io.sip3.twig.ce.util.*
@@ -178,6 +179,10 @@ abstract class SessionService {
         }
 
         return os
+    }
+
+    open fun wav(req: SessionRequest): List<WavFile> {
+        throw UnsupportedOperationException("WAV export is not supported in CE version")
     }
 
     open fun stash(req: SessionRequest) {

@@ -19,25 +19,47 @@ package io.sip3.twig.ce.controller
 import io.github.oshai.kotlinlogging.KotlinLogging
 import io.sip3.twig.ce.domain.Event
 import io.sip3.twig.ce.domain.SessionRequest
+import io.sip3.twig.ce.domain.WavFile
 import io.sip3.twig.ce.service.ServiceLocator
 import io.sip3.twig.ce.service.SessionService
 import io.sip3.twig.ce.service.media.MediaSessionService
 import io.sip3.twig.ce.service.participant.ParticipantService
 import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
 import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.servlet.http.HttpServletResponse
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.http.ContentDisposition
+import org.springframework.http.HttpEntity
+import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
+import org.springframework.http.converter.FormHttpMessageConverter
+import org.springframework.http.server.ServletServerHttpResponse
+import org.springframework.util.LinkedMultiValueMap
 import org.springframework.web.bind.annotation.*
 import java.util.*
+import java.util.zip.ZipEntry
+import java.util.zip.ZipOutputStream
 
 @Tag(name = "Session API", description = "Session Controller")
 @RestController
 @RequestMapping("/session")
 class SessionController {
+
+    companion object {
+
+        private val AUDIO_WAV = MediaType.parseMediaType("audio/wav")
+        private val APPLICATION_ZIP = MediaType.parseMediaType("application/zip")
+
+        private val SUPPORTED_WAV_CONTENT_TYPES = listOf(
+            MediaType.MULTIPART_MIXED,
+            AUDIO_WAV,
+            APPLICATION_ZIP
+        )
+    }
 
     private val logger = KotlinLogging.logger {}
 
@@ -210,6 +232,97 @@ class SessionController {
         }
     }
 
+    @Operation(summary = "Get recorded RTP streams as WAV files")
+    @ApiResponses(
+        ApiResponse(responseCode = "200", description = "WAV files in the format selected by Accept", content = [
+            Content(mediaType = "audio/wav"),
+            Content(mediaType = "multipart/mixed"),
+            Content(mediaType = "application/zip")
+        ]),
+        ApiResponse(responseCode = "204", description = "No RTP audio found"),
+        ApiResponse(responseCode = "400", description = "Bad request"),
+        ApiResponse(responseCode = "406", description = "Unsupported Accept type, or multiple WAVs requested as audio/wav"),
+        ApiResponse(responseCode = "500", description = "InternalServerError"),
+        ApiResponse(responseCode = "504", description = "ConnectionTimeoutError")
+    )
+    @PostMapping(value = ["/wav"], consumes = [MediaType.APPLICATION_JSON_VALUE])
+    fun wav(
+        @RequestBody req: SessionRequest,
+        @RequestHeader(value = HttpHeaders.ACCEPT, required = false) accept: String?,
+        response: HttpServletResponse
+    ) {
+        val type = wavContentType(accept)
+        if (type == null) {
+            response.status = HttpStatus.NOT_ACCEPTABLE.value()
+            return
+        }
+
+        val files = getSessionService(req).wav(req)
+        if (files.isEmpty()) {
+            response.status = HttpStatus.NO_CONTENT.value()
+            return
+        }
+
+        response.setHeader(HttpHeaders.VARY, HttpHeaders.ACCEPT)
+
+        when (type) {
+            MediaType.MULTIPART_MIXED -> writeMultipartWav(files, response)
+            APPLICATION_ZIP -> writeZipWav(files, response)
+            else -> writeWav(files, response)
+        }
+    }
+
+    private fun writeMultipartWav(files: List<WavFile>, response: HttpServletResponse) {
+        val parts = LinkedMultiValueMap<String, Any>()
+        files.forEach { file ->
+            val partHeaders = HttpHeaders().apply {
+                contentType = AUDIO_WAV
+                contentDisposition = ContentDisposition.attachment().filename(file.name).build()
+            }
+            parts.add("files", HttpEntity(file.content, partHeaders))
+        }
+
+        FormHttpMessageConverter().write(parts, MediaType.MULTIPART_MIXED, ServletServerHttpResponse(response))
+    }
+
+    private fun writeZipWav(files: List<WavFile>, response: HttpServletResponse) {
+        response.contentType = APPLICATION_ZIP.toString()
+        response.setHeader(
+            HttpHeaders.CONTENT_DISPOSITION,
+            ContentDisposition.attachment().filename("SIP3_${UUID.randomUUID()}.zip").build().toString()
+        )
+        ZipOutputStream(response.outputStream).use { zip ->
+            files.forEach { file ->
+                zip.putNextEntry(ZipEntry(file.name))
+                zip.write(file.content)
+                zip.closeEntry()
+            }
+        }
+    }
+
+    private fun writeWav(files: List<WavFile>, response: HttpServletResponse) {
+        if (files.size > 1) {
+            response.status = HttpStatus.NOT_ACCEPTABLE.value()
+            response.contentType = MediaType.TEXT_PLAIN_VALUE
+            response.writer.write("More than one WAV file is available. Request multipart/mixed or application/zip.")
+            return
+        }
+
+        val file = files.single()
+        response.contentType = AUDIO_WAV.toString()
+        response.setHeader(
+            HttpHeaders.CONTENT_DISPOSITION,
+            ContentDisposition.attachment().filename(file.name).build().toString()
+        )
+        response.outputStream.use { it.write(file.content) }
+    }
+
+    private fun wavContentType(accept: String?): MediaType? {
+        val requested = MediaType.parseMediaTypes(accept).ifEmpty { listOf(MediaType.ALL) }
+        return SUPPORTED_WAV_CONTENT_TYPES.firstOrNull { type ->
+            requested.any { it.isCompatibleWith(type) }
+        }
+    }
     @Operation(summary = "Stash session")
     @ApiResponses(
         ApiResponse(responseCode = "204", description = "Session stashed"),

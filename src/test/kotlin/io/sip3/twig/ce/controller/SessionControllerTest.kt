@@ -21,6 +21,7 @@ import io.sip3.twig.ce.MockitoExtension.any
 import io.sip3.twig.ce.domain.Host
 import io.sip3.twig.ce.domain.Participant
 import io.sip3.twig.ce.domain.SessionRequest
+import io.sip3.twig.ce.domain.WavFile
 import io.sip3.twig.ce.service.ServiceLocator
 import io.sip3.twig.ce.service.call.CallSessionService
 import io.sip3.twig.ce.service.media.MediaSessionService
@@ -34,22 +35,30 @@ import org.hamcrest.Matchers.`is`
 import org.hamcrest.Matchers.not
 import org.hamcrest.core.IsNull
 import org.junit.jupiter.api.Assertions.assertNull
+import org.junit.jupiter.api.Assertions.assertArrayEquals
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.ValueSource
 import org.mockito.BDDMockito.*
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.MediaType
+import org.springframework.http.HttpHeaders
 import org.springframework.test.context.bean.override.mockito.MockitoBean
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
 import java.io.ByteArrayOutputStream
+import java.io.ByteArrayInputStream
 import java.nio.charset.Charset
 import java.util.*
+import java.util.zip.ZipInputStream
 
 @ExtendWith(SpringExtension::class)
 @WebMvcTest(SessionController::class)
@@ -342,6 +351,100 @@ class SessionControllerTest {
 
         verify(callSessionService, only()).content(any())
     }
+
+    @Test
+    fun `WAV response contains file bytes and attachment headers`() {
+        val file = WavFile("call.wav", byteArrayOf(0, 1, 127, -1))
+        given(callSessionService.wav(any())).willReturn(listOf(file))
+
+        mockMvc.perform(wavRequest("audio/wav"))
+            .andExpect(status().isOk)
+            .andExpect(content().contentType("audio/wav"))
+            .andExpect(header().string(HttpHeaders.VARY, HttpHeaders.ACCEPT))
+            .andExpect(header().string(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"call.wav\""))
+            .andExpect(content().bytes(file.content))
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = ["", "*/*", "multipart/mixed"])
+    fun `WAV multipart response contains both files and a closing boundary`(accept: String) {
+        val files = listOf(WavFile("first.wav", byteArrayOf(0, 1)), WavFile("second.wav", byteArrayOf(2, -1)))
+        given(callSessionService.wav(any())).willReturn(files)
+
+        val response = mockMvc.perform(wavRequest(accept))
+            .andExpect(status().isOk)
+            .andExpect(content().contentTypeCompatibleWith(MediaType.MULTIPART_MIXED))
+            .andExpect(header().string(HttpHeaders.VARY, HttpHeaders.ACCEPT))
+            .andReturn().response
+
+        val boundary = MediaType.parseMediaType(response.contentType!!).getParameter("boundary")!!
+        val body = response.contentAsByteArray.toString(Charsets.ISO_8859_1)
+        assertTrue(body.startsWith("--$boundary\r\n"))
+        files.forEach { file ->
+            assertTrue(body.contains("Content-Disposition: attachment; filename=\"${file.name}\"\r\n"))
+            assertTrue(body.contains("Content-Type: audio/wav\r\n"))
+            assertTrue(body.contains("\r\n\r\n${file.content.toString(Charsets.ISO_8859_1)}\r\n"))
+        }
+        assertTrue(body.endsWith("--$boundary--\r\n"))
+    }
+
+    @Test
+    fun `WAV ZIP response contains all files`() {
+        val files = listOf(WavFile("first.wav", byteArrayOf(0, 1)), WavFile("second.wav", byteArrayOf(2, -1)))
+        given(callSessionService.wav(any())).willReturn(files)
+
+        val response = mockMvc.perform(wavRequest("application/zip"))
+            .andExpect(status().isOk)
+            .andExpect(content().contentType("application/zip"))
+            .andExpect(header().string(HttpHeaders.VARY, HttpHeaders.ACCEPT))
+            .andExpect(header().string(HttpHeaders.CONTENT_DISPOSITION, Matchers.matchesPattern("attachment; filename=\"SIP3_.*\\.zip\"")))
+            .andReturn().response
+
+        ZipInputStream(ByteArrayInputStream(response.contentAsByteArray)).use { zip ->
+            files.forEach { file ->
+                assertEquals(file.name, zip.nextEntry.name)
+                assertArrayEquals(file.content, zip.readBytes())
+            }
+            assertNull(zip.nextEntry)
+        }
+    }
+
+    @Test
+    fun `WAV response is empty when no files are available`() {
+        given(callSessionService.wav(any())).willReturn(emptyList())
+
+        mockMvc.perform(wavRequest("audio/wav"))
+            .andExpect(status().isNoContent)
+            .andExpect(content().bytes(byteArrayOf()))
+    }
+
+    @Test
+    fun `WAV rejects unsupported Accept before calling the service`() {
+        mockMvc.perform(wavRequest("application/json"))
+            .andExpect(status().isNotAcceptable)
+            .andExpect(content().bytes(byteArrayOf()))
+
+        verify(callSessionService, never()).wav(any())
+    }
+
+    @Test
+    fun `WAV rejects multiple files requested as a single WAV`() {
+        given(callSessionService.wav(any())).willReturn(
+            listOf(WavFile("first.wav", byteArrayOf(1)), WavFile("second.wav", byteArrayOf(2)))
+        )
+
+        mockMvc.perform(wavRequest("audio/wav"))
+            .andExpect(status().isNotAcceptable)
+            .andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_PLAIN))
+            .andExpect(content().string("More than one WAV file is available. Request multipart/mixed or application/zip."))
+    }
+
+    private fun wavRequest(accept: String) = post("/session/wav")
+        .contentType(MediaType.APPLICATION_JSON)
+        .content(objectMapper.writeValueAsString(SessionRequest(method = listOf("INVITE"))))
+        .apply {
+            if (accept.isNotEmpty()) header(HttpHeaders.ACCEPT, accept)
+        }
 
     @Test
     fun `Register session pcap`() {
