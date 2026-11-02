@@ -29,6 +29,7 @@ import org.bson.Document
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import org.mockito.Mockito.`when`
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -169,6 +170,22 @@ class SessionServiceTest {
 
     @Autowired
     private lateinit var service: TestSessionService
+
+    @Test
+    fun `WAV export is not supported in CE version`() {
+        val request = SessionRequest(
+            createdAt = NOW,
+            terminatedAt = NOW + 900000,
+            method = listOf("INVITE"),
+            callId = listOf("call-id-1")
+        )
+
+        val exception = assertThrows<UnsupportedOperationException> {
+            service.wav(request)
+        }
+
+        assertEquals("WAV export is not supported in CE version", exception.message)
+    }
 
     @Test
     fun `Validate 'details()' method`() {
